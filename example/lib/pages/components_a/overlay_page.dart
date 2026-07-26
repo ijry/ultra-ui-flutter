@@ -31,9 +31,11 @@ class _OverlayPageState extends State<OverlayPage> {
 
   @override
   Widget build(BuildContext context) {
-    return PopScope<Object?>(
+    return PopScope(
       canPop: !_hasVisibleOverlay,
-      onPopInvokedWithResult: (didPop, _) {
+      // Keep the declared Flutter 3.19 minimum SDK compatible.
+      // ignore: deprecated_member_use
+      onPopInvoked: (didPop) {
         if (!didPop && _hasVisibleOverlay) _dismissTopmostOverlay();
       },
       child: ExamplePageScaffold(
