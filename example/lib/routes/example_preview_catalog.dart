@@ -1,5 +1,12 @@
 import 'example_route.dart';
 
+class ExamplePreviewGroup {
+  const ExamplePreviewGroup({required this.title, required this.routes});
+
+  final String title;
+  final List<ExamplePreviewRoute> routes;
+}
+
 const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/color/color',
@@ -513,7 +520,34 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       available: false),
 ];
 
-const List<int> componentGroupLengths = <int>[11, 20, 7, 16, 15, 12, 20];
+const List<int> componentGroupLengths = <int>[11, 20, 7, 17, 15, 12, 20];
+
+const List<String> componentPreviewGroupTitles = <String>[
+  '基础组件',
+  '表单组件',
+  '数据组件',
+  '反馈组件',
+  '布局组件',
+  '导航组件',
+  '其他组件',
+];
+
+final List<ExamplePreviewGroup> componentPreviewGroups =
+    _buildComponentPreviewGroups();
+
+List<ExamplePreviewGroup> _buildComponentPreviewGroups() {
+  var start = 0;
+  return List<ExamplePreviewGroup>.generate(componentGroupLengths.length,
+      (index) {
+    final length = componentGroupLengths[index];
+    final routes = componentPreviewRoutes.sublist(start, start + length);
+    start += length;
+    return ExamplePreviewGroup(
+      title: componentPreviewGroupTitles[index],
+      routes: routes,
+    );
+  });
+}
 
 const List<ExamplePreviewRoute> templatePreviewRoutes = <ExamplePreviewRoute>[
   ExamplePreviewRoute(

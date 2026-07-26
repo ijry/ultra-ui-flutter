@@ -32,7 +32,8 @@ class ExamplePageScaffold extends StatelessWidget {
               )
             : null,
       ),
-      body: SafeArea(child: body),
+      body:
+          SafeArea(key: const ValueKey('example-page-safe-area'), child: body),
     );
   }
 }
