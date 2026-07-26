@@ -242,7 +242,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/swipeAction/swipeAction',
       title: 'SwipeAction 滑动单元格',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/collapse/collapse',
       title: 'Collapse 折叠面板',
@@ -327,7 +327,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/sticky/sticky',
       title: 'Sticky 吸顶',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/waterfall/waterfall',
       title: 'Waterfall 瀑布流',
@@ -372,7 +372,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/backtop/backtop',
       title: 'BackTop 返回顶部',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/navbar/navbar',
       title: 'Navbar 导航栏',
@@ -457,7 +457,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/lazyLoad/lazyLoad',
       title: 'LazyLoad 懒加载',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/gap/gap',
       title: 'Gap 间隔槽',

@@ -6,6 +6,64 @@ import 'package:ultra_ui_example/routes/example_catalog.dart';
 import 'example_test_helpers.dart';
 
 void main() {
+  testWidgets('Component A scroll routes render their source titles',
+      (tester) async {
+    for (final id in <String>[
+      'componentsA/swipeAction/swipeAction',
+      'componentsA/sticky/sticky',
+      'componentsA/backtop/backtop',
+      'componentsA/lazyLoad/lazyLoad',
+      'test/test',
+    ]) {
+      await tester.pumpWidget(buildRouteUnderTest(id));
+
+      expect(find.byKey(ValueKey('example-page-$id')), findsOneWidget);
+      expect(find.text(findExampleRoute(id).title).first, findsOneWidget);
+    }
+  });
+
+  testWidgets('swipe action delete confirmation removes the base row',
+      (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsA/swipeAction/swipeAction'));
+    await tester.drag(find.text('基础使用'), const Offset(-320, 0));
+    await tester.pumpAndSettle();
+    await tester.tap(
+      find.descendant(
+        of: find.byType(UPSwipeActionItem).first,
+        matching: find.text('删除'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    await tester.tap(find.text('确定'));
+    await tester.pumpAndSettle();
+    expect(find.text('基础使用'), findsNothing);
+  });
+
+  testWidgets('back top page returns its controller to scroll origin',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/backtop/backtop'));
+    await tester.drag(find.byType(Scrollable).first, const Offset(0, -800));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byType(UPBackTop));
+    await tester.pumpAndSettle();
+    expect(
+        tester
+            .state<ScrollableState>(find.byType(Scrollable).first)
+            .position
+            .pixels,
+        0);
+  });
+
+  testWidgets('lazy load page appends a source image batch', (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsA/lazyLoad/lazyLoad'));
+    final before = find.byType(UPLazyLoad).evaluate().length;
+    await tester.tap(find.text('加载更多'));
+    await tester.pumpAndSettle();
+    expect(find.byType(UPLazyLoad).evaluate().length, greaterThan(before));
+  });
+
   testWidgets('Component A display routes render their source titles',
       (tester) async {
     for (final id in <String>[

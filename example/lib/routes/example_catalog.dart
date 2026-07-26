@@ -5,6 +5,7 @@ import '../pages/home/components_home_page.dart';
 import '../pages/home/mine_page.dart';
 import '../pages/home/templates_home_page.dart';
 import '../pages/components_a/cell_page.dart';
+import '../pages/components_a/back_top_page.dart';
 import '../pages/components_a/checkbox_page.dart';
 import '../pages/components_a/divider_page.dart';
 import '../pages/components_a/empty_page.dart';
@@ -20,6 +21,10 @@ import '../pages/components_a/overlay_page.dart';
 import '../pages/components_a/popup_page.dart';
 import '../pages/components_a/radio_page.dart';
 import '../pages/components_a/rate_page.dart';
+import '../pages/components_a/lazy_load_page.dart';
+import '../pages/components_a/sticky_page.dart';
+import '../pages/components_a/swipe_action_page.dart';
+import '../pages/components_a/test_list_page.dart';
 import '../pages/components_a/button_page.dart';
 import '../pages/components_a/transition_page.dart';
 import 'example_route.dart';
@@ -179,6 +184,41 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsA,
     builder: _buildPopup,
   ),
+  const ExampleRoute(
+    id: 'componentsA/swipeAction/swipeAction',
+    sourcePath: 'pages/componentsA/swipeAction/swipeAction',
+    title: '滑动单元格',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildSwipeAction,
+  ),
+  const ExampleRoute(
+    id: 'componentsA/sticky/sticky',
+    sourcePath: 'pages/componentsA/sticky/sticky',
+    title: '吸顶',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildSticky,
+  ),
+  const ExampleRoute(
+    id: 'componentsA/backtop/backtop',
+    sourcePath: 'pages/componentsA/backtop/backtop',
+    title: '返回顶部',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildBackTop,
+  ),
+  const ExampleRoute(
+    id: 'componentsA/lazyLoad/lazyLoad',
+    sourcePath: 'pages/componentsA/lazyLoad/lazyLoad',
+    title: '懒加载',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildLazyLoad,
+  ),
+  const ExampleRoute(
+    id: 'test/test',
+    sourcePath: 'pages/test/test',
+    title: '测试',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildTestList,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -203,6 +243,11 @@ Widget _buildTransition(BuildContext context) => const TransitionPage();
 Widget _buildOverlay(BuildContext context) => const OverlayPage();
 Widget _buildLoadingPage(BuildContext context) => const LoadingPagePage();
 Widget _buildPopup(BuildContext context) => const PopupPage();
+Widget _buildSwipeAction(BuildContext context) => const SwipeActionPage();
+Widget _buildSticky(BuildContext context) => const StickyPage();
+Widget _buildBackTop(BuildContext context) => const BackTopPage();
+Widget _buildLazyLoad(BuildContext context) => const LazyLoadPage();
+Widget _buildTestList(BuildContext context) => const TestListPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(
