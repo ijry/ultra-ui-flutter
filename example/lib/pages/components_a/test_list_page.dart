@@ -12,7 +12,7 @@ class TestListPage extends StatelessWidget {
       title: '测试',
       scrollable: false,
       child: Container(
-        key: const ValueKey('example-page-test/test'),
+        key: const ValueKey('example-page-componentsA/test/test'),
         child: UPList(
           height: 500,
           customStyle: const BoxDecoration(color: Colors.red),

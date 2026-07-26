@@ -13,7 +13,7 @@ void main() {
       'componentsA/sticky/sticky',
       'componentsA/backtop/backtop',
       'componentsA/lazyLoad/lazyLoad',
-      'test/test',
+      'componentsA/test/test',
     ]) {
       await tester.pumpWidget(buildRouteUnderTest(id));
 

@@ -4,7 +4,30 @@ import 'package:ultra_ui_example/routes/example_catalog.dart';
 import 'package:ultra_ui_example/routes/example_preview_catalog.dart';
 import 'package:ultra_ui_example/routes/example_route.dart';
 
+import 'example_test_helpers.dart';
+
 void main() {
+  testWidgets('every completed Component A source route renders a real page',
+      (tester) async {
+    for (final id in componentARouteIds) {
+      await tester.pumpWidget(buildRouteUnderTest(id));
+      expect(find.byKey(ValueKey('example-page-$id')), findsOneWidget);
+    }
+  });
+
+  test('Component A catalog preserves the literal source order and total', () {
+    final componentARoutes = exampleRoutes
+        .where((route) => route.group == ExampleRouteGroup.componentsA)
+        .toList();
+
+    expect(exampleRoutes, hasLength(27));
+    expect(componentARoutes.map((route) => route.id), componentARouteIds);
+    expect(
+      componentARoutes.map((route) => route.sourcePath),
+      componentARouteIds.map((id) => 'pages/$id'),
+    );
+  });
+
   test('source main catalog contains exactly four available routes', () {
     final mainRoutes = exampleRoutes
         .where((route) => route.group == ExampleRouteGroup.main)
@@ -188,7 +211,20 @@ void main() {
         ],
       ],
     );
-    expect(componentPreviewRoutes.every((route) => route.available), isFalse);
+    final componentAPreviews = componentPreviewRoutes
+        .where((route) => route.group == ExampleRouteGroup.componentsA);
+    final laterComponentPreviews = componentPreviewRoutes
+        .where((route) => route.group != ExampleRouteGroup.componentsA);
+
+    expect(componentAPreviews, isNotEmpty);
+    expect(componentAPreviews.every((route) => route.available), isTrue);
+    expect(laterComponentPreviews.every((route) => route.available), isFalse);
+    expect(
+      componentPreviewRoutes
+          .map((route) => route.sourcePath)
+          .contains('pages/componentsA/test/test'),
+      isFalse,
+    );
     expect(
       componentPreviewRoutes.every(
         (route) => route.group != ExampleRouteGroup.main,
