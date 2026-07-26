@@ -60,6 +60,8 @@ rewarded-ad experience in this example.
 | Host generation | `flutter create --platforms=android,ios .` completed. |
 | Platform directories | `example/android/` and `example/ios/` present; no web, Windows, macOS, or Linux host directories created. |
 | Manifest preservation | `ultra_ui: path: ../packages/ultra_ui` and all 11 `assets/uview/` declarations remain in `pubspec.yaml`. |
+| Full static analysis | `flutter analyze` passed after the generated app boot test was adapted to `UltraUiExampleApp`. |
+| Full automated tests | `flutter test --reporter expanded` passed: 26 tests, including the generated-project boot smoke and all 23 Component A route titles. |
 | Android build | `flutter build apk --debug` passed; output is `example/build/app/outputs/flutter-apk/app-debug.apk`. |
 | iOS build | Skipped: this execution host is Windows, so Xcode/iOS Simulator builds cannot run. |
 | Device discovery | `flutter devices` found Windows, Chrome, and Edge only; `flutter emulators` found no emulators. |
@@ -74,10 +76,3 @@ The pending acceptance matrix covers launch, safe areas, three bottom tabs,
 system back, every enabled Component A route, long-list scrolling,
 popup/overlay dismissal, keyboard-free interaction, and the interaction
 matrices exercised by Tasks 3-7.
-
-## Concern
-
-The catalog correctly exposes `过渡动画`, but the existing, out-of-scope
-`TransitionPage` hard-codes the shortened app-bar title `动画`. Correcting that
-display string requires authorization to edit
-`example/lib/pages/components_a/transition_page.dart`.

@@ -1,4 +1,4 @@
-import 'package:flutter/widgets.dart';
+import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ultra_ui_example/routes/example_catalog.dart';
 import 'package:ultra_ui_example/routes/example_preview_catalog.dart';
@@ -11,7 +11,15 @@ void main() {
       (tester) async {
     for (final id in componentARouteIds) {
       await tester.pumpWidget(buildRouteUnderTest(id));
+      final route = findExampleRoute(id);
       expect(find.byKey(ValueKey('example-page-$id')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text(route.title),
+        ),
+        findsOneWidget,
+      );
     }
   });
 

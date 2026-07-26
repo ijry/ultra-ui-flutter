@@ -51,7 +51,7 @@ class _TransitionPageState extends State<TransitionPage> {
   @override
   Widget build(BuildContext context) {
     return ExamplePageScaffold(
-      title: '动画',
+      title: '过渡动画',
       child: Container(
         key: const ValueKey('example-page-componentsA/transition/transition'),
         padding: const EdgeInsets.only(top: 20, bottom: 20),
