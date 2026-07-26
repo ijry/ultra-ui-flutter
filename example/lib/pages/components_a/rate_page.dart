@@ -12,13 +12,14 @@ class RatePage extends StatefulWidget {
 }
 
 class _RatePageState extends State<RatePage> {
+  num defaultValue = 1;
   num controlledValue = 3;
+  num countFourValue = 1;
   num activeColorValue = 3;
   num voidColorValue = 2;
   num touchableValue = 2;
   num halfValue = 3.5;
   num activeIconValue = 3;
-  num currentRating = 3;
 
   @override
   Widget build(BuildContext context) {
@@ -30,21 +31,26 @@ class _RatePageState extends State<RatePage> {
           children: <Widget>[
             _RateBlock(
               title: '基本案例',
-              child: const UPRate(size: 20),
+              child: _editableRate(
+                value: defaultValue,
+                onChange: (value) => setState(() => defaultValue = value),
+              ),
             ),
             _RateBlock(
               title: '自定义选中星星数量',
               child: _editableRate(
                 value: controlledValue,
-                onChange: (value) => setState(() {
-                  controlledValue = value;
-                  currentRating = value;
-                }),
+                onChange: (value) => setState(() => controlledValue = value),
               ),
             ),
             _RateBlock(
               title: '自定义星星大小',
-              child: const UPRate(size: 30, count: 4),
+              child: _editableRate(
+                value: countFourValue,
+                count: 4,
+                size: 30,
+                onChange: (value) => setState(() => countFourValue = value),
+              ),
             ),
             _RateBlock(
               title: '是否禁用评分',
@@ -59,10 +65,7 @@ class _RatePageState extends State<RatePage> {
               child: _editableRate(
                 value: activeColorValue,
                 activeColor: '#2979ff',
-                onChange: (value) => setState(() {
-                  activeColorValue = value;
-                  currentRating = value;
-                }),
+                onChange: (value) => setState(() => activeColorValue = value),
               ),
             ),
             _RateBlock(
@@ -70,26 +73,18 @@ class _RatePageState extends State<RatePage> {
               child: _editableRate(
                 value: voidColorValue,
                 inactiveColor: '#2979ff',
-                onChange: (value) => setState(() {
-                  voidColorValue = value;
-                  currentRating = value;
-                }),
+                onChange: (value) => setState(() => voidColorValue = value),
               ),
             ),
             _RateBlock(
               title: '禁止触摸选择',
-              child: const IgnorePointer(
-                child: UPRate(size: 20, touchable: false),
-              ),
+              child: const UPRate(size: 20, touchable: false),
             ),
             _RateBlock(
               title: '允许触摸选择',
               child: _editableRate(
                 value: touchableValue,
-                onChange: (value) => setState(() {
-                  touchableValue = value;
-                  currentRating = value;
-                }),
+                onChange: (value) => setState(() => touchableValue = value),
               ),
             ),
             _RateBlock(
@@ -97,10 +92,9 @@ class _RatePageState extends State<RatePage> {
               child: _editableRate(
                 value: halfValue,
                 allowHalf: true,
-                onChange: (value) => setState(() {
-                  halfValue = value;
-                  currentRating = value;
-                }),
+                minCount: 0.5,
+                rateKey: const ValueKey('rate-half-mode'),
+                onChange: (value) => setState(() => halfValue = value),
               ),
             ),
             _RateBlock(
@@ -109,15 +103,8 @@ class _RatePageState extends State<RatePage> {
                 value: activeIconValue,
                 activeIcon: 'heart-fill',
                 inactiveIcon: 'heart',
-                onChange: (value) => setState(() {
-                  activeIconValue = value;
-                  currentRating = value;
-                }),
+                onChange: (value) => setState(() => activeIconValue = value),
               ),
-            ),
-            Padding(
-              padding: const EdgeInsets.all(16),
-              child: Text('当前评分：$currentRating'),
             ),
           ],
         ),
@@ -128,6 +115,10 @@ class _RatePageState extends State<RatePage> {
   Widget _editableRate({
     required num value,
     required ValueChanged<num> onChange,
+    Key? rateKey,
+    int count = 5,
+    num size = 20,
+    num minCount = 1,
     bool allowHalf = false,
     String activeColor = '',
     String inactiveColor = '',
@@ -138,7 +129,10 @@ class _RatePageState extends State<RatePage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: <Widget>[
         UPRate(
-          size: 20,
+          key: rateKey,
+          size: size,
+          count: count,
+          minCount: minCount,
           value: value,
           allowHalf: allowHalf,
           activeColor: activeColor,
@@ -147,6 +141,8 @@ class _RatePageState extends State<RatePage> {
           inactiveIcon: inactiveIcon,
           onChange: onChange,
         ),
+        const SizedBox(height: 8),
+        Text('当前评分：$value'),
       ],
     );
   }

@@ -57,8 +57,14 @@ void main() {
 
   testWidgets('rate page emits an editable half rating', (tester) async {
     await tester.pumpWidget(buildRouteUnderTest('componentsA/rate/rate'));
-    await tester.tap(find.byType(UPRate).last);
+
+    final halfRate = find.byKey(const ValueKey('rate-half-mode'));
+    await tester.ensureVisible(halfRate);
+    await tester.pumpAndSettle();
+    await tester.tapAt(tester.getTopLeft(halfRate) + const Offset(5, 10));
     await tester.pump();
-    expect(find.textContaining('当前评分：'), findsOneWidget);
+
+    expect(tester.state<UPRateState>(halfRate).value, 0.5);
+    expect(find.text('当前评分：0.5'), findsOneWidget);
   });
 }
