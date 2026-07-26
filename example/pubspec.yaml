@@ -21,4 +21,14 @@ dev_dependencies:
 flutter:
   uses-material-design: true
   assets:
-    - assets/uview/
+    - assets/uview/common/
+    - assets/uview/album/
+    - assets/uview/empty/
+    - assets/uview/demo/cell/
+    - assets/uview/demo/empty/
+    - assets/uview/demo/transition/
+    - assets/uview/demo/overlay/
+    - assets/uview/demo/loading-page/
+    - assets/uview/demo/popup/
+    - assets/uview/swiper/
+    - assets/uview/test/

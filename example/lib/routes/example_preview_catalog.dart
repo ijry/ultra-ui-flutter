@@ -17,12 +17,12 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/icon/icon',
       title: 'Icon 图标',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/image/image',
       title: 'Image 图片',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/button/button',
       title: 'Button 按钮',
@@ -42,7 +42,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/cell/cell',
       title: 'Cell 单元格',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/badge/badge',
       title: 'Badge 徽标数',
@@ -57,7 +57,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/loading-icon/loading-icon',
       title: 'Loading 加载动画',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/loading-page/loading-page',
       title: 'Loading page 加载页',
@@ -292,7 +292,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/line/line',
       title: 'Line 线条',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/card/card',
       title: 'Card 卡片',
@@ -312,7 +312,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/grid/grid',
       title: 'Grid 宫格布局',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/swiper/swiper',
       title: 'Swiper 轮播图',
@@ -337,7 +337,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/divider/divider',
       title: 'Divider 分割线',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/box/box',
       title: 'Box 盒子',
@@ -462,7 +462,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/gap/gap',
       title: 'Gap 间隔槽',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/avatar/avatar',
       title: 'Avatar 头像',
@@ -472,7 +472,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/link/link',
       title: 'Link 超链接',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/transition/transition',
       title: 'transition 动画',
