@@ -1,0 +1,24 @@
+name: ultra_ui_example
+description: Example app for ultra_ui (uview-plus Flutter port)
+publish_to: none
+version: 0.1.0+1
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  ultra_ui:
+    path: ../packages/ultra_ui
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+
+flutter:
+  uses-material-design: true
+  assets:
+    - assets/uview/
