@@ -234,7 +234,7 @@ class UPImage extends StatelessWidget {
         height: h,
         color: bg,
         alignment: Alignment.center,
-        child: loadingChild,
+        child: errorWidget ?? loadingChild,
       );
     } else {
       final isNetwork = src.startsWith('http://') || src.startsWith('https://');

@@ -22,26 +22,26 @@ All Components B-D and template preview rows remain unavailable.
 | Source path | Flutter class | Local assets | Representative automated coverage | Actual mobile substitution |
 | --- | --- | --- | --- | --- |
 | `pages/componentsA/transition/transition` | `TransitionPage` | None | `transition page shows the selected transition block` | - |
-| `pages/componentsA/test/test` | `TestListPage` | `assets/uview/test/list-item.jpg` | `Component A scroll routes render their source titles` | - |
-| `pages/componentsA/icon/icon` | `IconPage` | None | `Component A display routes render their source titles` | - |
-| `pages/componentsA/cell/cell` | `CellPage` | `assets/uview/demo/cell/tag.png` | `Component A display routes render their source titles` | - |
-| `pages/componentsA/line/line` | `LinePage` | None | `Component A display routes render their source titles` | - |
-| `pages/componentsA/image/image` | `ImagePage` | `assets/uview/album/1.jpg` | `Component A display routes render their source titles` | Remote source illustration replaced by a local bundled source asset. |
-| `pages/componentsA/link/link` | `LinkPage` | None | `Component A display routes render their source titles` | Source link opening replaced by in-app feedback. |
+| `pages/componentsA/test/test` | `TestListPage` | `assets/uview/test/list-item.jpg` | `test list changes its real scroll offset` | - |
+| `pages/componentsA/icon/icon` | `IconPage` | None | `icon tap emits source feedback` | - |
+| `pages/componentsA/cell/cell` | `CellPage` | `assets/uview/demo/cell/tag.png` | Route smoke: `every completed Component A source route renders a real page` | - |
+| `pages/componentsA/line/line` | `LinePage` | None | Route smoke: `every completed Component A source route renders a real page` | - |
+| `pages/componentsA/image/image` | `ImagePage` | `assets/uview/album/1.jpg` | `image page uses local source assets and reports taps` | Remote source illustration replaced by a local bundled source asset. |
+| `pages/componentsA/link/link` | `LinkPage` | None | `link page reports in-app feedback instead of navigating` | Source link opening replaced by in-app feedback. |
 | `pages/componentsA/button/button` | `ButtonPage` | None | `button page opens its source action sheet` | - |
-| `pages/componentsA/loading-icon/loading-icon` | `LoadingIconPage` | None | `Component A display routes render their source titles` | - |
-| `pages/componentsA/overlay/overlay` | `OverlayPage` | `assets/uview/demo/overlay/baseCases.png`, `embeddedContent.png`, `setTransparency.png` | `overlay page opens and dismisses embedded content` | - |
+| `pages/componentsA/loading-icon/loading-icon` | `LoadingIconPage` | None | Route smoke: `every completed Component A source route renders a real page` | - |
+| `pages/componentsA/overlay/overlay` | `OverlayPage` | `assets/uview/demo/overlay/baseCases.png`, `embeddedContent.png`, `setTransparency.png` | `overlay system back dismisses content before popping route` | - |
 | `pages/componentsA/loading-page/loading-page` | `LoadingPagePage` | `assets/uview/demo/loading-page/promptContent.png`, `customPicture.png`, `customMode.png`, `customBgColor.png`, `assets/uview/common/logo.png` | `loading page uses the custom text preset` | - |
-| `pages/componentsA/popup/popup` | `PopupPage` | `assets/uview/demo/popup/modeTop.png`, `modeRight.png`, `modeBottom.png`, `modeLeft.png`, `modeCenter.png`, `showRadis.png`, `noClose.png`, `showCloseBtn.png` | `popup page opens a top popup preset` | - |
+| `pages/componentsA/popup/popup` | `PopupPage` | `assets/uview/demo/popup/modeTop.png`, `modeRight.png`, `modeBottom.png`, `modeLeft.png`, `modeCenter.png`, `showRadis.png`, `noClose.png`, `showCloseBtn.png` | `popup system back dismisses non-dismissible overlay preset` | - |
 | `pages/componentsA/swipeAction/swipeAction` | `SwipeActionPage` | None | `swipe action delete confirmation removes the base row` | - |
-| `pages/componentsA/sticky/sticky` | `StickyPage` | None | `Component A scroll routes render their source titles` | - |
+| `pages/componentsA/sticky/sticky` | `StickyPage` | None | `sticky source button reports feedback after scrolling` | - |
 | `pages/componentsA/radio/radio` | `RadioPage` | None | `radio page changes the source group value` | - |
 | `pages/componentsA/checkbox/checkbox` | `CheckboxPage` | None | `checkbox page programmatic toggle changes standalone state` | - |
-| `pages/componentsA/empty/empty` | `EmptyPage` | Bundled empty-state asset group | `empty page changes its selected source mode` | - |
+| `pages/componentsA/empty/empty` | `EmptyPage` | `assets/uview/empty/{car,data,comment,coupon,history,list,message,news,order,page,permission,search,wifi}.png`; `assets/uview/demo/empty/{car,data,comment,coupon,history,list,message,news,order,page,permission,search,wifi}.png` | `empty page uses local source assets for its default and switch` | - |
 | `pages/componentsA/backtop/backtop` | `BackTopPage` | None | `back top page returns its controller to scroll origin` | - |
-| `pages/componentsA/divider/divider` | `DividerPage` | None | `Component A display routes render their source titles` | - |
+| `pages/componentsA/divider/divider` | `DividerPage` | None | Route smoke: `every completed Component A source route renders a real page` | - |
 | `pages/componentsA/rate/rate` | `RatePage` | None | `rate page emits an editable half rating` | - |
-| `pages/componentsA/gap/gap` | `GapPage` | None | `Component A display routes render their source titles` | - |
+| `pages/componentsA/gap/gap` | `GapPage` | None | Route smoke: `every completed Component A source route renders a real page` | - |
 | `pages/componentsA/grid/grid` | `GridPage` | None | `grid item tap reports source-style feedback` | - |
 | `pages/componentsA/lazyLoad/lazyLoad` | `LazyLoadPage` | `assets/uview/swiper/swiper1.png`, `swiper2.png`, `swiper3.png` | `lazy load page appends a source image batch` | - |
 
@@ -60,8 +60,8 @@ rewarded-ad experience in this example.
 | Host generation | `flutter create --platforms=android,ios .` completed. |
 | Platform directories | `example/android/` and `example/ios/` present; no web, Windows, macOS, or Linux host directories created. |
 | Manifest preservation | `ultra_ui: path: ../packages/ultra_ui` and all 11 `assets/uview/` declarations remain in `pubspec.yaml`. |
-| Full static analysis | `flutter analyze` passed after the generated app boot test was adapted to `UltraUiExampleApp`. |
-| Full automated tests | `flutter test --reporter expanded` passed: 26 tests, including the generated-project boot smoke and all 23 Component A route titles. |
+| Final full static analysis | Example `flutter analyze` passed with no issues. Package `flutter analyze` reported 150 existing info/warning diagnostics in unrelated files and exited 1; no diagnostic belongs to this fix wave. |
+| Final full automated tests | Example `flutter test --reporter expanded` passed: 34 tests. Touched package `flutter test --reporter expanded` passed: 809 tests. |
 | Android build | `flutter build apk --debug` passed; output is `example/build/app/outputs/flutter-apk/app-debug.apk`. |
 | iOS build | Skipped: this execution host is Windows, so Xcode/iOS Simulator builds cannot run. |
 | Device discovery | `flutter devices` found Windows, Chrome, and Edge only; `flutter emulators` found no emulators. |

@@ -15,66 +15,86 @@ class _OverlayPageState extends State<OverlayPage> {
   bool _showContent = false;
   bool _showTransparency = false;
 
+  bool get _hasVisibleOverlay => _showBase || _showContent || _showTransparency;
+
+  void _dismissTopmostOverlay() {
+    setState(() {
+      if (_showTransparency) {
+        _showTransparency = false;
+      } else if (_showContent) {
+        _showContent = false;
+      } else {
+        _showBase = false;
+      }
+    });
+  }
+
   @override
   Widget build(BuildContext context) {
-    return ExamplePageScaffold(
-      title: '遮罩层',
-      scrollable: false,
-      child: Stack(
-        children: <Widget>[
-          Container(
-            key: const ValueKey('example-page-componentsA/overlay/overlay'),
-            padding: const EdgeInsets.only(top: 20),
-            child: UPCellGroup(
-              children: <Widget>[
-                _OverlayCell(
-                  title: '基本案列',
-                  asset: 'assets/uview/demo/overlay/baseCases.png',
-                  onClick: () => setState(() => _showBase = true),
-                ),
-                _OverlayCell(
-                  title: '嵌入内容',
-                  asset: 'assets/uview/demo/overlay/embeddedContent.png',
-                  onClick: () => setState(() => _showContent = true),
-                ),
-                _OverlayCell(
-                  title: '设置透明度',
-                  asset: 'assets/uview/demo/overlay/setTransparency.png',
-                  onClick: () => setState(() => _showTransparency = true),
-                ),
-              ],
+    return PopScope<Object?>(
+      canPop: !_hasVisibleOverlay,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && _hasVisibleOverlay) _dismissTopmostOverlay();
+      },
+      child: ExamplePageScaffold(
+        title: '遮罩层',
+        scrollable: false,
+        child: Stack(
+          children: <Widget>[
+            Container(
+              key: const ValueKey('example-page-componentsA/overlay/overlay'),
+              padding: const EdgeInsets.only(top: 20),
+              child: UPCellGroup(
+                children: <Widget>[
+                  _OverlayCell(
+                    title: '基本案列',
+                    asset: 'assets/uview/demo/overlay/baseCases.png',
+                    onClick: () => setState(() => _showBase = true),
+                  ),
+                  _OverlayCell(
+                    title: '嵌入内容',
+                    asset: 'assets/uview/demo/overlay/embeddedContent.png',
+                    onClick: () => setState(() => _showContent = true),
+                  ),
+                  _OverlayCell(
+                    title: '设置透明度',
+                    asset: 'assets/uview/demo/overlay/setTransparency.png',
+                    onClick: () => setState(() => _showTransparency = true),
+                  ),
+                ],
+              ),
             ),
-          ),
-          if (_showBase)
-            UPOverlay(
-              show: true,
-              rootOverlay: false,
-              onClick: () => setState(() => _showBase = false),
-            ),
-          if (_showContent)
-            UPOverlay(
-              show: true,
-              rootOverlay: false,
-              onClick: () => setState(() => _showContent = false),
-              child: Center(
-                child: IgnorePointer(
-                  child: Container(
-                    key: const ValueKey('overlay-content-box'),
-                    width: 100,
-                    height: 100,
-                    color: const Color(0xFF70E1F5),
+            if (_showBase)
+              UPOverlay(
+                show: true,
+                rootOverlay: false,
+                onClick: () => setState(() => _showBase = false),
+              ),
+            if (_showContent)
+              UPOverlay(
+                show: true,
+                rootOverlay: false,
+                onClick: () => setState(() => _showContent = false),
+                child: Center(
+                  child: IgnorePointer(
+                    child: Container(
+                      key: const ValueKey('overlay-content-box'),
+                      width: 100,
+                      height: 100,
+                      color: const Color(0xFF70E1F5),
+                    ),
                   ),
                 ),
               ),
-            ),
-          if (_showTransparency)
-            UPOverlay(
-              show: true,
-              rootOverlay: false,
-              opacity: .85,
-              onClick: () => setState(() => _showTransparency = false),
-            ),
-        ],
+            if (_showTransparency)
+              UPOverlay(
+                show: true,
+                rootOverlay: false,
+                opacity: .85,
+                onClick: () => setState(() => _showTransparency = false),
+              ),
+          ],
+        ),
       ),
     );
   }

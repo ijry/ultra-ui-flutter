@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ultra_ui/ultra_ui.dart';
@@ -5,7 +7,72 @@ import 'package:ultra_ui_example/routes/example_catalog.dart';
 
 import 'example_test_helpers.dart';
 
+const List<String> _emptyModes = <String>[
+  'car',
+  'data',
+  'comment',
+  'coupon',
+  'history',
+  'list',
+  'message',
+  'news',
+  'order',
+  'page',
+  'permission',
+  'search',
+  'wifi',
+];
+
+Future<void> _pushRouteUnderTest(WidgetTester tester, String id) async {
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: UP.themeData(),
+      home: Builder(
+        builder: (context) => ElevatedButton(
+          onPressed: () => pushExampleRoute(context, findExampleRoute(id)),
+          child: const Text('打开组件页面'),
+        ),
+      ),
+    ),
+  );
+  await tester.tap(find.text('打开组件页面'));
+  await tester.pumpAndSettle();
+}
+
+Set<String> _assetImagePaths(WidgetTester tester) {
+  return tester
+      .widgetList<Image>(find.byType(Image))
+      .map((image) => image.image)
+      .whereType<AssetImage>()
+      .map((image) => image.assetName)
+      .toSet();
+}
+
+bool _isPng(File file) {
+  final bytes = file.readAsBytesSync();
+  const signature = <int>[137, 80, 78, 71, 13, 10, 26, 10];
+  return bytes.length >= signature.length &&
+      signature
+          .asMap()
+          .entries
+          .every((entry) => bytes[entry.key] == entry.value);
+}
+
 void main() {
+  test('Empty source asset fixtures are available locally', () {
+    for (final mode in _emptyModes) {
+      final emptyAsset = File('assets/uview/empty/$mode.png');
+      final previewAsset = File('assets/uview/demo/empty/$mode.png');
+
+      expect(emptyAsset.existsSync(), isTrue);
+      expect(previewAsset.existsSync(), isTrue);
+      expect(_isPng(emptyAsset), isTrue,
+          reason: '$mode Empty asset must not be a remote response payload');
+      expect(_isPng(previewAsset), isTrue,
+          reason: '$mode preview asset must be a local PNG');
+    }
+  });
+
   testWidgets('Component A scroll routes render their source titles',
       (tester) async {
     for (final id in <String>[
@@ -160,11 +227,95 @@ void main() {
     );
   });
 
-  testWidgets('empty page changes its selected source mode', (tester) async {
+  testWidgets('empty page uses local source assets for its default and switch',
+      (tester) async {
     await tester.pumpWidget(buildRouteUnderTest('componentsA/empty/empty'));
-    await tester.tap(find.text('购物车为空'));
+
+    var empty = tester.widget<UPEmpty>(find.byType(UPEmpty));
+    expect(empty.mode, 'car');
+    expect(empty.icon, 'assets/uview/empty/car.png');
+    expect(
+      _assetImagePaths(tester),
+      containsAll(<String>{
+        'assets/uview/empty/car.png',
+        ..._emptyModes.map((mode) => 'assets/uview/demo/empty/$mode.png'),
+      }),
+    );
+
+    await tester.tap(find.text('数据为空'));
     await tester.pump();
-    expect(find.text('购物车为空'), findsWidgets);
+
+    empty = tester.widget<UPEmpty>(find.byType(UPEmpty));
+    expect(empty.mode, 'data');
+    expect(empty.icon, 'assets/uview/empty/data.png');
+    expect(_assetImagePaths(tester), contains('assets/uview/empty/data.png'));
+  });
+
+  testWidgets('icon tap emits source feedback', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/icon/icon'));
+    await tester.tap(find.text('level'));
+    await tester.pump();
+
+    expect(find.text('当前图标：level'), findsOneWidget);
+    UPToast.hide();
+    await tester.pump();
+  });
+
+  testWidgets('image page uses local source assets and reports taps',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/image/image'));
+    final images = tester.widgetList<UPImage>(find.byType(UPImage)).toList();
+
+    expect(images.first.src, 'assets/uview/album/1.jpg');
+    expect(images.last.src, isEmpty);
+    expect(images.last.loadingWidget, isA<UPLoadingIcon>());
+
+    await tester.tap(find.byType(UPImage).first);
+    await tester.pump();
+    expect(find.text('点击图片'), findsOneWidget);
+    UPToast.hide();
+    await tester.pump();
+  });
+
+  testWidgets('link page reports in-app feedback instead of navigating',
+      (tester) async {
+    UPLink.openLinkHandler = (_) async {};
+    addTearDown(() => UPLink.openLinkHandler = null);
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/link/link'));
+
+    await tester.tap(find.text('打开uview-plus文档').first);
+    await tester.pump();
+
+    expect(find.text('https://uview-plus.jiangruyi.com/'), findsOneWidget);
+    UPToast.hide();
+    await tester.pump();
+  });
+
+  testWidgets('test list changes its real scroll offset', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/test/test'));
+    final list = find.byType(UPList);
+
+    expect(tester.state<UPListState>(list).scrollOffset, 0);
+    await tester.drag(list, const Offset(0, -300));
+    await tester.pumpAndSettle();
+    expect(tester.state<UPListState>(list).scrollOffset, greaterThan(0));
+  });
+
+  testWidgets('sticky source button reports feedback after scrolling',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/sticky/sticky'));
+    final scrollable = find.byType(Scrollable).first;
+
+    await tester.drag(scrollable, const Offset(0, -300));
+    await tester.pumpAndSettle();
+    expect(tester.state<ScrollableState>(scrollable).position.pixels,
+        greaterThan(0));
+
+    await tester.tap(find.text('吸顶按钮'));
+    await tester.pump();
+    expect(find.text('点击了吸顶按钮'), findsOneWidget);
+    UPToast.hide();
+    await tester.pump();
   });
 
   testWidgets('overlay page opens and dismisses embedded content',
@@ -176,6 +327,25 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('up-overlay-mask')));
     await tester.pump();
     expect(find.byKey(const ValueKey('overlay-content-box')), findsNothing);
+  });
+
+  testWidgets('overlay system back dismisses content before popping route',
+      (tester) async {
+    await _pushRouteUnderTest(tester, 'componentsA/overlay/overlay');
+    await tester.tap(find.text('嵌入内容'));
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('overlay-content-box')), findsOneWidget);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(
+        find.byKey(const ValueKey('example-page-componentsA/overlay/overlay')),
+        findsOneWidget);
+    expect(find.byKey(const ValueKey('overlay-content-box')), findsNothing);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('打开组件页面'), findsOneWidget);
   });
 
   testWidgets('loading page uses the custom text preset', (tester) async {
@@ -200,5 +370,24 @@ void main() {
     await tester.tap(find.text('点我关闭'));
     await tester.pump(const Duration(milliseconds: 350));
     expect(tester.state<UPPopupState>(popup).isShown, isFalse);
+  });
+
+  testWidgets('popup system back dismisses non-dismissible overlay preset',
+      (tester) async {
+    await _pushRouteUnderTest(tester, 'componentsA/popup/popup');
+    await tester.tap(find.text('禁止点击遮罩关闭'));
+    await tester.pumpAndSettle();
+    final popup = find.byType(UPPopup);
+    expect(tester.state<UPPopupState>(popup).isShown, isTrue);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.byKey(const ValueKey('example-page-componentsA/popup/popup')),
+        findsOneWidget);
+    expect(tester.state<UPPopupState>(popup).isShown, isFalse);
+
+    await tester.binding.handlePopRoute();
+    await tester.pumpAndSettle();
+    expect(find.text('打开组件页面'), findsOneWidget);
   });
 }

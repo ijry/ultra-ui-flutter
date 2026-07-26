@@ -876,6 +876,37 @@ void main() {
     expect(icon.name, 'photo');
   });
 
+  testWidgets(
+      'UPImage renders errorWidget for empty and failed network sources',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: <Widget>[
+              UPImage(
+                src: '',
+                width: 80,
+                height: 80,
+                errorWidget: Text('empty image error'),
+              ),
+              UPImage(
+                src: 'https://invalid.example.test/missing.png',
+                width: 80,
+                height: 80,
+                errorWidget: Text('network image error'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('empty image error'), findsOneWidget);
+    expect(find.text('network image error'), findsOneWidget);
+  });
+
   testWidgets('UPEmpty uses an asset image when its icon is a local asset path',
       (tester) async {
     await tester.pumpWidget(
@@ -894,6 +925,27 @@ void main() {
       tester.widget<Image>(find.byType(Image)).image,
       isA<AssetImage>(),
     );
+  });
+
+  testWidgets('UPEmpty selects network and asset image providers by icon path',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: Column(
+            children: <Widget>[
+              UPEmpty(icon: 'assets/uview/empty/car.png'),
+              UPEmpty(icon: 'https://example.test/empty.png'),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final images = tester.widgetList<Image>(find.byType(Image)).toList();
+    expect(images[0].image, isA<AssetImage>());
+    expect(images[1].image, isA<NetworkImage>());
   });
 
   testWidgets('UPEmpty keeps customStyle inside its source margin',

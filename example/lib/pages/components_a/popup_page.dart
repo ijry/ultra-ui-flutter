@@ -27,47 +27,53 @@ class _PopupPageState extends State<PopupPage> {
 
   @override
   Widget build(BuildContext context) {
-    return ExamplePageScaffold(
-      title: '弹窗',
-      scrollable: false,
-      child: Stack(
-        children: <Widget>[
-          Container(
-            key: const ValueKey('example-page-componentsA/popup/popup'),
-            padding: const EdgeInsets.only(top: 20),
-            child: UPCellGroup(
-              children: _popupOptions
-                  .map(
-                    (option) => _PopupCell(
-                      title: option.title,
-                      asset: option.asset,
-                      onClick: () => _open(option.preset),
-                    ),
-                  )
-                  .toList(),
+    return PopScope<Object?>(
+      canPop: !_show,
+      onPopInvokedWithResult: (didPop, _) {
+        if (!didPop && _show) _close();
+      },
+      child: ExamplePageScaffold(
+        title: '弹窗',
+        scrollable: false,
+        child: Stack(
+          children: <Widget>[
+            Container(
+              key: const ValueKey('example-page-componentsA/popup/popup'),
+              padding: const EdgeInsets.only(top: 20),
+              child: UPCellGroup(
+                children: _popupOptions
+                    .map(
+                      (option) => _PopupCell(
+                        title: option.title,
+                        asset: option.asset,
+                        onClick: () => _open(option.preset),
+                      ),
+                    )
+                    .toList(),
+              ),
             ),
-          ),
-          UPPopup(
-            show: _show,
-            safeAreaInsetBottom: true,
-            safeAreaInsetTop: true,
-            mode: _preset.mode,
-            round: _preset.round,
-            overlay: _preset.overlay,
-            closeable: _preset.closeable,
-            closeOnClickOverlay: _preset.closeOnClickOverlay,
-            touchable: _preset.touchable,
-            minHeight: _preset.minHeight,
-            maxHeight: _preset.maxHeight,
-            onClose: _close,
-            onUpdateShow: (show) => setState(() => _show = show),
-            child: _PopupContent(
+            UPPopup(
+              show: _show,
+              safeAreaInsetBottom: true,
+              safeAreaInsetTop: true,
               mode: _preset.mode,
-              scrollHeight: _preset.scrollHeight,
+              round: _preset.round,
+              overlay: _preset.overlay,
+              closeable: _preset.closeable,
+              closeOnClickOverlay: _preset.closeOnClickOverlay,
+              touchable: _preset.touchable,
+              minHeight: _preset.minHeight,
+              maxHeight: _preset.maxHeight,
               onClose: _close,
+              onUpdateShow: (show) => setState(() => _show = show),
+              child: _PopupContent(
+                mode: _preset.mode,
+                scrollHeight: _preset.scrollHeight,
+                onClose: _close,
+              ),
             ),
-          ),
-        ],
+          ],
+        ),
       ),
     );
   }

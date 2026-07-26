@@ -27,7 +27,10 @@ class _EmptyPageState extends State<EmptyPage> {
     _EmptyOption('wifi', '网络不给力'),
   ];
 
-  String _mode = 'data';
+  String _mode = 'car';
+
+  _EmptyOption get _selectedOption =>
+      _options.firstWhere((option) => option.mode == _mode);
 
   @override
   Widget build(BuildContext context) {
@@ -47,7 +50,8 @@ class _EmptyPageState extends State<EmptyPage> {
             ),
             UPEmpty(
               mode: _mode,
-              text: _options.firstWhere((option) => option.mode == _mode).title,
+              icon: _selectedOption.emptyAsset,
+              text: _selectedOption.title,
               child: _mode == 'car'
                   ? const Padding(
                       padding: EdgeInsets.only(top: 10),
@@ -67,6 +71,12 @@ class _EmptyPageState extends State<EmptyPage> {
                       title: option.title,
                       isLink: true,
                       clickable: true,
+                      iconSlot: Image.asset(
+                        option.previewAsset,
+                        width: 48,
+                        height: 30,
+                        fit: BoxFit.contain,
+                      ),
                       onClick: () => setState(() => _mode = option.mode),
                     ),
                   )
@@ -84,4 +94,7 @@ class _EmptyOption {
 
   final String mode;
   final String title;
+
+  String get emptyAsset => 'assets/uview/empty/$mode.png';
+  String get previewAsset => 'assets/uview/demo/empty/$mode.png';
 }
