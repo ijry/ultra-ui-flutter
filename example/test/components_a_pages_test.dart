@@ -38,4 +38,27 @@ void main() {
     UPToast.hide();
     await tester.pump();
   });
+
+  testWidgets('radio page changes the source group value', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/radio/radio'));
+    await tester.tap(find.text('苹果').first);
+    await tester.pump();
+    expect(find.text('当前选择：apple'), findsOneWidget);
+  });
+
+  testWidgets('checkbox page programmatic toggle changes standalone state',
+      (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsA/checkbox/checkbox'));
+    await tester.tap(find.text('切换').first);
+    await tester.pump();
+    expect(find.text('true'), findsWidgets);
+  });
+
+  testWidgets('rate page emits an editable half rating', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/rate/rate'));
+    await tester.tap(find.byType(UPRate).last);
+    await tester.pump();
+    expect(find.textContaining('当前评分：'), findsOneWidget);
+  });
 }

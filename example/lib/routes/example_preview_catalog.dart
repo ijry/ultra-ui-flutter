@@ -107,7 +107,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/rate/rate',
       title: 'Rate 评分',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/search/search',
       title: 'Search 搜索',
@@ -142,12 +142,12 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/checkbox/checkbox',
       title: 'Checkbox 复选框',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/radio/radio',
       title: 'Radio 单选框',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/switch/switch',
       title: 'Switch 开关选择器',

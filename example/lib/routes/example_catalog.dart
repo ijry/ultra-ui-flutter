@@ -5,6 +5,7 @@ import '../pages/home/components_home_page.dart';
 import '../pages/home/mine_page.dart';
 import '../pages/home/templates_home_page.dart';
 import '../pages/components_a/cell_page.dart';
+import '../pages/components_a/checkbox_page.dart';
 import '../pages/components_a/divider_page.dart';
 import '../pages/components_a/gap_page.dart';
 import '../pages/components_a/grid_page.dart';
@@ -13,6 +14,8 @@ import '../pages/components_a/image_page.dart';
 import '../pages/components_a/line_page.dart';
 import '../pages/components_a/link_page.dart';
 import '../pages/components_a/loading_icon_page.dart';
+import '../pages/components_a/radio_page.dart';
+import '../pages/components_a/rate_page.dart';
 import 'example_route.dart';
 
 final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
@@ -107,6 +110,27 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsA,
     builder: _buildGrid,
   ),
+  const ExampleRoute(
+    id: 'componentsA/radio/radio',
+    sourcePath: 'pages/componentsA/radio/radio',
+    title: '单选框',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildRadio,
+  ),
+  const ExampleRoute(
+    id: 'componentsA/checkbox/checkbox',
+    sourcePath: 'pages/componentsA/checkbox/checkbox',
+    title: '复选框',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildCheckbox,
+  ),
+  const ExampleRoute(
+    id: 'componentsA/rate/rate',
+    sourcePath: 'pages/componentsA/rate/rate',
+    title: '评分',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildRate,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -122,6 +146,9 @@ Widget _buildLoadingIcon(BuildContext context) => const LoadingIconPage();
 Widget _buildDivider(BuildContext context) => const DividerPage();
 Widget _buildGap(BuildContext context) => const GapPage();
 Widget _buildGrid(BuildContext context) => const GridPage();
+Widget _buildRadio(BuildContext context) => const RadioPage();
+Widget _buildCheckbox(BuildContext context) => const CheckboxPage();
+Widget _buildRate(BuildContext context) => const RatePage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(
