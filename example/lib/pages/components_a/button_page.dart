@@ -79,20 +79,17 @@ class _ButtonPageState extends State<ButtonPage> {
                 UPButton(text: '禁用按钮', type: 'warning', disabled: true),
               ],
             ),
-            TickerMode(
-              enabled: !_showActionSheet,
-              child: const _ButtonBlock(
-                title: '加载中',
-                children: <Widget>[
-                  UPButton(
-                    loading: true,
-                    loadingText: '加载中',
-                    loadingMode: 'circle',
-                    type: 'success',
-                  ),
-                  UPButton(loading: true, loadingText: '加载中', type: 'error'),
-                ],
-              ),
+            const _ButtonBlock(
+              title: '加载中',
+              children: <Widget>[
+                UPButton(
+                  loading: true,
+                  loadingText: '加载中',
+                  loadingMode: 'circle',
+                  type: 'success',
+                ),
+                UPButton(loading: true, loadingText: '加载中', type: 'error'),
+              ],
             ),
             _ButtonBlock(
               title: '按钮图标&按钮形状',

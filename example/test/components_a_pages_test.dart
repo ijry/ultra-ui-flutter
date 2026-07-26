@@ -70,18 +70,35 @@ void main() {
 
   testWidgets('button page opens its source action sheet', (tester) async {
     await tester.pumpWidget(buildRouteUnderTest('componentsA/button/button'));
+    final actionSheet = find.byType(UPActionSheet);
+
+    expect(tester.state<UPActionSheetState>(actionSheet).isShown, isFalse);
     await tester.tap(find.text('打开上拉菜单'));
-    await tester.pumpAndSettle();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    expect(tester.state<UPActionSheetState>(actionSheet).isShown, isTrue);
     expect(find.text('拍照'), findsOneWidget);
+    expect(
+      TickerMode.of(tester.element(find.byType(UPLoadingIcon).first)),
+      isTrue,
+    );
   });
 
   testWidgets('transition page shows the selected transition block',
       (tester) async {
     await tester
         .pumpWidget(buildRouteUnderTest('componentsA/transition/transition'));
+    final transition = find.byType(UPTransition);
+
+    expect(tester.state<UPTransitionState>(transition).isShown, isFalse);
     await tester.tap(find.text('淡入'));
-    await tester.pump();
-    expect(find.byKey(const ValueKey('transition-preview')), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 300));
+
+    expect(tester.state<UPTransitionState>(transition).isShown, isTrue);
+    expect(
+      find.byKey(const ValueKey('transition-preview')).hitTestable(),
+      findsOneWidget,
+    );
   });
 
   testWidgets('empty page changes its selected source mode', (tester) async {
