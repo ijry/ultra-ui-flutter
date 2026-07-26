@@ -7,6 +7,7 @@ import '../pages/home/templates_home_page.dart';
 import '../pages/components_a/cell_page.dart';
 import '../pages/components_a/checkbox_page.dart';
 import '../pages/components_a/divider_page.dart';
+import '../pages/components_a/empty_page.dart';
 import '../pages/components_a/gap_page.dart';
 import '../pages/components_a/grid_page.dart';
 import '../pages/components_a/icon_page.dart';
@@ -16,6 +17,8 @@ import '../pages/components_a/link_page.dart';
 import '../pages/components_a/loading_icon_page.dart';
 import '../pages/components_a/radio_page.dart';
 import '../pages/components_a/rate_page.dart';
+import '../pages/components_a/button_page.dart';
+import '../pages/components_a/transition_page.dart';
 import 'example_route.dart';
 
 final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
@@ -76,6 +79,13 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     builder: _buildImage,
   ),
   const ExampleRoute(
+    id: 'componentsA/button/button',
+    sourcePath: 'pages/componentsA/button/button',
+    title: '按钮',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildButton,
+  ),
+  const ExampleRoute(
     id: 'componentsA/link/link',
     sourcePath: 'pages/componentsA/link/link',
     title: '超链接',
@@ -95,6 +105,13 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     title: '分割线',
     group: ExampleRouteGroup.componentsA,
     builder: _buildDivider,
+  ),
+  const ExampleRoute(
+    id: 'componentsA/empty/empty',
+    sourcePath: 'pages/componentsA/empty/empty',
+    title: '内容为空',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildEmpty,
   ),
   const ExampleRoute(
     id: 'componentsA/gap/gap',
@@ -131,6 +148,13 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsA,
     builder: _buildRate,
   ),
+  const ExampleRoute(
+    id: 'componentsA/transition/transition',
+    sourcePath: 'pages/componentsA/transition/transition',
+    title: '动画',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildTransition,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -141,14 +165,17 @@ Widget _buildIcon(BuildContext context) => const IconPage();
 Widget _buildCell(BuildContext context) => const CellPage();
 Widget _buildLine(BuildContext context) => const LinePage();
 Widget _buildImage(BuildContext context) => const ImagePage();
+Widget _buildButton(BuildContext context) => const ButtonPage();
 Widget _buildLink(BuildContext context) => const LinkPage();
 Widget _buildLoadingIcon(BuildContext context) => const LoadingIconPage();
 Widget _buildDivider(BuildContext context) => const DividerPage();
+Widget _buildEmpty(BuildContext context) => const EmptyPage();
 Widget _buildGap(BuildContext context) => const GapPage();
 Widget _buildGrid(BuildContext context) => const GridPage();
 Widget _buildRadio(BuildContext context) => const RadioPage();
 Widget _buildCheckbox(BuildContext context) => const CheckboxPage();
 Widget _buildRate(BuildContext context) => const RatePage();
+Widget _buildTransition(BuildContext context) => const TransitionPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

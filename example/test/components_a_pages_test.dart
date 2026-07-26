@@ -67,4 +67,27 @@ void main() {
     expect(tester.state<UPRateState>(halfRate).value, 0.5);
     expect(find.text('当前评分：0.5'), findsOneWidget);
   });
+
+  testWidgets('button page opens its source action sheet', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/button/button'));
+    await tester.tap(find.text('打开上拉菜单'));
+    await tester.pumpAndSettle();
+    expect(find.text('拍照'), findsOneWidget);
+  });
+
+  testWidgets('transition page shows the selected transition block',
+      (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsA/transition/transition'));
+    await tester.tap(find.text('淡入'));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('transition-preview')), findsOneWidget);
+  });
+
+  testWidgets('empty page changes its selected source mode', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/empty/empty'));
+    await tester.tap(find.text('购物车为空'));
+    await tester.pump();
+    expect(find.text('购物车为空'), findsWidgets);
+  });
 }

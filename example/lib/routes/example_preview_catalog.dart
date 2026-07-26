@@ -27,7 +27,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/button/button',
       title: 'Button 按钮',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/text/text',
       title: 'Text 文本',
@@ -407,7 +407,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/empty/empty',
       title: 'Empty 内容为空',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/pagination/pagination',
       title: 'Pagination 分页器',
@@ -477,7 +477,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/transition/transition',
       title: 'transition 动画',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/qrcode/qrcode',
       title: 'Qrcode 二维码',
