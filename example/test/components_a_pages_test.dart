@@ -79,7 +79,8 @@ void main() {
     expect(tester.state<UPActionSheetState>(actionSheet).isShown, isTrue);
     expect(find.text('拍照'), findsOneWidget);
     expect(
-      TickerMode.of(tester.element(find.byType(UPLoadingIcon).first)),
+      TickerMode.valuesOf(tester.element(find.byType(UPLoadingIcon).first))
+          .enabled,
       isTrue,
     );
   });
@@ -129,8 +130,17 @@ void main() {
 
   testWidgets('popup page opens a top popup preset', (tester) async {
     await tester.pumpWidget(buildRouteUnderTest('componentsA/popup/popup'));
+
+    final popup = find.byType(UPPopup);
+    expect(tester.state<UPPopupState>(popup).isShown, isFalse);
+
     await tester.tap(find.text('顶部弹出'));
-    await tester.pumpAndSettle();
-    expect(find.text('点我关闭'), findsOneWidget);
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+
+    expect(tester.state<UPPopupState>(popup).isShown, isTrue);
+    await tester.tap(find.text('点我关闭'));
+    await tester.pump(const Duration(milliseconds: 350));
+    expect(tester.state<UPPopupState>(popup).isShown, isFalse);
   });
 }
