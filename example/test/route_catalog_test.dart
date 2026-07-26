@@ -6,8 +6,42 @@ import 'package:ultra_ui_example/routes/example_route.dart';
 
 void main() {
   test('source main catalog contains exactly four available routes', () {
-    expect(exampleRoutes, hasLength(4));
-    expect(exampleRoutes.every((route) => route.available), isTrue);
+    final mainRoutes = exampleRoutes
+        .where((route) => route.group == ExampleRouteGroup.main)
+        .toList();
+
+    expect(mainRoutes, hasLength(4));
+    expect(mainRoutes.every((route) => route.available), isTrue);
+    expect(
+      mainRoutes.map((route) => route.sourcePath),
+      <String>[
+        'pages/example/components',
+        'pages/example/template',
+        'pages/example/mine',
+        'pages/example/ad',
+      ],
+    );
+
+    final completedSourcePaths =
+        exampleRoutes.map((route) => route.sourcePath).toSet();
+    expect(
+      completedSourcePaths,
+      containsAll(<String>{
+        'pages/example/components',
+        'pages/example/template',
+        'pages/example/mine',
+        'pages/example/ad',
+        'pages/componentsA/icon/icon',
+        'pages/componentsA/cell/cell',
+        'pages/componentsA/line/line',
+        'pages/componentsA/image/image',
+        'pages/componentsA/link/link',
+        'pages/componentsA/loading-icon/loading-icon',
+        'pages/componentsA/divider/divider',
+        'pages/componentsA/gap/gap',
+        'pages/componentsA/grid/grid',
+      }),
+    );
   });
 
   test('route ids resolve to their registered catalog entries', () {
