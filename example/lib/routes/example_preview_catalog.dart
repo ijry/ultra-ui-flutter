@@ -62,7 +62,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/loading-page/loading-page',
       title: 'Loading page 加载页',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/form/form',
       title: 'Form 表单',
@@ -252,7 +252,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/popup/popup',
       title: 'Popup 弹出层',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/modal/modal',
       title: 'Modal 模态框',
@@ -302,7 +302,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsA/overlay/overlay',
       title: 'Overlay 遮罩层',
       group: ExampleRouteGroup.componentsA,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/noNetwork/noNetwork',
       title: 'NoNetwork 无网络提示',

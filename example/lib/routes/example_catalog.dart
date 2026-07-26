@@ -15,6 +15,9 @@ import '../pages/components_a/image_page.dart';
 import '../pages/components_a/line_page.dart';
 import '../pages/components_a/link_page.dart';
 import '../pages/components_a/loading_icon_page.dart';
+import '../pages/components_a/loading_page_page.dart';
+import '../pages/components_a/overlay_page.dart';
+import '../pages/components_a/popup_page.dart';
 import '../pages/components_a/radio_page.dart';
 import '../pages/components_a/rate_page.dart';
 import '../pages/components_a/button_page.dart';
@@ -155,6 +158,27 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsA,
     builder: _buildTransition,
   ),
+  const ExampleRoute(
+    id: 'componentsA/overlay/overlay',
+    sourcePath: 'pages/componentsA/overlay/overlay',
+    title: '遮罩层',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildOverlay,
+  ),
+  const ExampleRoute(
+    id: 'componentsA/loading-page/loading-page',
+    sourcePath: 'pages/componentsA/loading-page/loading-page',
+    title: '加载页',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildLoadingPage,
+  ),
+  const ExampleRoute(
+    id: 'componentsA/popup/popup',
+    sourcePath: 'pages/componentsA/popup/popup',
+    title: '弹窗',
+    group: ExampleRouteGroup.componentsA,
+    builder: _buildPopup,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -176,6 +200,9 @@ Widget _buildRadio(BuildContext context) => const RadioPage();
 Widget _buildCheckbox(BuildContext context) => const CheckboxPage();
 Widget _buildRate(BuildContext context) => const RatePage();
 Widget _buildTransition(BuildContext context) => const TransitionPage();
+Widget _buildOverlay(BuildContext context) => const OverlayPage();
+Widget _buildLoadingPage(BuildContext context) => const LoadingPagePage();
+Widget _buildPopup(BuildContext context) => const PopupPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

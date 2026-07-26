@@ -107,4 +107,30 @@ void main() {
     await tester.pump();
     expect(find.text('购物车为空'), findsWidgets);
   });
+
+  testWidgets('overlay page opens and dismisses embedded content',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/overlay/overlay'));
+    await tester.tap(find.text('嵌入内容'));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('overlay-content-box')), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('up-overlay-mask')));
+    await tester.pump();
+    expect(find.byKey(const ValueKey('overlay-content-box')), findsNothing);
+  });
+
+  testWidgets('loading page uses the custom text preset', (tester) async {
+    await tester.pumpWidget(
+        buildRouteUnderTest('componentsA/loading-page/loading-page'));
+    await tester.tap(find.text('自定义提示内容'));
+    await tester.pump();
+    expect(find.text('Hello uview-plus'), findsOneWidget);
+  });
+
+  testWidgets('popup page opens a top popup preset', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsA/popup/popup'));
+    await tester.tap(find.text('顶部弹出'));
+    await tester.pumpAndSettle();
+    expect(find.text('点我关闭'), findsOneWidget);
+  });
 }
