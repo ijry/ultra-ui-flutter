@@ -163,6 +163,22 @@ void main() {
     );
     expect(templatePreviewRoutes.every((route) => route.available), isFalse);
     expect(
+      templatePreviewRoutes.map((route) => route.sourcePath),
+      <String>[
+        'pages/template/coupon/index',
+        'pages/template/wxCenter/index',
+        'pages/template/keyboardPay/index',
+        'pages/template/mallMenu/index1',
+        'pages/template/mallMenu/index2',
+        'pages/template/submitBar/index',
+        'pages/template/comment/index',
+        'pages/template/order/index',
+        'pages/template/login/index',
+        'pages/template/address/index',
+        'pages/template/citySelect/index',
+      ],
+    );
+    expect(
       componentPreviewRoutes.map((route) => route.sourcePath).toSet().length,
       componentPreviewRoutes.length,
     );
@@ -170,5 +186,12 @@ void main() {
       templatePreviewRoutes.map((route) => route.sourcePath).toSet().length,
       templatePreviewRoutes.length,
     );
+    final allPreviewPaths = <String>[
+      ...componentPreviewGroups.expand(
+        (group) => group.routes.map((route) => route.sourcePath),
+      ),
+      ...templatePreviewRoutes.map((route) => route.sourcePath),
+    ];
+    expect(allPreviewPaths.toSet().length, allPreviewPaths.length);
   });
 }
