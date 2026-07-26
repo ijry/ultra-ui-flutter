@@ -29,7 +29,7 @@ The work includes all 124 registered routes. Vue files that are imported by a re
 The Flutter application uses a root `MaterialApp` with a source-shaped mobile shell.
 
 - Bottom navigation has three persistent destinations: `组件`, `模板`, and `我的`.
-- `组件` is a grouped index containing four source groups, `componentsA` through `componentsD`. Each group lists its source page titles in source order and opens a dedicated Flutter page.
+- `组件` is a grouped index matching `pages/example/components.config.js`: `基础组件`, `表单组件`, `数据组件`, `反馈组件`, `布局组件`, `导航组件`, and `其他组件`. Each group lists its source entries in source order and opens a dedicated Flutter page when that route has been migrated.
 - `模板` is a source-order list of all 14 template routes and opens a dedicated Flutter page for each.
 - `我的` reproduces the source mine route using the source component composition and navigation affordances that are supported on Android/iOS.
 - The source ad route is reachable from the component landing area and is not silently omitted.
@@ -136,7 +136,7 @@ The foundation and `componentsA` batch is complete only when:
 
 - The app launches into the source-shaped `组件` destination on Android and iOS.
 - `组件`, `模板`, and `我的` are reachable from the bottom navigation.
-- The components index lists source groups A-D in source order, with group A pages enabled and later batches visibly marked unavailable only until their page builders exist.
+- The components index lists the seven source semantic groups in source order, with Component A entries enabled wherever they appear and later-batch entries visibly marked unavailable until their page builders exist.
 - All 23 registered `pages/componentsA` routes resolve to a dedicated, non-placeholder Flutter page.
 - Every group A page renders source title and representative layout, and its key interaction works through a real `UP*` component.
 - The route smoke tests cover the shell, main routes, and every group A route.
