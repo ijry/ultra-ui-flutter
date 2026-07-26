@@ -509,6 +509,55 @@ void main() {
     expect(value, 4);
   });
 
+  testWidgets('UPRate touchable controls direct icon taps', (tester) async {
+    num nonTouchableValue = 2;
+    num touchableValue = 2;
+    final nonTouchableRate = find.byKey(const ValueKey('non-touchable-rate'));
+    final touchableRate = find.byKey(const ValueKey('touchable-rate'));
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setState) {
+              return Column(
+                children: <Widget>[
+                  UPRate(
+                    key: const ValueKey('non-touchable-rate'),
+                    value: nonTouchableValue,
+                    touchable: false,
+                    onChange: (value) =>
+                        setState(() => nonTouchableValue = value),
+                  ),
+                  UPRate(
+                    key: const ValueKey('touchable-rate'),
+                    value: touchableValue,
+                    onChange: (value) => setState(() => touchableValue = value),
+                  ),
+                ],
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(
+      find
+          .descendant(of: nonTouchableRate, matching: find.byType(UPIcon))
+          .at(3),
+    );
+    await tester.pumpAndSettle();
+    expect(nonTouchableValue, 2);
+
+    await tester.tap(
+      find.descendant(of: touchableRate, matching: find.byType(UPIcon)).at(3),
+    );
+    await tester.pumpAndSettle();
+    expect(touchableValue, 4);
+  });
+
   testWidgets('UPRate applies customStyle to its source root', (tester) async {
     const gradient = LinearGradient(
       colors: [Color(0xFF123456), Color(0xFF654321)],
