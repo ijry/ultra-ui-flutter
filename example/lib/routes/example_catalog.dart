@@ -31,6 +31,9 @@ import '../pages/components_b/dropdown_page.dart';
 import '../pages/components_b/action_sheet_page.dart';
 import '../pages/components_b/parse_jump_page.dart';
 import '../pages/components_b/parse_page.dart';
+import '../pages/components_b/toast_page.dart';
+import '../pages/components_b/keyboard_page.dart';
+import '../pages/components_b/slider_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -277,6 +280,27 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsB,
     builder: _buildParseJump,
   ),
+  const ExampleRoute(
+    id: 'componentsB/toast/toast',
+    sourcePath: 'pages/componentsB/toast/toast',
+    title: '提示消息',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildToast,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/keyboard/keyboard',
+    sourcePath: 'pages/componentsB/keyboard/keyboard',
+    title: '键盘',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildKeyboard,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/slider/slider',
+    sourcePath: 'pages/componentsB/slider/slider',
+    title: '滑动选择器',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildSlider,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -310,6 +334,9 @@ Widget _buildDropdown(BuildContext context) => const DropdownPage();
 Widget _buildActionSheet(BuildContext context) => const ActionSheetPage();
 Widget _buildParse(BuildContext context) => const ParsePage();
 Widget _buildParseJump(BuildContext context) => const ParseJumpPage();
+Widget _buildToast(BuildContext context) => const ToastPage();
+Widget _buildKeyboard(BuildContext context) => const KeyboardPage();
+Widget _buildSlider(BuildContext context) => const SliderPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

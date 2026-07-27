@@ -28,7 +28,9 @@ flutter:
     - assets/uview/demo/empty/
     - assets/uview/demo/transition/
     - assets/uview/demo/overlay/
+    - assets/uview/demo/keyboard/
     - assets/uview/demo/loading-page/
     - assets/uview/demo/popup/
+    - assets/uview/demo/toast/
     - assets/uview/swiper/
     - assets/uview/test/

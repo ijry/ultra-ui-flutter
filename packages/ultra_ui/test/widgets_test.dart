@@ -5726,6 +5726,23 @@ void main() {
     expect(find.text('数字键盘'), findsOneWidget);
   });
 
+  testWidgets('UPKeyboard treats empty source mode as car keyboard',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: UPKeyboard(show: true, mode: ''),
+        ),
+      ),
+    );
+
+    await tester.pumpAndSettle();
+    expect(find.text('车牌号键盘'), findsOneWidget);
+    expect(find.text('京'), findsOneWidget);
+    expect(find.text('数字键盘'), findsNothing);
+  });
+
   testWidgets('UPKeyboard leaves source-inactive customStyle unrendered',
       (tester) async {
     const gradient = LinearGradient(
@@ -12713,6 +12730,43 @@ void main() {
     expect(changing != null || changed != null || updated != null, isTrue);
   });
 
+  testWidgets('UPSlider showValue preserves decimal step values',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: UPSlider(
+            value: 0.3,
+            min: 0,
+            max: 1,
+            step: 0.1,
+            showValue: true,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('0.3'), findsOneWidget);
+    expect(find.text('0'), findsNothing);
+  });
+
+  testWidgets('UPSlider showValue preserves whole number trailing zeroes',
+      (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: UPSlider(
+            value: 30,
+            showValue: true,
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('30'), findsOneWidget);
+    expect(find.text('3'), findsNothing);
+  });
+
   testWidgets('UPSlider keeps disabled customStyle outside slider opacity',
       (tester) async {
     const gradient = LinearGradient(
@@ -19515,6 +19569,40 @@ void main() {
     await tester.pump();
     await tester.pump(const Duration(seconds: 6));
     expect(find.text('toast-d'), findsNothing);
+  });
+
+  testWidgets('UPToast loading type uses the source icon and duration',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Builder(
+          builder: (context) {
+            return Scaffold(
+              body: TextButton(
+                onPressed: () {
+                  UPToast.show(
+                    context,
+                    message: 'loading-toast',
+                    type: 'loading',
+                    duration: 100,
+                  );
+                },
+                child: const Text('show-loading-toast'),
+              ),
+            );
+          },
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('show-loading-toast'));
+    await tester.pump();
+    expect(find.byType(UPLoadingIcon), findsOneWidget);
+    expect(find.text('loading-toast'), findsOneWidget);
+
+    await tester.pump(const Duration(milliseconds: 101));
+    expect(find.byType(UPLoadingIcon), findsNothing);
+    expect(find.text('loading-toast'), findsNothing);
   });
 
   testWidgets('UPNotify BatchD clearTimeout/type helpers', (tester) async {

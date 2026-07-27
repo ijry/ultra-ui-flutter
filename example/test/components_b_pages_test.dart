@@ -89,4 +89,47 @@ void main() {
     expect(image.src.startsWith('http://'), isFalse);
     expect(image.src.startsWith('https://'), isFalse);
   });
+
+  testWidgets('toast page opens the source success preset', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/toast/toast'));
+
+    await tester.tap(find.text('成功主题(带图标)'));
+    await tester.pump();
+    expect(find.text('庄生晓梦迷蝴蝶'), findsOneWidget);
+    UPToast.hide();
+  });
+
+  testWidgets('toast page loading preset closes after the source duration',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/toast/toast'));
+
+    await tester.tap(find.text('正在加载'));
+    await tester.pump();
+    expect(find.byType(UPLoadingIcon), findsOneWidget);
+    expect(find.text('正在加载'), findsWidgets);
+
+    await tester.pump(const Duration(milliseconds: 2100));
+    expect(find.byType(UPLoadingIcon), findsNothing);
+    expect(find.text('正在加载'), findsOneWidget);
+  });
+
+  testWidgets('keyboard page opens the source car keyboard preset',
+      (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsB/keyboard/keyboard'));
+
+    await tester.tap(find.text('车牌号键盘'));
+    await tester.pumpAndSettle();
+    expect(find.text('车牌号键盘'), findsWidgets);
+    expect(find.text('京'), findsOneWidget);
+  });
+
+  testWidgets('slider page advances the basic source slider', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/slider/slider'));
+
+    expect(find.text('当前值：30'), findsOneWidget);
+    await tester.tap(find.text('前进'));
+    await tester.pump();
+    expect(find.text('当前值：31'), findsOneWidget);
+  });
 }
