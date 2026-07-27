@@ -3,10 +3,47 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ultra_ui_example/routes/example_catalog.dart';
 import 'package:ultra_ui_example/routes/example_preview_catalog.dart';
 import 'package:ultra_ui_example/routes/example_route.dart';
+import 'package:ultra_ui_example/routes/example_source_manifest.dart';
 
 import 'example_test_helpers.dart';
 
 void main() {
+  test('source route manifest preserves all registered pages.json routes', () {
+    expect(sourceExampleRoutes, hasLength(124));
+    expect(
+      sourceExampleRoutes.take(5).map((route) => route.id),
+      <String>[
+        'example/components',
+        'example/template',
+        'example/mine',
+        'example/ad',
+        'componentsA/transition/transition',
+      ],
+    );
+    expect(
+      sourceExampleRoutes.skip(27).take(4).map((route) => route.id),
+      <String>[
+        'componentsB/dropdown/dropdown',
+        'componentsB/actionSheet/actionSheet',
+        'componentsB/parse/parse',
+        'componentsB/parse/jump',
+      ],
+    );
+    expect(
+      sourceExampleRoutes.skip(120).map((route) => route.id),
+      <String>[
+        'template/order/index',
+        'template/login/code',
+        'template/address/index',
+        'template/address/addSite',
+      ],
+    );
+    expect(
+      sourceExampleRoutes.map((route) => route.sourcePath).toSet().length,
+      sourceExampleRoutes.length,
+    );
+  });
+
   testWidgets('every completed Component A source route renders a real page',
       (tester) async {
     for (final id in componentARouteIds) {
@@ -28,7 +65,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(27));
+    expect(exampleRoutes, hasLength(31));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -221,12 +258,18 @@ void main() {
     );
     final componentAPreviews = componentPreviewRoutes
         .where((route) => route.group == ExampleRouteGroup.componentsA);
-    final laterComponentPreviews = componentPreviewRoutes
-        .where((route) => route.group != ExampleRouteGroup.componentsA);
+    final completedPreviewPaths =
+        exampleRoutes.map((route) => route.sourcePath).toSet();
 
     expect(componentAPreviews, isNotEmpty);
     expect(componentAPreviews.every((route) => route.available), isTrue);
-    expect(laterComponentPreviews.every((route) => route.available), isFalse);
+    expect(
+      componentPreviewRoutes.every(
+        (route) =>
+            route.available == completedPreviewPaths.contains(route.sourcePath),
+      ),
+      isTrue,
+    );
     expect(
       componentPreviewRoutes
           .map((route) => route.sourcePath)

@@ -7786,6 +7786,68 @@ void main() {
     expect(find.textContaining('世界'), findsWidgets);
   });
 
+  testWidgets('UPParse renders HTML tables with merged cells', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: SingleChildScrollView(
+            child: UPParse(
+              scrollTable: true,
+              content: '''
+<table>
+  <tr><th>列一</th><th>列二</th><th>列三</th></tr>
+  <tr><td colspan="2">合并单元格</td><td rowspan="2">跨行单元格</td></tr>
+  <tr><td>内容一</td><td>内容二</td></tr>
+</table>''',
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('合并单元格'), findsOneWidget);
+    expect(find.text('跨行单元格'), findsOneWidget);
+    expect(find.text('内容二'), findsOneWidget);
+  });
+
+  testWidgets('UPParse exposes source links as tappable text', (tester) async {
+    var tappedHref = '';
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPParse(
+            content: '<p><a href="/jump">内部链接</a></p>',
+            domain: 'https://example.com',
+            onLinkTap: (href) => tappedHref = href,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('内部链接'));
+    expect(tappedHref, 'https://example.com/jump');
+  });
+
+  testWidgets('UPParse resolves image sources before building UPImage',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPParse(
+            content: '<img src="/preview.jpg">',
+            domain: 'https://example.com',
+            imageSourceResolver: (_) => '',
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.widget<UPImage>(find.byType(UPImage)).src, '');
+  });
+
   testWidgets('UPParse leaves source-inactive customStyle unrendered',
       (tester) async {
     const customStyle = BoxDecoration(color: Color(0xff123456));

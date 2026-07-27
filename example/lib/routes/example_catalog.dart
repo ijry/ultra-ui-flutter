@@ -27,6 +27,10 @@ import '../pages/components_a/swipe_action_page.dart';
 import '../pages/components_a/test_list_page.dart';
 import '../pages/components_a/button_page.dart';
 import '../pages/components_a/transition_page.dart';
+import '../pages/components_b/dropdown_page.dart';
+import '../pages/components_b/action_sheet_page.dart';
+import '../pages/components_b/parse_jump_page.dart';
+import '../pages/components_b/parse_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -245,6 +249,34 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsA,
     builder: _buildLazyLoad,
   ),
+  const ExampleRoute(
+    id: 'componentsB/dropdown/dropdown',
+    sourcePath: 'pages/componentsB/dropdown/dropdown',
+    title: '下拉菜单',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildDropdown,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/actionSheet/actionSheet',
+    sourcePath: 'pages/componentsB/actionSheet/actionSheet',
+    title: '上拉菜单',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildActionSheet,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/parse/parse',
+    sourcePath: 'pages/componentsB/parse/parse',
+    title: '富文本解析器',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildParse,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/parse/jump',
+    sourcePath: 'pages/componentsB/parse/jump',
+    title: '内部链接',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildParseJump,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -274,6 +306,10 @@ Widget _buildSticky(BuildContext context) => const StickyPage();
 Widget _buildBackTop(BuildContext context) => const BackTopPage();
 Widget _buildLazyLoad(BuildContext context) => const LazyLoadPage();
 Widget _buildTestList(BuildContext context) => const TestListPage();
+Widget _buildDropdown(BuildContext context) => const DropdownPage();
+Widget _buildActionSheet(BuildContext context) => const ActionSheetPage();
+Widget _buildParse(BuildContext context) => const ParsePage();
+Widget _buildParseJump(BuildContext context) => const ParseJumpPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

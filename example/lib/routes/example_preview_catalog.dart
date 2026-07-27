@@ -217,7 +217,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/actionSheet/actionSheet',
       title: 'ActionSheet 上拉菜单',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/alert/alert',
       title: 'Alert 警告提示',
@@ -362,7 +362,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/dropdown/dropdown',
       title: 'Dropdown 下拉菜单',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/tabbar/tabbar',
       title: 'Tabbar 底部导航栏',
@@ -422,7 +422,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/parse/parse',
       title: 'Parse 富文本解析器',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/markdown/markdown',
       title: 'Markdown 解析器',

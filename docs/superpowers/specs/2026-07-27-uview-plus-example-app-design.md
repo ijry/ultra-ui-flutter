@@ -114,6 +114,39 @@ The work is deliberately incremental. Each completed batch leaves the applicatio
 5. **Templates, 14 routes and final fidelity sweep**
    - Add every registered source template page, complete source asset packaging, validate route catalog completeness, and perform Android/iOS manual visual and interaction review.
 
+## Approved Source-Order Execution
+
+Migration follows the registered order in `src/pages.json`, not merely the
+order of rows visible in `components.config.js`. This includes registered
+detail routes which have no standalone index row, such as
+`componentsB/parse/jump`, `template/comment/reply`, `template/login/code`, and
+`template/address/addSite`.
+
+Each delivery batch contains consecutive source routes from one package. A
+route is enabled only after all of the following are present:
+
+- A dedicated, non-placeholder Flutter page class under the matching example
+  package directory.
+- An `ExampleRoute` catalog entry with its exact source path and source title.
+- An enabled index row when the route appears in the source index; routes that
+  are intentionally not indexed remain reachable through their registered
+  route only.
+- A route smoke assertion and a page-specific behavioral widget test.
+- Offline local assets for every source illustration used in that page.
+- Example analysis, tests, Android debug build, installation, and launch on
+  the available MuMu Android device.
+
+The first post-Components-A batch covers the first four Components B routes in
+their registered order: `dropdown/dropdown`, `actionSheet/actionSheet`,
+`parse/parse`, and `parse/jump`. Later batches continue without reordering
+within Components B, then Components C, Components D, and Templates.
+
+The example must maintain a source-route manifest for all 124 registered
+routes. The manifest is independent of the currently completed catalog and is
+the final completion contract: at final acceptance every manifest entry maps
+to exactly one catalog route, no example preview remains unavailable, and the
+full 124-route smoke test passes.
+
 ## Error Handling and Unsupported Behavior
 
 - A route catalog lookup failure shows a visible development error page containing its source path; production navigation must not silently land on an unrelated page.
