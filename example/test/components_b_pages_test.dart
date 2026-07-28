@@ -415,4 +415,89 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('10'), findsOneWidget);
   });
+
+  testWidgets('code page starts the source countdown and disables the button',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/code/code'));
+
+    expect(find.text('基础功能'), findsOneWidget);
+    await tester.tap(find.text('获取验证码').first);
+    await tester.pump();
+    expect(find.text('验证码已发送'), findsOneWidget);
+    expect(find.textContaining('S获取'), findsOneWidget);
+
+    final button = tester.widget<UPButton>(
+      find.widgetWithText(UPButton, '20S获取'),
+    );
+    expect(button.disabled, isTrue);
+    UPToast.hide();
+  });
+
+  testWidgets('noticeBar page closes the source closable notice',
+      (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsB/noticeBar/noticeBar'));
+
+    expect(find.text('关闭事件：0'), findsOneWidget);
+    await tester
+        .ensureVisible(find.byKey(const ValueKey('notice-page-closable')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('notice-page-closable')),
+        matching: find.byWidgetPredicate(
+          (widget) => widget is UPIcon && widget.name == 'close',
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('关闭事件：1'), findsOneWidget);
+  });
+
+  testWidgets('noticeBar page link opens the completed tag route',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Builder(
+          builder: (context) => ElevatedButton(
+            onPressed: () => pushExampleRoute(
+              context,
+              findExampleRoute('componentsB/noticeBar/noticeBar'),
+            ),
+            child: const Text('打开通知栏'),
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('打开通知栏'));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    await tester.ensureVisible(find.byKey(const ValueKey('notice-page-link')));
+    await tester.pump();
+    await tester.tap(find.byKey(const ValueKey('notice-page-link')));
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    expect(
+      find.byKey(const ValueKey('example-page-componentsB/tag/tag')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('progress page increments the source manual percentage',
+      (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsB/progress/progress'));
+
+    expect(find.text('自定义样式(不支持安卓环境的nvue)'), findsOneWidget);
+    expect(find.text('70%'), findsOneWidget);
+    await tester
+        .ensureVisible(find.byKey(const ValueKey('progress-page-manual')));
+    await tester.pump();
+    expect(find.text('手动值：50'), findsOneWidget);
+    await tester.tap(find.text('增加'));
+    await tester.pump(const Duration(milliseconds: 100));
+    expect(find.text('手动值：60'), findsOneWidget);
+  });
 }

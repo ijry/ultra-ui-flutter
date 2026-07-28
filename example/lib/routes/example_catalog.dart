@@ -46,6 +46,9 @@ import '../pages/components_b/tag_page.dart';
 import '../pages/components_b/alert_page.dart';
 import '../pages/components_b/switch_page.dart';
 import '../pages/components_b/collapse_page.dart';
+import '../pages/components_b/code_page.dart';
+import '../pages/components_b/notice_bar_page.dart';
+import '../pages/components_b/progress_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -397,6 +400,27 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsB,
     builder: _buildCollapse,
   ),
+  const ExampleRoute(
+    id: 'componentsB/code/code',
+    sourcePath: 'pages/componentsB/code/code',
+    title: '验证码',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildCode,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/noticeBar/noticeBar',
+    sourcePath: 'pages/componentsB/noticeBar/noticeBar',
+    title: '滚动通知',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildNoticeBar,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/progress/progress',
+    sourcePath: 'pages/componentsB/progress/progress',
+    title: '进度条',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildProgress,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -445,6 +469,9 @@ Widget _buildTag(BuildContext context) => const TagPage();
 Widget _buildAlert(BuildContext context) => const AlertPage();
 Widget _buildSwitch(BuildContext context) => const SwitchPage();
 Widget _buildCollapse(BuildContext context) => const CollapsePage();
+Widget _buildCode(BuildContext context) => const CodePage();
+Widget _buildNoticeBar(BuildContext context) => const NoticeBarPage();
+Widget _buildProgress(BuildContext context) => const ProgressPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(
