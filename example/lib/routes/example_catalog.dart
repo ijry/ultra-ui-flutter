@@ -49,6 +49,9 @@ import '../pages/components_b/collapse_page.dart';
 import '../pages/components_b/code_page.dart';
 import '../pages/components_b/notice_bar_page.dart';
 import '../pages/components_b/progress_page.dart';
+import '../pages/components_b/tabbar_page.dart';
+import '../pages/components_b/tabbar2_page.dart';
+import '../pages/components_b/waterfall_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -421,6 +424,27 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsB,
     builder: _buildProgress,
   ),
+  const ExampleRoute(
+    id: 'componentsB/tabbar/tabbar',
+    sourcePath: 'pages/componentsB/tabbar/tabbar',
+    title: 'Tabbar',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildTabbar,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/tabbar/tabbar2',
+    sourcePath: 'pages/componentsB/tabbar/tabbar2',
+    title: 'Tabbar-vue',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildTabbar2,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/waterfall/waterfall',
+    sourcePath: 'pages/componentsB/waterfall/waterfall',
+    title: '瀑布流',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildWaterfall,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -472,6 +496,9 @@ Widget _buildCollapse(BuildContext context) => const CollapsePage();
 Widget _buildCode(BuildContext context) => const CodePage();
 Widget _buildNoticeBar(BuildContext context) => const NoticeBarPage();
 Widget _buildProgress(BuildContext context) => const ProgressPage();
+Widget _buildTabbar(BuildContext context) => const TabbarPage();
+Widget _buildTabbar2(BuildContext context) => const Tabbar2Page();
+Widget _buildWaterfall(BuildContext context) => const WaterfallPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

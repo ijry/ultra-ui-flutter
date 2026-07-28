@@ -332,7 +332,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/waterfall/waterfall',
       title: 'Waterfall 瀑布流',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/divider/divider',
       title: 'Divider 分割线',
@@ -367,7 +367,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/tabbar/tabbar',
       title: 'Tabbar 底部导航栏',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/backtop/backtop',
       title: 'BackTop 返回顶部',

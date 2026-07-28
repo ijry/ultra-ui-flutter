@@ -500,4 +500,84 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     expect(find.text('手动值：60'), findsOneWidget);
   });
+
+  testWidgets('tabbar page updates the source basic selection', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/tabbar/tabbar'));
+
+    expect(find.text('基础功能'), findsOneWidget);
+    expect(find.text('基础值：0'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('tabbar-page-basic')),
+        matching: find.text('放映厅'),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('基础值：1'), findsOneWidget);
+  });
+
+  testWidgets('tabbar page intercepts the second source tab', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/tabbar/tabbar'));
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('tabbar-page-intercept')),
+    );
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('tabbar-page-intercept')),
+        matching: find.text('放映厅'),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('请您先登录'), findsOneWidget);
+    expect(find.text('拦截值：0'), findsOneWidget);
+    UPToast.hide();
+  });
+
+  testWidgets('tabbar-vue page updates the source dot style tab',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/tabbar/tabbar2'));
+
+    await tester.ensureVisible(find.byKey(const ValueKey('tabbar2-page-dot')));
+    await tester.pump();
+    expect(find.text('圆点值：0'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('tabbar2-page-dot')),
+        matching: find.text('图片'),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('圆点值：1'), findsOneWidget);
+  });
+
+  testWidgets('waterfall page removes the source product card', (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsB/waterfall/waterfall'));
+
+    expect(find.text('商品数量：10'), findsOneWidget);
+    await tester.tap(
+      find
+          .byWidgetPredicate(
+            (widget) => widget is UPIcon && widget.name == 'close-circle-fill',
+          )
+          .first,
+    );
+    await tester.pump();
+    expect(find.text('商品数量：9'), findsOneWidget);
+  });
+
+  testWidgets('waterfall page loads another deterministic source batch',
+      (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsB/waterfall/waterfall'));
+
+    expect(find.text('商品数量：10'), findsOneWidget);
+    await tester.ensureVisible(find.text('加载更多'));
+    await tester.pump();
+    await tester.tap(find.text('加载更多'));
+    await tester.pump();
+    expect(find.text('商品数量：20'), findsOneWidget);
+  });
 }
