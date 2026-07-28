@@ -176,4 +176,73 @@ void main() {
     await tester.pump();
     expect(find.text('手动状态：已暂停'), findsOneWidget);
   });
+
+  testWidgets('color page renders the source primary swatch', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/color/color'));
+
+    expect(find.text('主色调'), findsOneWidget);
+    expect(find.text('Primary'), findsOneWidget);
+    expect(find.text('#3c9cff'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('example-page-componentsB/color/color')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets(
+      'numberBox page increments source basic value and hides custom minus',
+      (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsB/numberBox/numberBox'));
+
+    expect(find.text('基础用法'), findsOneWidget);
+    expect(find.text('基础值：3'), findsOneWidget);
+
+    final basicPlus = find.descendant(
+      of: find.byKey(const ValueKey('number-box-page-basic')),
+      matching: find.byWidgetPredicate(
+        (widget) => widget is UPIcon && widget.name == 'plus',
+      ),
+    );
+    await tester.tap(basicPlus);
+    await tester.pumpAndSettle();
+    expect(find.text('基础值：4'), findsOneWidget);
+
+    await tester
+        .ensureVisible(find.byKey(const ValueKey('number-box-page-custom')));
+    await tester.pump();
+    final customMinus = find.byKey(const ValueKey('number-box-custom-minus'));
+    expect(customMinus, findsOneWidget);
+    await tester.tap(customMinus);
+    await tester.pumpAndSettle();
+    await tester.tap(customMinus);
+    await tester.pumpAndSettle();
+    await tester.tap(customMinus);
+    await tester.pumpAndSettle();
+    expect(customMinus, findsNothing);
+    expect(find.text('自定义值：0'), findsOneWidget);
+  });
+
+  testWidgets(
+      'countTo page starts pauses and resumes the manual source counter',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/countTo/countTo'));
+
+    expect(find.text('自定义控制'), findsOneWidget);
+    expect(find.text('计数状态：未开始'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('开始'));
+    await tester.pump();
+    await tester.tap(find.text('开始'));
+    await tester.pump();
+    expect(find.text('计数状态：运行中'), findsOneWidget);
+
+    await tester.tap(find.text('暂停'));
+    await tester.pump();
+    expect(find.text('计数状态：已暂停'), findsOneWidget);
+
+    await tester.tap(find.text('继续'));
+    await tester.pump();
+    expect(find.text('计数状态：继续中'), findsOneWidget);
+  });
 }

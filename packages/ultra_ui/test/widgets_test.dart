@@ -451,6 +451,47 @@ void main() {
     expect(value, 2);
   });
 
+  testWidgets('UPNumberBox custom slot builders keep source step behavior',
+      (tester) async {
+    num value = 1;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setState) {
+              return UPNumberBox(
+                value: value,
+                min: 0,
+                max: 3,
+                onChange: (next, {name}) => setState(() => value = next),
+                minusBuilder: (context, value, disabled) => Text(
+                  'minus-$value-${disabled ? 'off' : 'on'}',
+                ),
+                inputBuilder: (context, value, disabled) => Text(
+                  'input-$value',
+                ),
+                plusBuilder: (context, value, disabled) => Text(
+                  'plus-$value-${disabled ? 'off' : 'on'}',
+                ),
+              );
+            },
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('input-1'), findsOneWidget);
+    await tester.tap(find.text('plus-1-on'));
+    await tester.pumpAndSettle();
+    expect(value, 2);
+    expect(find.text('input-2'), findsOneWidget);
+
+    await tester.tap(find.text('minus-2-on'));
+    await tester.pumpAndSettle();
+    expect(value, 1);
+  });
+
   testWidgets('UPNumberBox leaves source-inactive customStyle unrendered',
       (tester) async {
     const gradient = LinearGradient(
