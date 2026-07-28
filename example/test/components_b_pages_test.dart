@@ -132,4 +132,48 @@ void main() {
     await tester.pump();
     expect(find.text('当前值：31'), findsOneWidget);
   });
+
+  testWidgets('upload page adds a source basic file', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/upload/upload'));
+
+    expect(find.text('基础用法：0'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('upload-page-basic')),
+        matching: find.byWidgetPredicate(
+          (widget) => widget is UPIcon && widget.name == 'camera-fill',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('基础用法：1'), findsOneWidget);
+  });
+
+  testWidgets('notify page opens the source success preset', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/notify/notify'));
+
+    await tester.tap(find.text('成功通知'));
+    await tester.pump();
+    expect(find.text('notify顶部提示'), findsOneWidget);
+    expect(find.byType(UPNotify), findsOneWidget);
+  });
+
+  testWidgets('countDown page starts and pauses the manual source timer',
+      (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsB/countDown/countDown'));
+
+    expect(find.text('手动状态：未开始'), findsOneWidget);
+    await tester.ensureVisible(find.text('开始'));
+    await tester.pump();
+    await tester.tap(find.text('开始'));
+    await tester.pump();
+    expect(find.text('手动状态：运行中'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('暂停'));
+    await tester.pump();
+    await tester.tap(find.text('暂停'));
+    await tester.pump();
+    expect(find.text('手动状态：已暂停'), findsOneWidget);
+  });
 }

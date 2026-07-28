@@ -122,7 +122,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/upload/upload',
       title: 'Upload 上传',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/code/code',
       title: 'Code 验证码倒计时',
@@ -192,7 +192,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/countDown/countDown',
       title: 'CountDown 倒计时',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/countTo/countTo',
       title: 'CountTo 数字滚动',
@@ -237,7 +237,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/notify/notify',
       title: 'Notify 消息提示',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/swipeAction/swipeAction',
       title: 'SwipeAction 滑动单元格',

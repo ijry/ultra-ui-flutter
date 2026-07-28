@@ -32,5 +32,7 @@ flutter:
     - assets/uview/demo/loading-page/
     - assets/uview/demo/popup/
     - assets/uview/demo/toast/
+    - assets/uview/demo/upload/
+    - assets/uview/demo/notify/
     - assets/uview/swiper/
     - assets/uview/test/

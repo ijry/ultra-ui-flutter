@@ -34,6 +34,9 @@ import '../pages/components_b/parse_page.dart';
 import '../pages/components_b/toast_page.dart';
 import '../pages/components_b/keyboard_page.dart';
 import '../pages/components_b/slider_page.dart';
+import '../pages/components_b/upload_page.dart';
+import '../pages/components_b/notify_page.dart';
+import '../pages/components_b/count_down_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -301,6 +304,27 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsB,
     builder: _buildSlider,
   ),
+  const ExampleRoute(
+    id: 'componentsB/upload/upload',
+    sourcePath: 'pages/componentsB/upload/upload',
+    title: '上传',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildUpload,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/notify/notify',
+    sourcePath: 'pages/componentsB/notify/notify',
+    title: '消息提示',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildNotify,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/countDown/countDown',
+    sourcePath: 'pages/componentsB/countDown/countDown',
+    title: '倒计时',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildCountDown,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -337,6 +361,9 @@ Widget _buildParseJump(BuildContext context) => const ParseJumpPage();
 Widget _buildToast(BuildContext context) => const ToastPage();
 Widget _buildKeyboard(BuildContext context) => const KeyboardPage();
 Widget _buildSlider(BuildContext context) => const SliderPage();
+Widget _buildUpload(BuildContext context) => const UploadPage();
+Widget _buildNotify(BuildContext context) => const NotifyPage();
+Widget _buildCountDown(BuildContext context) => const CountDownPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(
