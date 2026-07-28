@@ -321,4 +321,98 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('多选：1,3'), findsOneWidget);
   });
+
+  testWidgets('alert page closes source alert and records close callback',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/alert/alert'));
+
+    expect(find.text('基础功能'), findsOneWidget);
+    expect(find.text('关闭事件：0'), findsOneWidget);
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('alert-page-close-callback')),
+    );
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('alert-page-close-callback')),
+        matching: find.byWidgetPredicate(
+          (widget) => widget is UPIcon && widget.name == 'close',
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('关闭事件：1'), findsOneWidget);
+  });
+
+  testWidgets('switch page toggles basic and confirms async source switch',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/switch/switch'));
+
+    expect(find.text('基础功能'), findsOneWidget);
+    expect(find.text('异步值：true'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('switch-page-basic-1')),
+        matching: find.byType(UPSwitch),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 450));
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('switch-page-basic-1')),
+        matching: find.text('true'),
+      ),
+      findsOneWidget,
+    );
+
+    await tester.ensureVisible(find.byKey(const ValueKey('switch-page-async')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('switch-page-async')),
+        matching: find.byType(UPSwitch),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('确定要关闭吗'), findsOneWidget);
+    await tester.tap(find.text('确定'));
+    await tester.pump(const Duration(milliseconds: 300));
+    expect(find.text('异步值：false'), findsOneWidget);
+  });
+
+  testWidgets('collapse page opens source panels and renders custom slots',
+      (tester) async {
+    await tester.pumpWidget(
+      buildRouteUnderTest('componentsB/collapse/collapse'),
+    );
+
+    expect(find.text('基础功能'), findsOneWidget);
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('collapse-page-basic')),
+        matching: find.text('文档指南'),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(find.textContaining('方向指导和设计理念'), findsWidgets);
+    expect(find.textContaining('变更：'), findsOneWidget);
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('collapse-page-expanded-disabled')),
+    );
+    await tester.pumpAndSettle();
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('collapse-page-expanded-disabled')),
+        matching: find.textContaining('贴心小工具'),
+      ),
+      findsOneWidget,
+    );
+
+    await tester.ensureVisible(
+      find.byKey(const ValueKey('collapse-page-custom-slots')),
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('10'), findsOneWidget);
+  });
 }

@@ -1189,6 +1189,44 @@ void main() {
     expect(find.text('内容1'), findsOneWidget);
   });
 
+  testWidgets('UPCollapseItem renders source slot bridge widgets',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: UPCollapse(
+            value: ['slot'],
+            children: [
+              UPCollapseItem(
+                name: 'slot',
+                title: 'fallback-title',
+                icon: 'map',
+                value: 'fallback-right',
+                titleWidget: Text('slot-title'),
+                iconWidget: UPIcon(name: 'tags-fill', size: 20),
+                rightIconWidget: Text('slot-right'),
+                child: Text('slot-body'),
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    expect(find.text('slot-title'), findsOneWidget);
+    expect(find.text('slot-right'), findsOneWidget);
+    expect(find.text('slot-body'), findsOneWidget);
+    expect(find.text('fallback-title'), findsNothing);
+    expect(find.text('fallback-right'), findsNothing);
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is UPIcon && widget.name == 'tags-fill',
+      ),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('UPCollapse leaves source-inactive customStyle unrendered',
       (tester) async {
     const parentGradient = LinearGradient(

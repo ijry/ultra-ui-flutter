@@ -152,7 +152,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/switch/switch',
       title: 'Switch 开关选择器',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/slider/slider',
       title: 'Slider 滑动选择器',
@@ -222,7 +222,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/alert/alert',
       title: 'Alert 警告提示',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/toast/toast',
       title: 'Toast 消息提示',
@@ -247,7 +247,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/collapse/collapse',
       title: 'Collapse 折叠面板',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/popup/popup',
       title: 'Popup 弹出层',
