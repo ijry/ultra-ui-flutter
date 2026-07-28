@@ -245,4 +245,80 @@ void main() {
     await tester.pump();
     expect(find.text('计数状态：继续中'), findsOneWidget);
   });
+
+  testWidgets('search page edits basic source input and opens icon toast',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/search/search'));
+
+    expect(find.text('基础功能'), findsOneWidget);
+    final basicInput = find.descendant(
+      of: find.byKey(const ValueKey('search-page-basic')),
+      matching: find.byType(TextField),
+    );
+    await tester.enterText(basicInput, '关键词');
+    await tester.pump();
+    expect(find.text('关键词'), findsOneWidget);
+
+    await tester
+        .ensureVisible(find.byKey(const ValueKey('search-page-click-icon')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('search-page-click-icon')),
+        matching: find.byWidgetPredicate(
+          (widget) => widget is UPIcon && widget.name == 'search',
+        ),
+      ),
+    );
+    await tester.pump();
+    expect(find.text('点击了左侧图标'), findsOneWidget);
+    UPToast.hide();
+  });
+
+  testWidgets('badge page renders source limit number formats', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/badge/badge'));
+
+    expect(find.text('徽标数显示方式'), findsOneWidget);
+    expect(find.text('1.5k'), findsOneWidget);
+    expect(find.text('4.51w'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('example-page-componentsB/badge/badge')),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('tag page closes and toggles source selectable tags',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/tag/tag'));
+
+    expect(find.text('可关闭标签'), findsOneWidget);
+    expect(find.text('关闭状态：true,true,true'), findsOneWidget);
+    await tester
+        .ensureVisible(find.byKey(const ValueKey('tag-page-closeable')));
+    await tester.pump();
+    await tester.tap(
+      find
+          .descendant(
+            of: find.byKey(const ValueKey('tag-page-closeable')),
+            matching: find.byWidgetPredicate(
+              (widget) => widget is UPIcon && widget.name == 'close',
+            ),
+          )
+          .first,
+    );
+    await tester.pumpAndSettle();
+    expect(find.text('关闭状态：false,true,true'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('单选标签'));
+    await tester.pump();
+    await tester.tap(find.text('选项2').first);
+    await tester.pumpAndSettle();
+    expect(find.text('单选：2'), findsOneWidget);
+
+    await tester.ensureVisible(find.text('多选标签'));
+    await tester.pump();
+    await tester.tap(find.text('选项3').last);
+    await tester.pumpAndSettle();
+    expect(find.text('多选：1,3'), findsOneWidget);
+  });
 }

@@ -308,6 +308,48 @@ void main() {
     expect(searched, 'flutter');
   });
 
+  testWidgets('UPSearch clearable alias controls source clear icon',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: UPSearch(
+            value: '天山雪莲',
+            clearable: false,
+            onlyClearableOnFocused: false,
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is UPIcon && widget.name == 'close',
+      ),
+      findsNothing,
+    );
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: UPSearch(
+            value: '天山雪莲',
+            onlyClearableOnFocused: false,
+          ),
+        ),
+      ),
+    );
+
+    expect(
+      find.byWidgetPredicate(
+        (widget) => widget is UPIcon && widget.name == 'close',
+      ),
+      findsOneWidget,
+    );
+  });
+
   testWidgets('UPSearch keeps customStyle on its root before source margin',
       (tester) async {
     const gradient = LinearGradient(

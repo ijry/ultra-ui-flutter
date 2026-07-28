@@ -40,6 +40,9 @@ import '../pages/components_b/count_down_page.dart';
 import '../pages/components_b/color_page.dart';
 import '../pages/components_b/number_box_page.dart';
 import '../pages/components_b/count_to_page.dart';
+import '../pages/components_b/search_page.dart';
+import '../pages/components_b/badge_page.dart';
+import '../pages/components_b/tag_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -349,6 +352,27 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsB,
     builder: _buildCountTo,
   ),
+  const ExampleRoute(
+    id: 'componentsB/search/search',
+    sourcePath: 'pages/componentsB/search/search',
+    title: '搜索',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildSearch,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/badge/badge',
+    sourcePath: 'pages/componentsB/badge/badge',
+    title: '徽标数',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildBadge,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/tag/tag',
+    sourcePath: 'pages/componentsB/tag/tag',
+    title: '标签',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildTag,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -391,6 +415,9 @@ Widget _buildCountDown(BuildContext context) => const CountDownPage();
 Widget _buildColor(BuildContext context) => const ColorPage();
 Widget _buildNumberBox(BuildContext context) => const NumberBoxPage();
 Widget _buildCountTo(BuildContext context) => const CountToPage();
+Widget _buildSearch(BuildContext context) => const SearchPage();
+Widget _buildBadge(BuildContext context) => const BadgePage();
+Widget _buildTag(BuildContext context) => const TagPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

@@ -47,12 +47,12 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/badge/badge',
       title: 'Badge 徽标数',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/tag/tag',
       title: 'Tag 标签',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/loading-icon/loading-icon',
       title: 'Loading 加载动画',
@@ -112,7 +112,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/search/search',
       title: 'Search 搜索',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/numberBox/numberBox',
       title: 'NumberBox 步进器',
