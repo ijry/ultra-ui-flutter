@@ -52,6 +52,9 @@ import '../pages/components_b/progress_page.dart';
 import '../pages/components_b/tabbar_page.dart';
 import '../pages/components_b/tabbar2_page.dart';
 import '../pages/components_b/waterfall_page.dart';
+import '../pages/components_b/card_page.dart';
+import '../pages/components_b/table_page.dart';
+import '../pages/components_b/table2_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -445,6 +448,27 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsB,
     builder: _buildWaterfall,
   ),
+  const ExampleRoute(
+    id: 'componentsB/card/card',
+    sourcePath: 'pages/componentsB/card/card',
+    title: '卡片',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildCard,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/table/table',
+    sourcePath: 'pages/componentsB/table/table',
+    title: '表格',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildTable,
+  ),
+  const ExampleRoute(
+    id: 'componentsB/table2/table2',
+    sourcePath: 'pages/componentsB/table2/table2',
+    title: '表格2',
+    group: ExampleRouteGroup.componentsB,
+    builder: _buildTable2,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -499,6 +523,9 @@ Widget _buildProgress(BuildContext context) => const ProgressPage();
 Widget _buildTabbar(BuildContext context) => const TabbarPage();
 Widget _buildTabbar2(BuildContext context) => const Tabbar2Page();
 Widget _buildWaterfall(BuildContext context) => const WaterfallPage();
+Widget _buildCard(BuildContext context) => const CardPage();
+Widget _buildTable(BuildContext context) => const TablePage();
+Widget _buildTable2(BuildContext context) => const Table2Page();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

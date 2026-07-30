@@ -182,12 +182,12 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/table/table',
       title: 'Table 表格',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/table2/table2',
       title: 'Table2 表格2',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/countDown/countDown',
       title: 'CountDown 倒计时',
@@ -297,7 +297,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsB/card/card',
       title: 'Card 卡片',
       group: ExampleRouteGroup.componentsB,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/overlay/overlay',
       title: 'Overlay 遮罩层',

@@ -580,4 +580,170 @@ void main() {
     await tester.pump();
     expect(find.text('商品数量：20'), findsOneWidget);
   });
+
+  testWidgets('card page toggles the source card configuration',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/card/card'));
+
+    expect(find.text('基础卡片'), findsOneWidget);
+    expect(find.text('高级卡片'), findsOneWidget);
+    expect(find.textContaining('尊敬的客户您好'), findsOneWidget);
+
+    await tester.ensureVisible(find.byKey(const ValueKey('card-page-thumb')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('card-page-thumb')),
+        matching: find.text('隐藏'),
+      ),
+    );
+    await tester.pump();
+    expect(find.textContaining('左上角图标：隐藏'), findsOneWidget);
+
+    await tester.ensureVisible(find.byKey(const ValueKey('card-page-padding')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('card-page-padding')),
+        matching: find.text('20'),
+      ),
+    );
+    await tester.pump();
+    expect(find.textContaining('内边距：20'), findsOneWidget);
+
+    await tester.ensureVisible(find.byKey(const ValueKey('card-page-foot')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('card-page-foot')),
+        matching: find.text('隐藏'),
+      ),
+    );
+    await tester.pump();
+    expect(find.textContaining('底部：隐藏'), findsOneWidget);
+
+    await tester.ensureVisible(find.byKey(const ValueKey('card-page-border')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('card-page-border')),
+        matching: find.text('隐藏'),
+      ),
+    );
+    await tester.pump();
+    expect(find.textContaining('外边框：隐藏'), findsOneWidget);
+  });
+
+  testWidgets('table page switches border color and alignment', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/table/table'));
+
+    expect(find.text('演示效果'), findsOneWidget);
+    expect(find.text('吕布'), findsOneWidget);
+
+    await tester.ensureVisible(find.byKey(const ValueKey('table-page-border')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('table-page-border')),
+        matching: find.text('primary'),
+      ),
+    );
+    await tester.pump();
+    expect(find.textContaining('边框颜色：primary'), findsOneWidget);
+
+    await tester.ensureVisible(find.byKey(const ValueKey('table-page-align')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('table-page-align')),
+        matching: find.text('右'),
+      ),
+    );
+    await tester.pump();
+    expect(find.textContaining('对齐方式：right'), findsOneWidget);
+  });
+
+  testWidgets('table2 page updates row selection and row click state',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/table2/table2'));
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('table2-page-basic')),
+        matching: find.text('张三'),
+      ),
+    );
+    await tester.pump();
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('table2-page-basic')),
+        matching: find.textContaining('行点击：张三'),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('table2 page selects rows and sorts columns', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/table2/table2'));
+
+    await tester
+        .ensureVisible(find.byKey(const ValueKey('table2-page-selection')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('table2-page-selection')),
+        matching: find.byKey(const ValueKey('up-table2-cell-0-0')),
+      ),
+    );
+    await tester.pump();
+    expect(find.textContaining('选择数量：1'), findsOneWidget);
+
+    await tester.ensureVisible(find.byKey(const ValueKey('table2-page-sort')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('table2-page-sort')),
+        matching: find.textContaining('年龄'),
+      ),
+    );
+    await tester.pump();
+    expect(find.textContaining('排序：age'), findsOneWidget);
+  });
+
+  testWidgets('table2 page opens the popup table and closes on row tap',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsB/table2/table2'));
+
+    await tester.ensureVisible(find.byKey(const ValueKey('table2-page-popup')));
+    await tester.pump();
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('table2-page-popup')),
+        matching: find.text('打开弹窗表格'),
+      ),
+    );
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 350));
+    final popupTable = find.byKey(const ValueKey('table2-page-popup-table'));
+    final popupCell = find.descendant(
+      of: popupTable,
+      matching: find.byKey(const ValueKey('up-table2-row-1')),
+    );
+    await tester.tap(popupCell);
+    await tester.pump();
+    expect(
+      find.descendant(
+        of: find
+            .byKey(const ValueKey('example-page-componentsB/table2/table2')),
+        matching: find.textContaining('弹窗选择：李四'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('table2-page-popup-table')),
+      findsNothing,
+    );
+    UPToast.hide();
+    await tester.pump();
+  });
 }
