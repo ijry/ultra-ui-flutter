@@ -32,7 +32,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/text/text',
       title: 'Text 文本',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/layout/layout',
       title: 'Layout 布局',
@@ -67,7 +67,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/form/form',
       title: 'Form 表单',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/calendar/calendar',
       title: 'Calendar 日历',
@@ -137,7 +137,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/textarea/textarea',
       title: 'Textarea 文本域',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/checkbox/checkbox',
       title: 'Checkbox 复选框',
@@ -307,7 +307,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/noNetwork/noNetwork',
       title: 'NoNetwork 无网络提示',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/grid/grid',
       title: 'Grid 宫格布局',
@@ -447,7 +447,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/loadmore/loadmore',
       title: 'Loadmore 加载更多',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/readMore/readMore',
       title: 'ReadMore 展开阅读更多',

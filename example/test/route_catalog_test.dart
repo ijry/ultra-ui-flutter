@@ -65,7 +65,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(55));
+    expect(exampleRoutes, hasLength(60));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -107,6 +107,21 @@ void main() {
         'componentsB/card/card',
         'componentsB/table/table',
         'componentsB/table2/table2',
+      ],
+    );
+
+    final componentCRoutes = exampleRoutes
+        .where((route) => route.group == ExampleRouteGroup.componentsC)
+        .map((route) => route.id)
+        .toList();
+    expect(
+      componentCRoutes.take(5),
+      <String>[
+        'componentsC/form/form',
+        'componentsC/textarea/textarea',
+        'componentsC/noNetwork/noNetwork',
+        'componentsC/loadmore/loadmore',
+        'componentsC/text/text',
       ],
     );
   });

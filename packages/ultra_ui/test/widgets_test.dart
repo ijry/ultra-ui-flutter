@@ -13413,6 +13413,27 @@ void main() {
     expect(updated, 'area');
   });
 
+  testWidgets('UPTextarea autoHeight lays out inside a vertical scroll view',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: SingleChildScrollView(
+            child: UPTextarea(
+              value: '第一行\n第二行\n第三行\n第四行',
+              autoHeight: true,
+              count: true,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    expect(tester.takeException(), isNull);
+    expect(find.byType(TextField), findsOneWidget);
+  });
+
   testWidgets('UPTextarea merges customStyle into its visible root',
       (tester) async {
     const gradient = LinearGradient(
@@ -29465,6 +29486,11 @@ void main() {
 
   testWidgets('UPText price mode renders the source formatted value',
       (tester) async {
+    expect(
+      const UPText(text: '728732.32', mode: 'price').displayValue,
+      '728,732.32',
+    );
+
     await tester.pumpWidget(
       const MaterialApp(
         home: Scaffold(
@@ -29478,6 +29504,31 @@ void main() {
     expect(find.text('1,234.50'), findsOneWidget);
     expect(find.text('1234.5'), findsNothing);
     expect(tester.widget<Text>(find.text('￥')).style!.fontSize, 15);
+  });
+
+  testWidgets('UPText forwards source iconStyle to both icons', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: UPText(
+            text: 'icons',
+            prefixIcon: 'baidu',
+            suffixIcon: 'arrow-rightward',
+            iconStyle:
+                'font-size: 19px; color: #123456; font-weight: bold; top: 2px',
+          ),
+        ),
+      ),
+    );
+
+    final icons = tester.widgetList<UPIcon>(find.byType(UPIcon)).toList();
+    expect(icons, hasLength(2));
+    for (final icon in icons) {
+      expect(icon.size, '19px');
+      expect(icon.color, '#123456');
+      expect(icon.bold, isTrue);
+      expect(icon.top, '2px');
+    }
   });
 
   testWidgets('UPText applies customStyle only to source value nodes',

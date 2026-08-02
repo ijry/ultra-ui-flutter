@@ -55,6 +55,11 @@ import '../pages/components_b/waterfall_page.dart';
 import '../pages/components_b/card_page.dart';
 import '../pages/components_b/table_page.dart';
 import '../pages/components_b/table2_page.dart';
+import '../pages/components_c/form_page.dart';
+import '../pages/components_c/loadmore_page.dart';
+import '../pages/components_c/no_network_page.dart';
+import '../pages/components_c/text_page.dart';
+import '../pages/components_c/textarea_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -469,6 +474,41 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsB,
     builder: _buildTable2,
   ),
+  const ExampleRoute(
+    id: 'componentsC/form/form',
+    sourcePath: 'pages/componentsC/form/form',
+    title: '表单',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildForm,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/textarea/textarea',
+    sourcePath: 'pages/componentsC/textarea/textarea',
+    title: '文本域',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildTextarea,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/noNetwork/noNetwork',
+    sourcePath: 'pages/componentsC/noNetwork/noNetwork',
+    title: '无网络提示',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildNoNetwork,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/loadmore/loadmore',
+    sourcePath: 'pages/componentsC/loadmore/loadmore',
+    title: '加载更多',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildLoadmore,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/text/text',
+    sourcePath: 'pages/componentsC/text/text',
+    title: '文本',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildText,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -526,6 +566,11 @@ Widget _buildWaterfall(BuildContext context) => const WaterfallPage();
 Widget _buildCard(BuildContext context) => const CardPage();
 Widget _buildTable(BuildContext context) => const TablePage();
 Widget _buildTable2(BuildContext context) => const Table2Page();
+Widget _buildForm(BuildContext context) => const FormPage();
+Widget _buildTextarea(BuildContext context) => const TextareaPage();
+Widget _buildNoNetwork(BuildContext context) => const NoNetworkPage();
+Widget _buildLoadmore(BuildContext context) => const LoadmorePage();
+Widget _buildText(BuildContext context) => const TextPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(
