@@ -287,6 +287,38 @@ void main() {
     expect(text, '');
   });
 
+  test('UPInput uses the source clear-button focus default', () {
+    expect(const UPInput(clearable: true).onlyClearableOnFocused, isTrue);
+  });
+
+  testWidgets('UPInput forwards prefix and suffix icon styles', (tester) async {
+    await tester.pumpWidget(
+      const MaterialApp(
+        home: Scaffold(
+          body: UPInput(
+            prefixIcon: 'search',
+            suffixIcon: 'map-fill',
+            prefixIconStyle:
+                'font-size: 22px; color: #123456; font-weight: bold; top: 2px',
+            suffixIconStyle: <String, dynamic>{
+              'fontSize': '20px',
+              'color': '#654321',
+            },
+          ),
+        ),
+      ),
+    );
+
+    final icons = tester.widgetList<UPIcon>(find.byType(UPIcon)).toList();
+    expect(icons, hasLength(2));
+    expect(icons[0].size, '22px');
+    expect(icons[0].color, '#123456');
+    expect(icons[0].bold, isTrue);
+    expect(icons[0].top, '2px');
+    expect(icons[1].size, '20px');
+    expect(icons[1].color, '#654321');
+  });
+
   testWidgets('UPSearch action triggers onSearch', (tester) async {
     var searched = '';
     await tester.pumpWidget(

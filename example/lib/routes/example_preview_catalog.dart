@@ -132,7 +132,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/input/input',
       title: 'Input 输入框',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/textarea/textarea',
       title: 'Textarea 文本域',
@@ -162,7 +162,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/album/album',
       title: 'Album 相册',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/list/list',
       title: 'List 列表',
@@ -322,7 +322,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/skeleton/skeleton',
       title: 'Skeleton 骨架屏',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/sticky/sticky',
       title: 'Sticky 吸顶',
@@ -377,7 +377,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/navbar/navbar',
       title: 'Navbar 导航栏',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/navbarMini/navbarMini',
       title: 'NavbarMini 迷你导航栏',
@@ -402,7 +402,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/steps/steps',
       title: 'Steps 步骤条',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/empty/empty',
       title: 'Empty 内容为空',

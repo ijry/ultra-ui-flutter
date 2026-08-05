@@ -60,12 +60,12 @@ void main() {
     }
   });
 
-  test('Component A catalog preserves the literal source order and total', () {
+  test('component catalogs preserve literal source order and total', () {
     final componentARoutes = exampleRoutes
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(60));
+    expect(exampleRoutes, hasLength(65));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -114,16 +114,18 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsC)
         .map((route) => route.id)
         .toList();
-    expect(
-      componentCRoutes.take(5),
-      <String>[
-        'componentsC/form/form',
-        'componentsC/textarea/textarea',
-        'componentsC/noNetwork/noNetwork',
-        'componentsC/loadmore/loadmore',
-        'componentsC/text/text',
-      ],
-    );
+    expect(componentCRoutes, <String>[
+      'componentsC/form/form',
+      'componentsC/textarea/textarea',
+      'componentsC/noNetwork/noNetwork',
+      'componentsC/loadmore/loadmore',
+      'componentsC/text/text',
+      'componentsC/steps/steps',
+      'componentsC/navbar/navbar',
+      'componentsC/skeleton/skeleton',
+      'componentsC/input/input',
+      'componentsC/album/album',
+    ]);
   });
 
   test('source main catalog contains exactly four available routes', () {

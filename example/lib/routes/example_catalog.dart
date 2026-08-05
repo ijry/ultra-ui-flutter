@@ -56,8 +56,13 @@ import '../pages/components_b/card_page.dart';
 import '../pages/components_b/table_page.dart';
 import '../pages/components_b/table2_page.dart';
 import '../pages/components_c/form_page.dart';
+import '../pages/components_c/album_page.dart';
+import '../pages/components_c/input_page.dart';
 import '../pages/components_c/loadmore_page.dart';
+import '../pages/components_c/navbar_page.dart';
 import '../pages/components_c/no_network_page.dart';
+import '../pages/components_c/skeleton_page.dart';
+import '../pages/components_c/steps_page.dart';
 import '../pages/components_c/text_page.dart';
 import '../pages/components_c/textarea_page.dart';
 import 'example_route.dart';
@@ -509,6 +514,41 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsC,
     builder: _buildText,
   ),
+  const ExampleRoute(
+    id: 'componentsC/steps/steps',
+    sourcePath: 'pages/componentsC/steps/steps',
+    title: '步骤条',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildSteps,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/navbar/navbar',
+    sourcePath: 'pages/componentsC/navbar/navbar',
+    title: '导航栏',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildNavbar,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/skeleton/skeleton',
+    sourcePath: 'pages/componentsC/skeleton/skeleton',
+    title: '骨架屏',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildSkeleton,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/input/input',
+    sourcePath: 'pages/componentsC/input/input',
+    title: '输入框',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildInput,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/album/album',
+    sourcePath: 'pages/componentsC/album/album',
+    title: '相册',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildAlbum,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -571,6 +611,11 @@ Widget _buildTextarea(BuildContext context) => const TextareaPage();
 Widget _buildNoNetwork(BuildContext context) => const NoNetworkPage();
 Widget _buildLoadmore(BuildContext context) => const LoadmorePage();
 Widget _buildText(BuildContext context) => const TextPage();
+Widget _buildSteps(BuildContext context) => const StepsPage();
+Widget _buildNavbar(BuildContext context) => const NavbarPage();
+Widget _buildSkeleton(BuildContext context) => const SkeletonPage();
+Widget _buildInput(BuildContext context) => const InputPage();
+Widget _buildAlbum(BuildContext context) => const AlbumPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

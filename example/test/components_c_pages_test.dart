@@ -119,4 +119,129 @@ void main() {
     UPToast.hide();
     await tester.pump();
   });
+
+  testWidgets('steps page renders source variants', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsC/steps/steps'));
+
+    expect(find.text('基础演示'), findsOneWidget);
+    expect(find.text('显示点类型'), findsOneWidget);
+    expect(find.text('错误状态'), findsOneWidget);
+    expect(find.text('自定义图标'), findsOneWidget);
+    expect(find.text('自定义插槽'), findsOneWidget);
+    expect(find.text('自定义颜色'), findsOneWidget);
+    expect(find.text('竖向展示'), findsOneWidget);
+    expect(find.text('运'), findsOneWidget);
+    expect(
+      find.byWidgetPredicate((widget) => widget is UPStepsItem && widget.error),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('navbar page renders source variants and callbacks',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsC/navbar/navbar'));
+
+    expect(find.text('基础功能'), findsOneWidget);
+    expect(find.text('自定义文本'), findsOneWidget);
+    expect(find.text('自定义插槽'), findsOneWidget);
+    expect(find.text('个人中心'), findsNWidgets(3));
+    expect(find.text('返回'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('navbar-page-left')));
+    await tester.pump();
+    expect(find.text('左侧点击：1'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('navbar-page-right')));
+    await tester.pump();
+    expect(find.text('右侧点击：1'), findsOneWidget);
+  });
+
+  testWidgets('skeleton page toggles source loading state', (tester) async {
+    await tester
+        .pumpWidget(buildRouteUnderTest('componentsC/skeleton/skeleton'));
+
+    expect(find.text('基础使用'), findsOneWidget);
+    expect(find.text('自定义段落行数'), findsOneWidget);
+    expect(find.text('设置段落宽度'), findsOneWidget);
+    expect(find.text('设置段落高度'), findsOneWidget);
+    expect(find.text('是否开启动画'), findsOneWidget);
+    expect(find.text('展示头像'), findsOneWidget);
+    expect(find.text('切换状态'), findsOneWidget);
+    expect(find.text('利剑出鞘,一统江湖'), findsNothing);
+
+    final loadingSwitch =
+        find.byKey(const ValueKey('skeleton-page-loading-switch'));
+    await tester.ensureVisible(loadingSwitch);
+    await tester.pump();
+    await tester.tap(loadingSwitch);
+    await tester.pump();
+    expect(find.text('利剑出鞘,一统江湖'), findsOneWidget);
+  });
+
+  testWidgets('input page edits, filters, clears, and confirms source values',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsC/input/input'));
+
+    expect(find.text('基础使用'), findsOneWidget);
+    expect(find.text('前后插槽'), findsOneWidget);
+
+    final basic = find.descendant(
+      of: find.byKey(const ValueKey('input-page-basic')),
+      matching: find.byType(TextField),
+    );
+    await tester.enterText(basic, 'hello');
+    await tester.pump();
+    expect(find.text('基础值：hello'), findsOneWidget);
+
+    await tester.testTextInput.receiveAction(TextInputAction.search);
+    await tester.pump();
+    expect(find.text('确认：hello'), findsOneWidget);
+
+    final number = find.descendant(
+      of: find.byKey(const ValueKey('input-page-number')),
+      matching: find.byType(TextField),
+    );
+    await tester.enterText(number, '12a3');
+    await tester.pump();
+    expect(find.text('数字值：123'), findsOneWidget);
+
+    final passwordState = tester.state<UPInputState>(
+      find.byKey(const ValueKey('input-page-password')),
+    );
+    expect(passwordState.isPassword(), isTrue);
+    passwordState.setValue('secret');
+    passwordState.onClear();
+    await tester.pump();
+    expect(passwordState.value, isEmpty);
+    UPToast.hide();
+  });
+
+  testWidgets('album page renders source variants and previews an image',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsC/album/album'));
+
+    expect(find.text('基础使用'), findsOneWidget);
+    expect(find.text('多图模式'), findsOneWidget);
+    expect(find.text('图文对齐'), findsOneWidget);
+    expect(find.text('更改裁剪模式'), findsOneWidget);
+    expect(find.text('更改图片大小'), findsOneWidget);
+    expect(find.text('自定义圆角'), findsOneWidget);
+    expect(find.text('自定义形状'), findsOneWidget);
+    expect(find.text('自适应自动换行'), findsOneWidget);
+
+    final multi = tester.widget<UPAlbum>(
+      find.byKey(const ValueKey('album-page-multiple')),
+    );
+    expect(multi.urls, hasLength(10));
+    expect(multi.maxCount, 9);
+
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('album-page-basic')),
+        matching: find.byType(UPImage),
+      ),
+    );
+    await tester.pump();
+    expect(find.textContaining('预览：'), findsOneWidget);
+  });
 }
