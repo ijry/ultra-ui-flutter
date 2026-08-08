@@ -269,4 +269,26 @@ void main() {
     await tester.pump();
     expect(find.text('点击次数：1'), findsOneWidget);
   });
+
+  testWidgets('read more page expands and closes parsed content',
+      (tester) async {
+    await tester.pumpWidget(
+      buildRouteUnderTest('componentsC/readMore/readMore'),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+
+    expect(find.text('状态：close'), findsOneWidget);
+    expect(find.text('展开阅读全文'), findsOneWidget);
+
+    await tester.tap(find.text('展开阅读全文'));
+    await tester.pump();
+    expect(find.text('状态：open'), findsOneWidget);
+    expect(find.text('展开次数：1'), findsOneWidget);
+    expect(find.text('收起'), findsOneWidget);
+
+    await tester.tap(find.text('收起'));
+    await tester.pump();
+    expect(find.text('状态：close'), findsOneWidget);
+    expect(find.text('收起次数：1'), findsOneWidget);
+  });
 }
