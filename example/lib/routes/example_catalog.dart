@@ -67,6 +67,7 @@ import '../pages/components_c/text_page.dart';
 import '../pages/components_c/textarea_page.dart';
 import '../pages/components_c/avatar_page.dart';
 import '../pages/components_c/read_more_page.dart';
+import '../pages/components_c/layout_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -565,6 +566,13 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsC,
     builder: _buildReadMore,
   ),
+  const ExampleRoute(
+    id: 'componentsC/layout/layout',
+    sourcePath: 'pages/componentsC/layout/layout',
+    title: '布局',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildLayout,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -634,6 +642,7 @@ Widget _buildInput(BuildContext context) => const InputPage();
 Widget _buildAlbum(BuildContext context) => const AlbumPage();
 Widget _buildAvatar(BuildContext context) => const AvatarPage();
 Widget _buildReadMore(BuildContext context) => const ReadMorePage();
+Widget _buildLayout(BuildContext context) => const LayoutPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

@@ -291,4 +291,28 @@ void main() {
     expect(find.text('状态：close'), findsOneWidget);
     expect(find.text('收起次数：1'), findsOneWidget);
   });
+
+  testWidgets('layout page renders source layout sections and parameters',
+      (tester) async {
+    await tester.pumpWidget(
+      buildRouteUnderTest('componentsC/layout/layout'),
+    );
+
+    expect(find.text('基础使用'), findsOneWidget);
+    expect(find.text('分栏间隔'), findsOneWidget);
+    expect(find.text('混合布局'), findsOneWidget);
+    expect(find.text('分栏偏移'), findsOneWidget);
+    expect(find.text('对齐方式'), findsOneWidget);
+
+    final gutterRow = tester.widget<UPRow>(
+      find.byKey(const ValueKey('layout-page-gutter-row')),
+    );
+    expect(gutterRow.gutter, 10);
+
+    final offsetCol = tester.widget<UPCol>(
+      find.byKey(const ValueKey('layout-page-offset-col')),
+    );
+    expect(offsetCol.span, 3);
+    expect(offsetCol.offset, 3);
+  });
 }
