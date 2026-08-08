@@ -65,6 +65,7 @@ import '../pages/components_c/skeleton_page.dart';
 import '../pages/components_c/steps_page.dart';
 import '../pages/components_c/text_page.dart';
 import '../pages/components_c/textarea_page.dart';
+import '../pages/components_c/avatar_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -549,6 +550,13 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsC,
     builder: _buildAlbum,
   ),
+  const ExampleRoute(
+    id: 'componentsC/avatar/avatar',
+    sourcePath: 'pages/componentsC/avatar/avatar',
+    title: '头像',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildAvatar,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -616,6 +624,7 @@ Widget _buildNavbar(BuildContext context) => const NavbarPage();
 Widget _buildSkeleton(BuildContext context) => const SkeletonPage();
 Widget _buildInput(BuildContext context) => const InputPage();
 Widget _buildAlbum(BuildContext context) => const AlbumPage();
+Widget _buildAvatar(BuildContext context) => const AvatarPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

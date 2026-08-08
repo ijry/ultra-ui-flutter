@@ -244,4 +244,29 @@ void main() {
     await tester.pump();
     expect(find.textContaining('预览：'), findsOneWidget);
   });
+
+  testWidgets('avatar page renders source variants and reports clicks',
+      (tester) async {
+    await tester.pumpWidget(
+      buildRouteUnderTest('componentsC/avatar/avatar'),
+    );
+
+    expect(find.text('基础演示'), findsOneWidget);
+    expect(find.text('头像形状'), findsOneWidget);
+    expect(find.text('头像尺寸'), findsOneWidget);
+    expect(find.text('图标头像'), findsOneWidget);
+    expect(find.text('文字头像(自动背景色)'), findsOneWidget);
+    expect(find.text('图片加载失败(显示默认头像)'), findsOneWidget);
+    expect(find.text('头像组'), findsOneWidget);
+
+    final group = tester.widget<UPAvatarGroup>(
+      find.byKey(const ValueKey('avatar-page-group-wide')),
+    );
+    expect(group.urls, hasLength(7));
+    expect(group.gap, 0.4);
+
+    await tester.tap(find.byKey(const ValueKey('avatar-page-clickable')));
+    await tester.pump();
+    expect(find.text('点击次数：1'), findsOneWidget);
+  });
 }
