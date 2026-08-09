@@ -14522,6 +14522,33 @@ void main() {
     expect(opened, 1);
   });
 
+  testWidgets('UPPopover opens when its click trigger is an UPButton',
+      (tester) async {
+    var opened = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPPopover(
+            trigger: const UPButton(
+              type: 'primary',
+              size: 'small',
+              text: '按钮触发器',
+              stop: false,
+            ),
+            content: const Text('按钮内容'),
+            onOpen: () => opened += 1,
+          ),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('按钮触发器'));
+    await tester.pump();
+    expect(find.text('按钮内容'), findsOneWidget);
+    expect(opened, 1);
+  });
+
   testWidgets('UPPopover manual show is controlled', (tester) async {
     var show = false;
     var opened = 0;
