@@ -37,7 +37,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/layout/layout',
       title: 'Layout 布局',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/cell/cell',
       title: 'Cell 单元格',
@@ -397,7 +397,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/indexList/indexList',
       title: 'IndexList 索引列表',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/steps/steps',
       title: 'Steps 步骤条',
@@ -452,7 +452,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/readMore/readMore',
       title: 'ReadMore 展开阅读更多',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/lazyLoad/lazyLoad',
       title: 'LazyLoad 懒加载',
@@ -467,7 +467,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/avatar/avatar',
       title: 'Avatar 头像',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/link/link',
       title: 'Link 超链接',

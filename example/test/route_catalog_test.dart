@@ -65,7 +65,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(65));
+    expect(exampleRoutes, hasLength(70));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -125,6 +125,11 @@ void main() {
       'componentsC/skeleton/skeleton',
       'componentsC/input/input',
       'componentsC/album/album',
+      'componentsC/avatar/avatar',
+      'componentsC/readMore/readMore',
+      'componentsC/layout/layout',
+      'componentsC/indexList/indexList',
+      'componentsC/indexList/indexList2',
     ]);
   });
 
@@ -163,6 +168,11 @@ void main() {
         'pages/componentsA/divider/divider',
         'pages/componentsA/gap/gap',
         'pages/componentsA/grid/grid',
+        'pages/componentsC/avatar/avatar',
+        'pages/componentsC/readMore/readMore',
+        'pages/componentsC/layout/layout',
+        'pages/componentsC/indexList/indexList',
+        'pages/componentsC/indexList/indexList2',
       }),
     );
   });
