@@ -413,4 +413,43 @@ void main() {
       expect(find.text('扩展点击：1'), findsOneWidget);
     },
   );
+
+  testWidgets('guide page runs the first-entry flow and can reset it',
+      (tester) async {
+    const storageKey = 'components-c-batch4-guide';
+    UPGuide.clearRemembered(storageKey);
+    addTearDown(() => UPGuide.clearRemembered(storageKey));
+
+    await tester.pumpWidget(buildRouteUnderTest('componentsC/guide/guide'));
+    await tester.pump();
+
+    final guide = tester.state<UPGuideState>(
+      find.byKey(const ValueKey('guide-page-widget')),
+    );
+    expect(guide.isOpen, isTrue);
+    expect(find.text('欢迎使用 uview-plus'), findsOneWidget);
+
+    await tester.tap(find.text('下一步'));
+    await tester.pump(const Duration(milliseconds: 320));
+    await tester.pump(const Duration(milliseconds: 320));
+    expect(find.text('引导页支持多页滑动'), findsOneWidget);
+
+    await tester.tap(find.text('下一步'));
+    await tester.pump(const Duration(milliseconds: 320));
+    await tester.pump(const Duration(milliseconds: 320));
+    expect(find.text('只显示一次'), findsOneWidget);
+
+    await tester.tap(find.text('立即体验'));
+    await tester.pump();
+    expect(guide.isOpen, isFalse);
+    expect(find.text('完成次数：1'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('guide-page-reset')));
+    await tester.pump();
+    expect(find.text('重置次数：1'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('guide-page-open')));
+    await tester.pump();
+    expect(guide.isOpen, isTrue);
+  });
 }
