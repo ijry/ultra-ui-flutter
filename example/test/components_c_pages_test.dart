@@ -508,4 +508,24 @@ void main() {
     await tester.pump();
     expect(find.text('当前索引：3'), findsOneWidget);
   });
+
+  testWidgets('list page appends deterministic rows at the lower edge',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsC/list/list'));
+    await tester.pump();
+
+    expect(find.text('列表长度-1'), findsOneWidget);
+    expect(find.text('列表长度-10'), findsOneWidget);
+    expect(find.text('列表数量：10'), findsOneWidget);
+
+    final list = tester.state<UPListState>(
+      find.byKey(const ValueKey('list-page-widget')),
+    );
+    list.scrollToBottom();
+    await tester.pump();
+    await tester.pump(const Duration(milliseconds: 40));
+    await tester.pump();
+    expect(find.text('列表长度-20'), findsOneWidget);
+    expect(find.text('列表数量：20'), findsOneWidget);
+  });
 }
