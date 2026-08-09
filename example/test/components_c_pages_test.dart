@@ -315,4 +315,74 @@ void main() {
     expect(offsetCol.span, 3);
     expect(offsetCol.offset, 3);
   });
+
+  testWidgets('index list page renders contacts and opens popup page',
+      (tester) async {
+    await tester.pumpWidget(
+      buildRouteUnderTest('componentsC/indexList/indexList'),
+    );
+
+    expect(find.text('新的朋友'), findsOneWidget);
+    expect(find.text('标签'), findsOneWidget);
+    expect(find.text('朋友圈'), findsOneWidget);
+    expect(find.text('QQ'), findsOneWidget);
+    expect(find.text('A'), findsWidgets);
+    expect(find.text('#'), findsWidgets);
+
+    final indexList = tester.state<UPIndexListState>(
+      find.byKey(const ValueKey('index-list-page-widget')),
+    );
+    await indexList.jumpToLetter('C');
+    await tester.pump();
+    expect(indexList.activeLetter, 'C');
+
+    indexList.scrollTo(99999);
+    await tester.pump();
+    expect(find.text('共305位好友'), findsOneWidget);
+
+    indexList.scrollToTop();
+    await tester.pump();
+    final newFriend = find.byKey(
+      const ValueKey('index-list-page-new-friend'),
+    );
+    await tester.ensureVisible(newFriend);
+    await tester.tap(newFriend);
+    await tester.pumpAndSettle();
+    expect(find.text('索引列表(弹窗)'), findsOneWidget);
+  });
+
+  testWidgets('index list2 page opens and closes its popup', (tester) async {
+    await tester.pumpWidget(
+      buildRouteUnderTest('componentsC/indexList/indexList2'),
+    );
+
+    expect(find.text('打开弹窗'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('index-list2-page-content')),
+      findsNothing,
+    );
+
+    await tester.tap(find.byKey(const ValueKey('index-list2-page-open')));
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('index-list2-page-content')),
+      findsOneWidget,
+    );
+    final popupIndexList = tester.state<UPIndexListState>(
+      find.byType(UPIndexList),
+    );
+    await popupIndexList.jumpToLetter('C');
+    await tester.pump();
+    expect(popupIndexList.activeLetter, 'C');
+
+    final popup = tester.state<UPPopupState>(
+      find.byKey(const ValueKey('index-list2-page-popup')),
+    );
+    popup.close();
+    await tester.pumpAndSettle();
+    expect(
+      find.byKey(const ValueKey('index-list2-page-content')),
+      findsNothing,
+    );
+  });
 }
