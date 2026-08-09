@@ -475,4 +475,37 @@ void main() {
     expect(find.text('自定义内容'), findsNothing);
     expect(find.text('关闭次数：1'), findsOneWidget);
   });
+
+  testWidgets('tabs page changes selection and renders source variants',
+      (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsC/tabs/tabs'));
+
+    expect(find.text('基础演示'), findsOneWidget);
+    expect(find.text('粘性布局'), findsOneWidget);
+    expect(find.text('显示徽标'), findsOneWidget);
+    expect(find.text('胶囊模式'), findsOneWidget);
+    expect(find.text('卡片模式'), findsOneWidget);
+    expect(find.text('圆角矩形箭头模式'), findsOneWidget);
+    expect(find.text('Tag模式'), findsOneWidget);
+
+    final basic = tester.state<UPTabsState>(
+      find.byKey(const ValueKey('tabs-page-basic')),
+    );
+    basic.setCurrent(2);
+    await tester.pump();
+    expect(find.text('当前索引：2'), findsOneWidget);
+    expect(find.text('点击次数：1'), findsOneWidget);
+
+    final disabled = find.byKey(const ValueKey('tabs-page-disabled'));
+    await tester.tap(find.descendant(of: disabled, matching: find.text('电影')));
+    await tester.pump();
+    expect(find.text('当前索引：2'), findsOneWidget);
+
+    final nextButton = find.byKey(const ValueKey('tabs-page-next'));
+    await tester.ensureVisible(nextButton);
+    await tester.pump();
+    await tester.tap(nextButton);
+    await tester.pump();
+    expect(find.text('当前索引：3'), findsOneWidget);
+  });
 }
