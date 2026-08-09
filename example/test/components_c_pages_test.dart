@@ -452,4 +452,27 @@ void main() {
     await tester.pump();
     expect(guide.isOpen, isTrue);
   });
+
+  testWidgets('popover page opens custom content and closes', (tester) async {
+    await tester.pumpWidget(buildRouteUnderTest('componentsC/popover/popover'));
+
+    expect(find.text('右侧弹出'), findsOneWidget);
+    expect(find.text('左侧弹出及强制定位'), findsOneWidget);
+    expect(find.text('自定义内容'), findsNothing);
+
+    await tester.tap(
+      find.byKey(const ValueKey('popover-page-right-trigger')),
+    );
+    await tester.pump();
+    expect(find.text('自定义内容'), findsOneWidget);
+    expect(find.text('打开次数：1'), findsOneWidget);
+
+    final popover = tester.state<UPPopoverState>(
+      find.byKey(const ValueKey('popover-page-right')),
+    );
+    popover.close();
+    await tester.pump();
+    expect(find.text('自定义内容'), findsNothing);
+    expect(find.text('关闭次数：1'), findsOneWidget);
+  });
 }

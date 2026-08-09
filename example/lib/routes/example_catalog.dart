@@ -72,6 +72,7 @@ import '../pages/components_c/index_list_page.dart';
 import '../pages/components_c/index_list2_page.dart';
 import '../pages/components_c/tooltip_page.dart';
 import '../pages/components_c/guide_page.dart';
+import '../pages/components_c/popover_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -605,6 +606,13 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsC,
     builder: _buildGuide,
   ),
+  const ExampleRoute(
+    id: 'componentsC/popover/popover',
+    sourcePath: 'pages/componentsC/popover/popover',
+    title: 'Popover弹窗',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildPopover,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -679,6 +687,7 @@ Widget _buildIndexList(BuildContext context) => const IndexListPage();
 Widget _buildIndexList2(BuildContext context) => const IndexList2Page();
 Widget _buildTooltip(BuildContext context) => const TooltipPage();
 Widget _buildGuide(BuildContext context) => const GuidePage();
+Widget _buildPopover(BuildContext context) => const PopoverPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(
