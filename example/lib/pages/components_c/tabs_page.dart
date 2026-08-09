@@ -25,8 +25,7 @@ class _TabsPageState extends State<TabsPage> {
 
   void _nextTab() {
     final next = (_current + 1) % _baseTabs.length;
-    final disabled =
-        _baseTabs[next] is Map && (_baseTabs[next] as Map)['disabled'] == true;
+    final disabled = _baseTabs[next]['disabled'] == true;
     if (disabled) return;
     _selectTab(next);
   }
