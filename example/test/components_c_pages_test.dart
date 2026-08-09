@@ -385,4 +385,32 @@ void main() {
       findsNothing,
     );
   });
+
+  testWidgets(
+    'tooltip page opens custom trigger and records extension action',
+    (tester) async {
+      await tester.pumpWidget(
+        buildRouteUnderTest('componentsC/tooltip/tooltip'),
+      );
+
+      expect(find.text('基础使用'), findsOneWidget);
+      expect(find.text('单例打开'), findsOneWidget);
+      expect(find.text('自定义触发器'), findsOneWidget);
+
+      await tester.tap(
+        find.byKey(const ValueKey('tooltip-page-custom-trigger')),
+      );
+      await tester.pump();
+      expect(find.text('自定义内容'), findsOneWidget);
+
+      final extension = tester.state<UPTooltipState>(
+        find.byKey(const ValueKey('tooltip-page-extension')),
+      );
+      extension.open();
+      await tester.pump();
+      await tester.tap(find.text('扩展').last);
+      await tester.pump();
+      expect(find.text('扩展点击：1'), findsOneWidget);
+    },
+  );
 }

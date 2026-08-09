@@ -70,6 +70,7 @@ import '../pages/components_c/read_more_page.dart';
 import '../pages/components_c/layout_page.dart';
 import '../pages/components_c/index_list_page.dart';
 import '../pages/components_c/index_list2_page.dart';
+import '../pages/components_c/tooltip_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -589,6 +590,13 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsC,
     builder: _buildIndexList2,
   ),
+  const ExampleRoute(
+    id: 'componentsC/tooltip/tooltip',
+    sourcePath: 'pages/componentsC/tooltip/tooltip',
+    title: '长按提示',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildTooltip,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -661,6 +669,7 @@ Widget _buildReadMore(BuildContext context) => const ReadMorePage();
 Widget _buildLayout(BuildContext context) => const LayoutPage();
 Widget _buildIndexList(BuildContext context) => const IndexListPage();
 Widget _buildIndexList2(BuildContext context) => const IndexList2Page();
+Widget _buildTooltip(BuildContext context) => const TooltipPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(
