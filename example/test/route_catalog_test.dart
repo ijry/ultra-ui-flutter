@@ -65,7 +65,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(70));
+    expect(exampleRoutes, hasLength(75));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -130,6 +130,11 @@ void main() {
       'componentsC/layout/layout',
       'componentsC/indexList/indexList',
       'componentsC/indexList/indexList2',
+      'componentsC/tooltip/tooltip',
+      'componentsC/guide/guide',
+      'componentsC/popover/popover',
+      'componentsC/tabs/tabs',
+      'componentsC/list/list',
     ]);
   });
 
@@ -173,6 +178,11 @@ void main() {
         'pages/componentsC/layout/layout',
         'pages/componentsC/indexList/indexList',
         'pages/componentsC/indexList/indexList2',
+        'pages/componentsC/tooltip/tooltip',
+        'pages/componentsC/guide/guide',
+        'pages/componentsC/popover/popover',
+        'pages/componentsC/tabs/tabs',
+        'pages/componentsC/list/list',
       }),
     );
   });
@@ -328,6 +338,20 @@ void main() {
 
     expect(componentAPreviews, isNotEmpty);
     expect(componentAPreviews.every((route) => route.available), isTrue);
+    expect(
+      componentPreviewRoutes
+          .where(
+            (route) => <String>{
+              'pages/componentsC/tooltip/tooltip',
+              'pages/componentsC/guide/guide',
+              'pages/componentsC/popover/popover',
+              'pages/componentsC/tabs/tabs',
+              'pages/componentsC/list/list',
+            }.contains(route.sourcePath),
+          )
+          .every((route) => route.available),
+      isTrue,
+    );
     expect(
       componentPreviewRoutes.every(
         (route) =>

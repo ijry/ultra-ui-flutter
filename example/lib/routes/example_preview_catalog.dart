@@ -167,7 +167,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/list/list',
       title: 'List 列表',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/virtualList/virtualList',
       title: 'VirtualList 虚拟列表',
@@ -202,17 +202,17 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/tooltip/tooltip',
       title: 'Tooltip 长按提示',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/guide/guide',
       title: 'Guide 首屏引导',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/popover/popover',
       title: 'Popover 弹窗提示',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/actionSheet/actionSheet',
       title: 'ActionSheet 上拉菜单',
@@ -387,7 +387,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/tabs/tabs',
       title: 'Tabs 标签',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/subsection/subsection',
       title: 'Subsection 分段器',
