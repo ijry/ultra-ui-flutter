@@ -11436,6 +11436,47 @@ void main() {
     expect(clicked, 0);
   });
 
+  testWidgets('UPSwiper vertical changes page on vertical drag',
+      (tester) async {
+    final key = GlobalKey<UPSwiperState>();
+    var current = -1;
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: SizedBox(
+            height: 200,
+            child: UPSwiper(
+              key: key,
+              vertical: true,
+              autoplay: false,
+              height: 200,
+              list: const ['A', 'B'],
+              itemBuilder: (context, item, index) {
+                return ColoredBox(
+                  color: index == 0 ? Colors.blue : Colors.green,
+                  child: Center(child: Text('$item')),
+                );
+              },
+              onChange: (index) => current = index,
+            ),
+          ),
+        ),
+      ),
+    );
+
+    await tester.pump();
+    expect(find.text('A'), findsOneWidget);
+
+    await tester.drag(find.byType(UPSwiper), const Offset(0, -240));
+    await tester.pumpAndSettle();
+
+    expect(key.currentState!.currentIndex, 1);
+    expect(current, 1);
+    expect(find.text('B'), findsOneWidget);
+  });
+
   testWidgets('UPSwiper loading state', (tester) async {
     await tester.pumpWidget(
       MaterialApp(
