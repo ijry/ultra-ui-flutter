@@ -4,6 +4,7 @@ import 'package:ultra_ui/ultra_ui.dart';
 
 import '../lib/pages/components_c/code_input_page.dart';
 import '../lib/pages/components_c/modal_page.dart';
+import '../lib/pages/components_c/picker_page.dart';
 import '../lib/pages/components_c/scroll_list_page.dart';
 import '../lib/pages/components_c/swiper_page.dart';
 import 'example_test_helpers.dart';
@@ -683,5 +684,46 @@ void main() {
     expect(find.text('操作中...'), findsOneWidget);
     await tester.pump(const Duration(milliseconds: 180));
     expect(find.text('异步状态：已关闭'), findsOneWidget);
+  });
+
+  testWidgets('picker page confirms defaults and linked columns',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const PickerPage(),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('基础使用'), findsOneWidget);
+    expect(find.text('设置默认项'), findsOneWidget);
+    expect(find.text('多列联动'), findsOneWidget);
+    expect(find.text('加载中状态(切换第一列)'), findsOneWidget);
+    expect(find.text('设置标题'), findsOneWidget);
+    expect(find.text('允许点击遮罩关闭'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('picker-page-open-1')));
+    await tester.pump();
+    final defaultPicker = tester.state<UPPickerState>(
+      find.byKey(const ValueKey('picker-page-default')),
+    );
+    expect(defaultPicker.getIndexs(), <int>[1]);
+    defaultPicker.confirm();
+    await tester.pump();
+    expect(find.text('默认确认值：美国'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('picker-page-open-2')));
+    await tester.pump();
+    final linkedPicker = tester.state<UPPickerState>(
+      find.byKey(const ValueKey('picker-page-linked')),
+    );
+    linkedPicker.changeHandler(0, 1);
+    await tester.pump();
+    expect(find.text('联动列：深圳'), findsOneWidget);
+    linkedPicker.changeHandler(1, 2);
+    linkedPicker.confirm();
+    await tester.pump();
+    expect(find.text('联动确认值：美国/上海'), findsOneWidget);
   });
 }
