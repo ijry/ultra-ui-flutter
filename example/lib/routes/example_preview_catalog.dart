@@ -262,12 +262,12 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/copy/copy',
       title: 'Copy 复制',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/floatButton/floatButton',
       title: 'FloatButton 悬浮按钮',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/pullRefresh/pullRefresh',
       title: 'PullRefresh 下拉刷新',
@@ -342,7 +342,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/box/box',
       title: 'Box 盒子',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/cateTab/cateTab',
       title: 'CateTab 垂直TAB',
@@ -382,7 +382,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/navbarMini/navbarMini',
       title: 'NavbarMini 迷你导航栏',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/tabs/tabs',
       title: 'Tabs 标签',
@@ -482,7 +482,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/qrcode/qrcode',
       title: 'Qrcode 二维码',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/coupon/coupon',
       title: 'Coupon 优惠券',

@@ -8,7 +8,6 @@ import '../lib/pages/components_d/box_page.dart';
 import '../lib/pages/components_d/float_button_page.dart';
 import '../lib/pages/components_d/navbar_mini_page.dart';
 import '../lib/pages/components_d/qrcode_page.dart';
-import 'example_test_helpers.dart';
 
 void main() {
   testWidgets('qrcode page renders source variants offline', (tester) async {

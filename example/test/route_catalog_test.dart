@@ -7,6 +7,14 @@ import 'package:ultra_ui_example/routes/example_source_manifest.dart';
 
 import 'example_test_helpers.dart';
 
+const List<String> componentDRouteIds = <String>[
+  'componentsD/qrcode/qrcode',
+  'componentsD/copy/copy',
+  'componentsD/navbarMini/navbarMini',
+  'componentsD/box/box',
+  'componentsD/floatButton/floatButton',
+];
+
 void main() {
   test('source route manifest preserves all registered pages.json routes', () {
     expect(sourceExampleRoutes, hasLength(124));
@@ -60,12 +68,28 @@ void main() {
     }
   });
 
+  testWidgets('every completed Components D source route renders a real page',
+      (tester) async {
+    for (final id in componentDRouteIds) {
+      await tester.pumpWidget(buildRouteUnderTest(id));
+      final route = findExampleRoute(id);
+      expect(find.byKey(ValueKey('example-page-$id')), findsOneWidget);
+      expect(
+        find.descendant(
+          of: find.byType(AppBar),
+          matching: find.text(route.title),
+        ),
+        findsOneWidget,
+      );
+    }
+  });
+
   test('component catalogs preserve literal source order and total', () {
     final componentARoutes = exampleRoutes
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(83));
+    expect(exampleRoutes, hasLength(88));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -144,6 +168,12 @@ void main() {
       'componentsC/datetimePicker/datetimePicker',
       'componentsC/subsection/subsection',
     ]);
+
+    final componentDRoutes = exampleRoutes
+        .where((route) => route.group == ExampleRouteGroup.componentsD)
+        .map((route) => route.id)
+        .toList();
+    expect(componentDRoutes, componentDRouteIds);
   });
 
   test('source main catalog contains exactly four available routes', () {
@@ -199,6 +229,11 @@ void main() {
         'pages/componentsC/calendar/calendar',
         'pages/componentsC/datetimePicker/datetimePicker',
         'pages/componentsC/subsection/subsection',
+        'pages/componentsD/qrcode/qrcode',
+        'pages/componentsD/copy/copy',
+        'pages/componentsD/navbarMini/navbarMini',
+        'pages/componentsD/box/box',
+        'pages/componentsD/floatButton/floatButton',
       }),
     );
   });
@@ -371,6 +406,11 @@ void main() {
               'pages/componentsC/calendar/calendar',
               'pages/componentsC/datetimePicker/datetimePicker',
               'pages/componentsC/subsection/subsection',
+              'pages/componentsD/qrcode/qrcode',
+              'pages/componentsD/copy/copy',
+              'pages/componentsD/navbarMini/navbarMini',
+              'pages/componentsD/box/box',
+              'pages/componentsD/floatButton/floatButton',
             }.contains(route.sourcePath),
           )
           .every((route) => route.available),

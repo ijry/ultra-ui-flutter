@@ -83,6 +83,11 @@ import '../pages/components_c/datetime_picker_page.dart';
 import '../pages/components_c/modal_page.dart';
 import '../pages/components_c/picker_page.dart';
 import '../pages/components_c/subsection_page.dart';
+import '../pages/components_d/box_page.dart';
+import '../pages/components_d/copy_page.dart';
+import '../pages/components_d/float_button_page.dart';
+import '../pages/components_d/navbar_mini_page.dart';
+import '../pages/components_d/qrcode_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -693,6 +698,41 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsC,
     builder: _buildSubsection,
   ),
+  const ExampleRoute(
+    id: 'componentsD/qrcode/qrcode',
+    sourcePath: 'pages/componentsD/qrcode/qrcode',
+    title: '二维码',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildQrcode,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/copy/copy',
+    sourcePath: 'pages/componentsD/copy/copy',
+    title: '复制',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildCopy,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/navbarMini/navbarMini',
+    sourcePath: 'pages/componentsD/navbarMini/navbarMini',
+    title: '迷你导航栏',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildNavbarMini,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/box/box',
+    sourcePath: 'pages/componentsD/box/box',
+    title: '盒子',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildBox,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/floatButton/floatButton',
+    sourcePath: 'pages/componentsD/floatButton/floatButton',
+    title: '悬浮按钮',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildFloatButton,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -778,6 +818,11 @@ Widget _buildPicker(BuildContext context) => const PickerPage();
 Widget _buildCalendar(BuildContext context) => const CalendarPage();
 Widget _buildDatetimePicker(BuildContext context) => const DatetimePickerPage();
 Widget _buildSubsection(BuildContext context) => const SubsectionPage();
+Widget _buildQrcode(BuildContext context) => const QrcodePage();
+Widget _buildCopy(BuildContext context) => const CopyPage();
+Widget _buildNavbarMini(BuildContext context) => const NavbarMiniPage();
+Widget _buildBox(BuildContext context) => const BoxPage();
+Widget _buildFloatButton(BuildContext context) => const FloatButtonPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

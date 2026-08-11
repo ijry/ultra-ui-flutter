@@ -28,8 +28,6 @@ class FloatButtonPage extends StatefulWidget {
 
 class _FloatButtonPageState extends State<FloatButtonPage> {
   String _menuMessage = '';
-  bool _menuOpen = false;
-  UPFloatButtonState? _menuState;
 
   Widget _customMenu() {
     return Row(
@@ -39,42 +37,6 @@ class _FloatButtonPageState extends State<FloatButtonPage> {
         SizedBox(width: 8),
         _FloatMenuItem(color: Colors.green, icon: 'order'),
       ],
-    );
-  }
-
-  Widget _menuHitTargets() {
-    return Positioned(
-      top: 0,
-      right: 30,
-      child: Column(
-        mainAxisSize: MainAxisSize.min,
-        children: [
-          for (var i = 0; i < _menuItems.length; i++)
-            Padding(
-              key: ValueKey('up-float-item-$i'),
-              padding: const EdgeInsets.symmetric(vertical: 5),
-              child: GestureDetector(
-                onTap: () => _menuState?.itemClick(i),
-                child: Container(
-                  width: 50,
-                  height: 50,
-                  alignment: Alignment.center,
-                  decoration: BoxDecoration(
-                    color: UPUtils.parseColor(
-                      _menuItems[i]['backgroundColor'],
-                    ),
-                    shape: BoxShape.circle,
-                  ),
-                  child: UPIcon(
-                    name: _menuItems[i]['name']!,
-                    color: Colors.white,
-                    size: 16,
-                  ),
-                ),
-              ),
-            ),
-        ],
-      ),
     );
   }
 
@@ -93,27 +55,17 @@ class _FloatButtonPageState extends State<FloatButtonPage> {
                 height: 180,
                 child: Stack(
                   children: [
-                    if (_menuOpen) _menuHitTargets(),
                     UPFloatButton(
                       key: const ValueKey('float-button-page-menu'),
                       isMenu: true,
-                      top: '120px',
                       list: _menuItems,
-                      listSlot: const SizedBox.shrink(),
-                      child: Builder(
-                        builder: (context) {
-                          _menuState = context
-                              .findAncestorStateOfType<UPFloatButtonState>();
-                          return const KeyedSubtree(
-                            key: ValueKey('float-button-page-menu-trigger'),
-                            child: UPIcon(
-                              name: 'plus',
-                              color: Colors.white,
-                            ),
-                          );
-                        },
+                      child: const KeyedSubtree(
+                        key: ValueKey('float-button-page-menu-trigger'),
+                        child: UPIcon(
+                          name: 'plus',
+                          color: Colors.white,
+                        ),
                       ),
-                      onClick: () => setState(() => _menuOpen = !_menuOpen),
                       onItemClick: (item, _) => setState(
                         () => _menuMessage = '菜单点击：${item['key']}',
                       ),
