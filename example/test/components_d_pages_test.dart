@@ -1,7 +1,10 @@
 import 'package:flutter/material.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ultra_ui/ultra_ui.dart';
 
+import '../lib/pages/components_d/copy_page.dart';
+import '../lib/pages/components_d/navbar_mini_page.dart';
 import '../lib/pages/components_d/qrcode_page.dart';
 import 'example_test_helpers.dart';
 
@@ -25,5 +28,56 @@ void main() {
     expect(find.byType(UPQrcode), findsNWidgets(3));
     expect(find.byKey(const ValueKey('qrcode-page-logo')), findsOneWidget);
     expect(find.byType(Image), findsOneWidget);
+  });
+
+  testWidgets('copy page reports successful text and button copies',
+      (tester) async {
+    tester.binding.defaultBinaryMessenger.setMockMethodCallHandler(
+      SystemChannels.platform,
+      (call) async {
+        if (call.method == 'Clipboard.setData') return null;
+        return null;
+      },
+    );
+    addTearDown(() {
+      tester.binding.defaultBinaryMessenger
+          .setMockMethodCallHandler(SystemChannels.platform, null);
+      UPToast.hide();
+    });
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const CopyPage(),
+      ),
+    );
+
+    expect(find.text('点击文字复制'), findsOneWidget);
+    expect(find.text('点击按钮复制'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('copy-page-text')));
+    await tester.pump();
+    expect(find.text('复制次数：1'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('copy-page-button')));
+    await tester.pump();
+    expect(find.text('复制次数：2'), findsOneWidget);
+    UPToast.hide();
+    await tester.pump();
+  });
+
+  testWidgets('navbar mini page invokes its source left callback',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const NavbarMiniPage(),
+      ),
+    );
+
+    expect(find.text('基础功能'), findsOneWidget);
+    expect(find.text('自定义插槽'), findsOneWidget);
+    await tester.tap(find.byKey(const ValueKey('navbar-mini-page-left')));
+    await tester.pump();
+    expect(find.text('左侧点击：1'), findsOneWidget);
   });
 }
