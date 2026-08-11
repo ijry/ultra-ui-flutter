@@ -90,12 +90,16 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ultra_ui/ultra_ui.dart';
 
+import '../lib/pages/components_d/qrcode_page.dart';
 import 'example_test_helpers.dart';
 
 void main() {
   testWidgets('qrcode page renders source variants offline', (tester) async {
     await tester.pumpWidget(
-      buildRouteUnderTest('componentsD/qrcode/qrcode'),
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const QrcodePage(),
+      ),
     );
     await tester.pump();
 
@@ -119,8 +123,7 @@ Run from `example`:
 flutter test test/components_d_pages_test.dart --plain-name "qrcode page renders source variants offline" --reporter expanded
 ```
 
-Expected: FAIL because `QrcodePage` is not defined and the route is not yet
-registered.
+Expected: FAIL because `QrcodePage` is not defined.
 
 - [ ] **Step 3: Implement the Qrcode page**
 
@@ -206,9 +209,17 @@ git commit -m "feat(example): add qrcode page"
 Append:
 
 ```dart
+import '../lib/pages/components_d/copy_page.dart';
+import '../lib/pages/components_d/navbar_mini_page.dart';
+
 testWidgets('copy page reports successful text and button copies',
     (tester) async {
-  await tester.pumpWidget(buildRouteUnderTest('componentsD/copy/copy'));
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: UP.themeData(),
+      home: const CopyPage(),
+    ),
+  );
 
   expect(find.text('点击文字复制'), findsOneWidget);
   expect(find.text('点击按钮复制'), findsOneWidget);
@@ -224,7 +235,10 @@ testWidgets('copy page reports successful text and button copies',
 testWidgets('navbar mini page invokes its source left callback',
     (tester) async {
   await tester.pumpWidget(
-    buildRouteUnderTest('componentsD/navbarMini/navbarMini'),
+    MaterialApp(
+      theme: UP.themeData(),
+      home: const NavbarMiniPage(),
+    ),
   );
 
   expect(find.text('基础功能'), findsOneWidget);
@@ -326,8 +340,16 @@ git commit -m "feat(example): add copy and navbar mini pages"
 Append:
 
 ```dart
+import '../lib/pages/components_d/box_page.dart';
+import '../lib/pages/components_d/float_button_page.dart';
+
 testWidgets('box page renders default and custom slots', (tester) async {
-  await tester.pumpWidget(buildRouteUnderTest('componentsD/box/box'));
+  await tester.pumpWidget(
+    MaterialApp(
+      theme: UP.themeData(),
+      home: const BoxPage(),
+    ),
+  );
 
   expect(find.text('基础功能'), findsOneWidget);
   expect(find.text('自定义插槽'), findsOneWidget);
@@ -339,7 +361,10 @@ testWidgets('box page renders default and custom slots', (tester) async {
 testWidgets('float button page opens menu and emits item click',
     (tester) async {
   await tester.pumpWidget(
-    buildRouteUnderTest('componentsD/floatButton/floatButton'),
+    MaterialApp(
+      theme: UP.themeData(),
+      home: const FloatButtonPage(),
+    ),
   );
 
   final state = tester.state<UPFloatButtonState>(
