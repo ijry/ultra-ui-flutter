@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ultra_ui/ultra_ui.dart';
 
-import '../shared/example_demo_block.dart';
 import '../shared/example_page_scaffold.dart';
 
 class CalendarPage extends StatefulWidget {
