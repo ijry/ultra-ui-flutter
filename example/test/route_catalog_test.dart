@@ -65,7 +65,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(75));
+    expect(exampleRoutes, hasLength(80));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -135,6 +135,11 @@ void main() {
       'componentsC/popover/popover',
       'componentsC/tabs/tabs',
       'componentsC/list/list',
+      'componentsC/swiper/swiper',
+      'componentsC/scrollList/scrollList',
+      'componentsC/codeInput/codeInput',
+      'componentsC/modal/modal',
+      'componentsC/picker/picker',
     ]);
   });
 
@@ -183,6 +188,11 @@ void main() {
         'pages/componentsC/popover/popover',
         'pages/componentsC/tabs/tabs',
         'pages/componentsC/list/list',
+        'pages/componentsC/swiper/swiper',
+        'pages/componentsC/scrollList/scrollList',
+        'pages/componentsC/codeInput/codeInput',
+        'pages/componentsC/modal/modal',
+        'pages/componentsC/picker/picker',
       }),
     );
   });
@@ -347,6 +357,11 @@ void main() {
               'pages/componentsC/popover/popover',
               'pages/componentsC/tabs/tabs',
               'pages/componentsC/list/list',
+              'pages/componentsC/swiper/swiper',
+              'pages/componentsC/scrollList/scrollList',
+              'pages/componentsC/codeInput/codeInput',
+              'pages/componentsC/modal/modal',
+              'pages/componentsC/picker/picker',
             }.contains(route.sourcePath),
           )
           .every((route) => route.available),

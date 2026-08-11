@@ -75,6 +75,11 @@ import '../pages/components_c/guide_page.dart';
 import '../pages/components_c/popover_page.dart';
 import '../pages/components_c/tabs_page.dart';
 import '../pages/components_c/list_page.dart';
+import '../pages/components_c/swiper_page.dart';
+import '../pages/components_c/scroll_list_page.dart';
+import '../pages/components_c/code_input_page.dart';
+import '../pages/components_c/modal_page.dart';
+import '../pages/components_c/picker_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -629,6 +634,41 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsC,
     builder: _buildList,
   ),
+  const ExampleRoute(
+    id: 'componentsC/swiper/swiper',
+    sourcePath: 'pages/componentsC/swiper/swiper',
+    title: '轮播',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildSwiper,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/scrollList/scrollList',
+    sourcePath: 'pages/componentsC/scrollList/scrollList',
+    title: '横向滚动列表',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildScrollList,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/codeInput/codeInput',
+    sourcePath: 'pages/componentsC/codeInput/codeInput',
+    title: '验证码输入',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildCodeInput,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/modal/modal',
+    sourcePath: 'pages/componentsC/modal/modal',
+    title: '模态框',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildModal,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/picker/picker',
+    sourcePath: 'pages/componentsC/picker/picker',
+    title: '选择器',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildPicker,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -706,6 +746,11 @@ Widget _buildGuide(BuildContext context) => const GuidePage();
 Widget _buildPopover(BuildContext context) => const PopoverPage();
 Widget _buildTabs(BuildContext context) => const TabsPage();
 Widget _buildList(BuildContext context) => const ListPage();
+Widget _buildSwiper(BuildContext context) => const SwiperPage();
+Widget _buildScrollList(BuildContext context) => const ScrollListPage();
+Widget _buildCodeInput(BuildContext context) => const CodeInputPage();
+Widget _buildModal(BuildContext context) => const ModalPage();
+Widget _buildPicker(BuildContext context) => const PickerPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

@@ -82,7 +82,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/picker/picker',
       title: 'Picker 选择器',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/select/select',
       title: 'Select 经典下拉框',
@@ -257,7 +257,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/modal/modal',
       title: 'Modal 模态框',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/copy/copy',
       title: 'Copy 复制',
@@ -287,7 +287,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/scrollList/scrollList',
       title: 'ScrollList 横向滚动列表',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/line/line',
       title: 'Line 线条',
@@ -317,7 +317,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/swiper/swiper',
       title: 'Swiper 轮播图',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/skeleton/skeleton',
       title: 'Skeleton 骨架屏',
@@ -432,7 +432,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/codeInput/codeInput',
       title: 'CodeInput 验证码输入',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/dragsort/dragsort',
       title: 'Dragsort 拖动排序',
