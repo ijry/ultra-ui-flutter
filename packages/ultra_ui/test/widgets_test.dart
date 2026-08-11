@@ -19036,6 +19036,36 @@ void main() {
     expect(lastItem!['name'], 'share');
   });
 
+  testWidgets('UPFloatButton menu items remain hit-testable when visible',
+      (tester) async {
+    final key = GlobalKey<UPFloatButtonState>();
+    var itemHits = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: Stack(
+            children: [
+              UPFloatButton(
+                key: key,
+                isMenu: true,
+                list: const [
+                  {'name': 'share'},
+                ],
+                onItemClick: (_, __) => itemHits++,
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+
+    key.currentState!.open();
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('up-float-item-0')));
+    expect(itemHits, 1);
+  });
+
   testWidgets('UPOverlay BatchD clickHandler', (tester) async {
     var hits = 0;
     final overlay = UPOverlay(
