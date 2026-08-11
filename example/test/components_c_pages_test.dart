@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ultra_ui/ultra_ui.dart';
 
+import '../lib/pages/components_c/scroll_list_page.dart';
 import '../lib/pages/components_c/swiper_page.dart';
 import 'example_test_helpers.dart';
 
@@ -574,5 +575,38 @@ void main() {
       find.byKey(const ValueKey('swiper-page-custom-indicator')),
       findsOneWidget,
     );
+  });
+
+  testWidgets('scroll list page reports edge actions and more action',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const ScrollListPage(),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('基础使用'), findsOneWidget);
+    expect(find.text('多菜单扩展'), findsOneWidget);
+    expect(find.text('查看更多'), findsOneWidget);
+    expect(find.text('查看更多次数：0'), findsOneWidget);
+
+    final more = find.byKey(const ValueKey('scroll-list-page-more'));
+    await tester.ensureVisible(more);
+    await tester.pump();
+    await tester.tap(more);
+    await tester.pump();
+    expect(find.text('查看更多次数：1'), findsOneWidget);
+
+    final list = tester.state<UPScrollListState>(
+      find.byKey(const ValueKey('scroll-list-page-basic')),
+    );
+    list.scrollToRight();
+    await tester.pump();
+    list.scrollToLeft();
+    await tester.pump();
+    expect(find.text('右侧触发次数：1'), findsOneWidget);
+    expect(find.text('左侧触发次数：1'), findsOneWidget);
   });
 }
