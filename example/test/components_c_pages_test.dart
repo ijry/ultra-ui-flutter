@@ -4,6 +4,7 @@ import 'package:ultra_ui/ultra_ui.dart';
 
 import '../lib/pages/components_c/calendar_page.dart';
 import '../lib/pages/components_c/code_input_page.dart';
+import '../lib/pages/components_c/datetime_picker_page.dart';
 import '../lib/pages/components_c/modal_page.dart';
 import '../lib/pages/components_c/picker_page.dart';
 import '../lib/pages/components_c/scroll_list_page.dart';
@@ -791,5 +792,57 @@ void main() {
     range.confirm();
     await tester.pump();
     expect(find.text('2026-08-12~2026-08-15'), findsOneWidget);
+  });
+
+  testWidgets('datetime picker page confirms fixed values and keeps variants',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const DatetimePickerPage(),
+      ),
+    );
+    await tester.pump();
+
+    for (final title in const [
+      '完整日期时间',
+      '年月日',
+      '年月',
+      '时间',
+      '过滤器(保留偶数年)',
+      '格式化',
+      '限制最大最小值',
+    ]) {
+      expect(find.text(title), findsOneWidget);
+    }
+    expect(
+      find.byKey(const ValueKey('datetime-picker-page-input')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('datetime-picker-page-inline')),
+      findsOneWidget,
+    );
+
+    final formatted = tester.widget<UPDatetimePicker>(
+      find.byKey(const ValueKey('datetime-picker-page-widget-5')),
+    );
+    expect(formatted.formatter, isA<Function>());
+    final filtered = tester.widget<UPDatetimePicker>(
+      find.byKey(const ValueKey('datetime-picker-page-widget-4')),
+    );
+    expect(filtered.filter, isA<Function>());
+
+    await tester.tap(
+      find.byKey(const ValueKey('datetime-picker-page-open-0')),
+    );
+    await tester.pump(const Duration(milliseconds: 350));
+    final datetime = tester.state<UPDatetimePickerState>(
+      find.byKey(const ValueKey('datetime-picker-page-widget-0')),
+    );
+    datetime.setValue(DateTime(2026, 8, 11, 14, 30).millisecondsSinceEpoch);
+    datetime.confirm();
+    await tester.pump();
+    expect(find.text('结果：2026-08-11 14:30'), findsOneWidget);
   });
 }
