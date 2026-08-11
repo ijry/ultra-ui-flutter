@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ultra_ui/ultra_ui.dart';
 
+import '../lib/pages/components_c/swiper_page.dart';
 import 'example_test_helpers.dart';
 
 void main() {
@@ -527,5 +528,51 @@ void main() {
     await tester.pump();
     expect(find.text('列表长度-20'), findsOneWidget);
     expect(find.text('列表数量：20'), findsOneWidget);
+  });
+
+  testWidgets('swiper page changes index and renders source variants',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const SwiperPage(),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('基础功能'), findsOneWidget);
+    expect(find.text('纵向滑动'), findsOneWidget);
+    expect(find.text('带标题'), findsOneWidget);
+    expect(find.text('带指示器'), findsOneWidget);
+    expect(find.text('加载中'), findsOneWidget);
+    expect(find.text('嵌入视频'), findsOneWidget);
+    expect(find.text('自定义内容'), findsOneWidget);
+    expect(find.text('自定义指示器'), findsOneWidget);
+    expect(find.text('卡片式'), findsOneWidget);
+
+    final basic = tester.state<UPSwiperState>(
+      find.byKey(const ValueKey('swiper-page-basic')),
+    );
+    basic.swipeTo(1, animated: false);
+    await tester.pump();
+    expect(find.text('当前索引：1'), findsOneWidget);
+
+    basic.clickHandler(1);
+    await tester.pump();
+    expect(find.text('点击次数：1'), findsOneWidget);
+
+    expect(
+      tester
+          .widget<UPSwiper>(
+            find.byKey(const ValueKey('swiper-page-vertical')),
+          )
+          .vertical,
+      isTrue,
+    );
+    expect(find.byType(UPLoadingIcon), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('swiper-page-custom-indicator')),
+      findsOneWidget,
+    );
   });
 }
