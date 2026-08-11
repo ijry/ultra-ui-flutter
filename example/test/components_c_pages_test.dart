@@ -8,6 +8,7 @@ import '../lib/pages/components_c/datetime_picker_page.dart';
 import '../lib/pages/components_c/modal_page.dart';
 import '../lib/pages/components_c/picker_page.dart';
 import '../lib/pages/components_c/scroll_list_page.dart';
+import '../lib/pages/components_c/subsection_page.dart';
 import '../lib/pages/components_c/swiper_page.dart';
 import 'example_test_helpers.dart';
 
@@ -844,5 +845,56 @@ void main() {
     datetime.confirm();
     await tester.pump();
     expect(find.text('结果：2026-08-11 14:30'), findsOneWidget);
+  });
+
+  testWidgets(
+      'subsection page changes enabled state and preserves disabled state',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const SubsectionPage(),
+      ),
+    );
+    await tester.pump();
+
+    for (final title in const [
+      '基础使用',
+      '按钮模式',
+      '更换主题',
+      '默认位置',
+      '按钮模式通过list自定义颜色',
+    ]) {
+      expect(find.text(title), findsOneWidget);
+    }
+    expect(find.text('禁用'), findsWidgets);
+
+    final basic = tester.state<UPSubsectionState>(
+      find.byKey(const ValueKey('subsection-page-basic')),
+    );
+    basic.setCurrent(2);
+    await tester.pump();
+    expect(basic.currentIndex, 2);
+    expect(find.text('基础索引：2'), findsOneWidget);
+    expect(find.text('基础变化次数：1'), findsOneWidget);
+
+    final disabledButton = tester.state<UPSubsectionState>(
+      find.byKey(const ValueKey('subsection-page-disabled-button')),
+    );
+    expect(disabledButton.currentIndex, 0);
+    final disabledOption = find.descendant(
+      of: find.byKey(const ValueKey('subsection-page-disabled-button')),
+      matching: find.text('启用'),
+    );
+    await tester.ensureVisible(disabledOption);
+    await tester.pump();
+    await tester.tap(disabledOption);
+    await tester.pump();
+    expect(disabledButton.currentIndex, 0);
+
+    final custom = tester.widget<UPSubsection>(
+      find.byKey(const ValueKey('subsection-page-custom-colors')),
+    );
+    expect(custom.activeColorKeyName, 'textColor');
   });
 }
