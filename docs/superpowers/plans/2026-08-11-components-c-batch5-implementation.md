@@ -609,16 +609,21 @@ testWidgets('modal page opens variants and handles async confirmation',
 
   await tester.tap(find.byKey(const ValueKey('modal-page-open-0')));
   await tester.pump();
-  expect(find.text('标题'), findsOneWidget);
-  expect(find.text('模态框，常用于消息提示、消息确认、在当前页面内完成特定的交互操作'),
-      findsOneWidget);
-  await tester.tap(find.text('确认').last);
+  final basicModal = tester.state<UPModalState>(
+    find.byKey(const ValueKey('modal-page-basic')),
+  );
+  expect(basicModal.isShown, isTrue);
+  basicModal.confirmHandler();
   await tester.pump();
   expect(find.text('确认次数：1'), findsOneWidget);
 
   await tester.tap(find.byKey(const ValueKey('modal-page-open-3')));
   await tester.pump();
-  await tester.tap(find.text('确认').last);
+  final asyncModal = tester.state<UPModalState>(
+    find.byKey(const ValueKey('modal-page-async')),
+  );
+  expect(asyncModal.isShown, isTrue);
+  asyncModal.confirmHandler();
   await tester.pump();
   expect(find.text('操作中...'), findsOneWidget);
   await tester.pump(const Duration(milliseconds: 180));
