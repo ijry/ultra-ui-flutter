@@ -305,7 +305,8 @@ Run:
 
 ```text
 dart format lib/pages/components_d/copy_page.dart lib/pages/components_d/navbar_mini_page.dart test/components_d_pages_test.dart
-flutter test test/components_d_pages_test.dart --plain-name "copy page|navbar mini page" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "copy page reports successful text and button copies" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "navbar mini page invokes its source left callback" --reporter expanded
 ```
 
 Expected: both tests pass. A Clipboard platform-channel failure is a package
@@ -441,7 +442,8 @@ Run:
 
 ```text
 dart format lib/pages/components_d/box_page.dart lib/pages/components_d/float_button_page.dart test/components_d_pages_test.dart
-flutter test test/components_d_pages_test.dart --plain-name "box page|float button page" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "box page renders default and custom slots" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "float button page opens menu and emits item click" --reporter expanded
 ```
 
 Expected: both tests pass. If the FloatButton state cannot be reached because
