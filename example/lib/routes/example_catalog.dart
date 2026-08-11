@@ -78,8 +78,11 @@ import '../pages/components_c/list_page.dart';
 import '../pages/components_c/swiper_page.dart';
 import '../pages/components_c/scroll_list_page.dart';
 import '../pages/components_c/code_input_page.dart';
+import '../pages/components_c/calendar_page.dart';
+import '../pages/components_c/datetime_picker_page.dart';
 import '../pages/components_c/modal_page.dart';
 import '../pages/components_c/picker_page.dart';
+import '../pages/components_c/subsection_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -669,6 +672,27 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsC,
     builder: _buildPicker,
   ),
+  const ExampleRoute(
+    id: 'componentsC/calendar/calendar',
+    sourcePath: 'pages/componentsC/calendar/calendar',
+    title: '日历',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildCalendar,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/datetimePicker/datetimePicker',
+    sourcePath: 'pages/componentsC/datetimePicker/datetimePicker',
+    title: '时间选择',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildDatetimePicker,
+  ),
+  const ExampleRoute(
+    id: 'componentsC/subsection/subsection',
+    sourcePath: 'pages/componentsC/subsection/subsection',
+    title: '分段器',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildSubsection,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -751,6 +775,9 @@ Widget _buildScrollList(BuildContext context) => const ScrollListPage();
 Widget _buildCodeInput(BuildContext context) => const CodeInputPage();
 Widget _buildModal(BuildContext context) => const ModalPage();
 Widget _buildPicker(BuildContext context) => const PickerPage();
+Widget _buildCalendar(BuildContext context) => const CalendarPage();
+Widget _buildDatetimePicker(BuildContext context) => const DatetimePickerPage();
+Widget _buildSubsection(BuildContext context) => const SubsectionPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

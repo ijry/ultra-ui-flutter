@@ -72,7 +72,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/calendar/calendar',
       title: 'Calendar 日历',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/keyboard/keyboard',
       title: 'Keyboard 键盘',
@@ -102,7 +102,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/datetimePicker/datetimePicker',
       title: 'DatetimePicker 时间选择器',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsA/rate/rate',
       title: 'Rate 评分',
@@ -392,7 +392,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsC/subsection/subsection',
       title: 'Subsection 分段器',
       group: ExampleRouteGroup.componentsC,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/indexList/indexList',
       title: 'IndexList 索引列表',

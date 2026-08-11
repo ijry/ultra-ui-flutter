@@ -65,7 +65,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(80));
+    expect(exampleRoutes, hasLength(83));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -140,6 +140,9 @@ void main() {
       'componentsC/codeInput/codeInput',
       'componentsC/modal/modal',
       'componentsC/picker/picker',
+      'componentsC/calendar/calendar',
+      'componentsC/datetimePicker/datetimePicker',
+      'componentsC/subsection/subsection',
     ]);
   });
 
@@ -193,6 +196,9 @@ void main() {
         'pages/componentsC/codeInput/codeInput',
         'pages/componentsC/modal/modal',
         'pages/componentsC/picker/picker',
+        'pages/componentsC/calendar/calendar',
+        'pages/componentsC/datetimePicker/datetimePicker',
+        'pages/componentsC/subsection/subsection',
       }),
     );
   });
@@ -362,6 +368,9 @@ void main() {
               'pages/componentsC/codeInput/codeInput',
               'pages/componentsC/modal/modal',
               'pages/componentsC/picker/picker',
+              'pages/componentsC/calendar/calendar',
+              'pages/componentsC/datetimePicker/datetimePicker',
+              'pages/componentsC/subsection/subsection',
             }.contains(route.sourcePath),
           )
           .every((route) => route.available),
