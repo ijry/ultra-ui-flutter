@@ -3,6 +3,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:ultra_ui/ultra_ui.dart';
 
 import '../lib/pages/components_c/code_input_page.dart';
+import '../lib/pages/components_c/modal_page.dart';
 import '../lib/pages/components_c/scroll_list_page.dart';
 import '../lib/pages/components_c/swiper_page.dart';
 import 'example_test_helpers.dart';
@@ -638,5 +639,49 @@ void main() {
     await tester.pump();
     expect(find.text('基础值：1234'), findsOneWidget);
     expect(find.text('完成次数：1'), findsOneWidget);
+  });
+
+  testWidgets('modal page opens variants and handles async confirmation',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const ModalPage(),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('基础使用'), findsOneWidget);
+    expect(find.text('无标题'), findsOneWidget);
+    expect(find.text('带取消按钮'), findsOneWidget);
+    expect(find.text('异步关闭'), findsOneWidget);
+    expect(find.text('对调取消和确认按钮'), findsOneWidget);
+    expect(find.text('允许点击遮罩关闭'), findsOneWidget);
+    expect(find.text('传入slot'), findsOneWidget);
+    expect(find.text('自定义按钮'), findsOneWidget);
+    expect(find.text('淡入淡出动画'), findsOneWidget);
+    expect(find.text('带底部关闭按钮'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('modal-page-open-0')));
+    await tester.pump();
+    final basicModal = tester.state<UPModalState>(
+      find.byKey(const ValueKey('modal-page-basic')),
+    );
+    expect(basicModal.isShown, isTrue);
+    basicModal.confirmHandler();
+    await tester.pump();
+    expect(find.text('确认次数：1'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('modal-page-open-3')));
+    await tester.pump();
+    final asyncModal = tester.state<UPModalState>(
+      find.byKey(const ValueKey('modal-page-async')),
+    );
+    expect(asyncModal.isShown, isTrue);
+    asyncModal.confirmHandler();
+    await tester.pump();
+    expect(find.text('操作中...'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 180));
+    expect(find.text('异步状态：已关闭'), findsOneWidget);
   });
 }
