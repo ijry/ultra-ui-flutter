@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ultra_ui/ultra_ui.dart';
 
+import '../lib/pages/components_c/calendar_page.dart';
 import '../lib/pages/components_c/code_input_page.dart';
 import '../lib/pages/components_c/modal_page.dart';
 import '../lib/pages/components_c/picker_page.dart';
@@ -725,5 +726,70 @@ void main() {
     linkedPicker.confirm();
     await tester.pump();
     expect(find.text('联动确认值：美国/上海'), findsOneWidget);
+  });
+
+  testWidgets('calendar page opens variants and confirms fixed dates',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const CalendarPage(),
+      ),
+    );
+    await tester.pump();
+
+    for (final title in const [
+      '单个日期',
+      '多个日期',
+      '日期范围',
+      '自定义主题颜色',
+      '自定义文案',
+      '日期最大范围',
+      '显示农历',
+      '默认日期',
+      '日期最小范围',
+      '单月切换-单选',
+      '单月切换-日期区间',
+      '单月切换-多选',
+    ]) {
+      expect(find.text(title), findsOneWidget);
+    }
+    expect(find.text('页面行内模式'), findsOneWidget);
+    expect(find.text('单行日历（支持切月、下拉展开完整月历）'), findsOneWidget);
+    expect(
+      find.byKey(const ValueKey('calendar-page-strip-value')),
+      findsOneWidget,
+    );
+    expect(
+      tester
+          .widget<Text>(
+            find.byKey(const ValueKey('calendar-page-strip-value')),
+          )
+          .data,
+      '2026-08-11',
+    );
+
+    await tester.tap(find.byKey(const ValueKey('calendar-page-open-0')));
+    await tester.pump(const Duration(milliseconds: 350));
+    final single = tester.state<UPCalendarState>(
+      find.byKey(const ValueKey('calendar-page-widget-0')),
+    );
+    single.selectDate(DateTime(2026, 8, 12));
+    single.confirm();
+    await tester.pump();
+    expect(find.text('2026-08-12'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('calendar-page-open-2')));
+    await tester.pump(const Duration(milliseconds: 350));
+    final range = tester.state<UPCalendarState>(
+      find.byKey(const ValueKey('calendar-page-widget-2')),
+    );
+    range.setSelected([
+      DateTime(2026, 8, 12),
+      DateTime(2026, 8, 15),
+    ]);
+    range.confirm();
+    await tester.pump();
+    expect(find.text('2026-08-12~2026-08-15'), findsOneWidget);
   });
 }
