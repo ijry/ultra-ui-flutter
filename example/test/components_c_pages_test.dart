@@ -2,6 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ultra_ui/ultra_ui.dart';
 
+import '../lib/pages/components_c/code_input_page.dart';
 import '../lib/pages/components_c/scroll_list_page.dart';
 import '../lib/pages/components_c/swiper_page.dart';
 import 'example_test_helpers.dart';
@@ -608,5 +609,34 @@ void main() {
     await tester.pump();
     expect(find.text('右侧触发次数：1'), findsOneWidget);
     expect(find.text('左侧触发次数：1'), findsOneWidget);
+  });
+
+  testWidgets('code input page edits value and reports finish', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const CodeInputPage(),
+      ),
+    );
+    await tester.pump();
+
+    expect(find.text('基础使用'), findsOneWidget);
+    expect(find.text('横线模式'), findsOneWidget);
+    expect(find.text('设置长度'), findsOneWidget);
+    expect(find.text('设置间距'), findsOneWidget);
+    expect(find.text('细边框'), findsOneWidget);
+    expect(find.text('调整颜色'), findsOneWidget);
+    expect(find.text('点模式'), findsOneWidget);
+    expect(find.text('预置内容'), findsOneWidget);
+    expect(find.text('预置值：123'), findsOneWidget);
+    expect(find.text('预置值：34'), findsOneWidget);
+
+    final basic = tester.state<UPCodeInputState>(
+      find.byKey(const ValueKey('code-input-page-basic')),
+    );
+    basic.setValue('1234');
+    await tester.pump();
+    expect(find.text('基础值：1234'), findsOneWidget);
+    expect(find.text('完成次数：1'), findsOneWidget);
   });
 }
