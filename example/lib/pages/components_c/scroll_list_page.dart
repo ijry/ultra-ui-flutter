@@ -207,8 +207,6 @@ const _image1 = 'assets/uview/swiper/swiper1.png';
 const _image2 = 'assets/uview/swiper/swiper2.png';
 const _image3 = 'assets/uview/swiper/swiper3.png';
 
-const List<String> _localImages = <String>[_image1, _image2, _image3];
-
 const List<_Goods> _goods = <_Goods>[
   _Goods('230.5', _image1),
   _Goods('74.1', _image2),
