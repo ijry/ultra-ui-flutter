@@ -5,9 +5,12 @@ import 'package:ultra_ui/ultra_ui.dart';
 
 import '../lib/pages/components_d/copy_page.dart';
 import '../lib/pages/components_d/box_page.dart';
+import '../lib/pages/components_d/cate_tab_page.dart';
 import '../lib/pages/components_d/float_button_page.dart';
 import '../lib/pages/components_d/navbar_mini_page.dart';
+import '../lib/pages/components_d/pagination_page.dart';
 import '../lib/pages/components_d/qrcode_page.dart';
+import '../lib/pages/components_d/select_page.dart';
 
 void main() {
   testWidgets('qrcode page renders source variants offline', (tester) async {
@@ -120,5 +123,72 @@ void main() {
     await tester.tap(find.byKey(const ValueKey('up-float-item-0')));
     await tester.pump();
     expect(find.text('菜单点击：plus'), findsOneWidget);
+  });
+
+  testWidgets('cate tab page switches local categories', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const CateTabPage(),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('example-page-componentsD/cateTab/cateTab')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('cate-tab-page-follow')), findsOneWidget);
+    expect(find.byKey(const ValueKey('cate-tab-page-tab')), findsOneWidget);
+    expect(find.text('食品'), findsWidgets);
+    expect(find.text('米饭'), findsWidgets);
+
+    final follow = find.byKey(const ValueKey('cate-tab-page-follow'));
+    final secondMenu = find.descendant(
+      of: follow,
+      matching: find.byKey(const ValueKey('up-cate-tab-left-1')),
+    );
+    expect(secondMenu, findsOneWidget);
+    expect(tester.getCenter(secondMenu).dy, greaterThan(0));
+    await tester.tap(secondMenu);
+    await tester.pumpAndSettle();
+    expect(find.text('当前分类：饮料'), findsOneWidget);
+    expect(find.text('分类变化次数：1'), findsOneWidget);
+  });
+
+  testWidgets('select page opens and selects an option', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const SelectPage(),
+      ),
+    );
+
+    await tester.tap(find.byKey(const ValueKey('select-page-trigger')));
+    await tester.pumpAndSettle();
+    expect(
+        find.byKey(const ValueKey('up-select-options-panel')), findsOneWidget);
+    expect(find.text('选项二'), findsOneWidget);
+    await tester.tap(find.text('选项二'));
+    await tester.pumpAndSettle();
+    expect(find.text('当前选择：选项二'), findsOneWidget);
+    expect(find.byKey(const ValueKey('up-select-options-panel')), findsNothing);
+  });
+
+  testWidgets('pagination page changes page and page size', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const PaginationPage(),
+      ),
+    );
+
+    expect(find.byKey(const ValueKey('pagination-page-basic')), findsOneWidget);
+    await tester.tap(find.text('2').first);
+    await tester.pump();
+    expect(find.text('当前页：2'), findsOneWidget);
+
+    await tester.tap(find.text('20条/页'));
+    await tester.pump();
+    expect(find.text('每页：20'), findsOneWidget);
   });
 }
