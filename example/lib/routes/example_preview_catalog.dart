@@ -87,7 +87,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/select/select',
       title: 'Select 经典下拉框',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/cascader/cascader',
       title: 'Cascader 级联选择器',
@@ -347,7 +347,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/cateTab/cateTab',
       title: 'CateTab 垂直TAB',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/title/title',
       title: 'Title 标题',
@@ -412,12 +412,12 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/pagination/pagination',
       title: 'Pagination 分页器',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/tree/tree',
       title: 'Tree 树形',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/parse/parse',
       title: 'Parse 富文本解析器',
@@ -437,7 +437,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/dragsort/dragsort',
       title: 'Dragsort 拖动排序',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/cropper/cropper',
       title: 'cropper 图片裁剪',

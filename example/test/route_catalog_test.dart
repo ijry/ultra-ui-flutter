@@ -13,6 +13,11 @@ const List<String> componentDRouteIds = <String>[
   'componentsD/navbarMini/navbarMini',
   'componentsD/box/box',
   'componentsD/floatButton/floatButton',
+  'componentsD/cateTab/cateTab',
+  'componentsD/select/select',
+  'componentsD/pagination/pagination',
+  'componentsD/tree/tree',
+  'componentsD/dragsort/dragsort',
 ];
 
 void main() {
@@ -81,6 +86,7 @@ void main() {
         ),
         findsOneWidget,
       );
+      await tester.pump(const Duration(milliseconds: 100));
     }
   });
 
@@ -89,7 +95,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(88));
+    expect(exampleRoutes, hasLength(93));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -234,6 +240,11 @@ void main() {
         'pages/componentsD/navbarMini/navbarMini',
         'pages/componentsD/box/box',
         'pages/componentsD/floatButton/floatButton',
+        'pages/componentsD/cateTab/cateTab',
+        'pages/componentsD/select/select',
+        'pages/componentsD/pagination/pagination',
+        'pages/componentsD/tree/tree',
+        'pages/componentsD/dragsort/dragsort',
       }),
     );
   });
@@ -411,6 +422,11 @@ void main() {
               'pages/componentsD/navbarMini/navbarMini',
               'pages/componentsD/box/box',
               'pages/componentsD/floatButton/floatButton',
+              'pages/componentsD/cateTab/cateTab',
+              'pages/componentsD/select/select',
+              'pages/componentsD/pagination/pagination',
+              'pages/componentsD/tree/tree',
+              'pages/componentsD/dragsort/dragsort',
             }.contains(route.sourcePath),
           )
           .every((route) => route.available),

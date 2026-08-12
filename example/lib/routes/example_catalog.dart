@@ -84,10 +84,15 @@ import '../pages/components_c/modal_page.dart';
 import '../pages/components_c/picker_page.dart';
 import '../pages/components_c/subsection_page.dart';
 import '../pages/components_d/box_page.dart';
+import '../pages/components_d/cate_tab_page.dart';
 import '../pages/components_d/copy_page.dart';
+import '../pages/components_d/dragsort_page.dart';
 import '../pages/components_d/float_button_page.dart';
 import '../pages/components_d/navbar_mini_page.dart';
+import '../pages/components_d/pagination_page.dart';
 import '../pages/components_d/qrcode_page.dart';
+import '../pages/components_d/select_page.dart';
+import '../pages/components_d/tree_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -733,6 +738,41 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsD,
     builder: _buildFloatButton,
   ),
+  const ExampleRoute(
+    id: 'componentsD/cateTab/cateTab',
+    sourcePath: 'pages/componentsD/cateTab/cateTab',
+    title: '垂直TAB',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildCateTab,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/select/select',
+    sourcePath: 'pages/componentsD/select/select',
+    title: '经典下拉框',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildSelect,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/pagination/pagination',
+    sourcePath: 'pages/componentsD/pagination/pagination',
+    title: '分页器',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildPagination,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/tree/tree',
+    sourcePath: 'pages/componentsD/tree/tree',
+    title: '树形',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildTree,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/dragsort/dragsort',
+    sourcePath: 'pages/componentsD/dragsort/dragsort',
+    title: '拖动排序',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildDragsort,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -823,6 +863,11 @@ Widget _buildCopy(BuildContext context) => const CopyPage();
 Widget _buildNavbarMini(BuildContext context) => const NavbarMiniPage();
 Widget _buildBox(BuildContext context) => const BoxPage();
 Widget _buildFloatButton(BuildContext context) => const FloatButtonPage();
+Widget _buildCateTab(BuildContext context) => const CateTabPage();
+Widget _buildSelect(BuildContext context) => const SelectPage();
+Widget _buildPagination(BuildContext context) => const PaginationPage();
+Widget _buildTree(BuildContext context) => const TreePage();
+Widget _buildDragsort(BuildContext context) => const DragsortPage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(
