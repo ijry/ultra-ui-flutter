@@ -6,11 +6,13 @@ import 'package:ultra_ui/ultra_ui.dart';
 import '../lib/pages/components_d/copy_page.dart';
 import '../lib/pages/components_d/box_page.dart';
 import '../lib/pages/components_d/cate_tab_page.dart';
+import '../lib/pages/components_d/dragsort_page.dart';
 import '../lib/pages/components_d/float_button_page.dart';
 import '../lib/pages/components_d/navbar_mini_page.dart';
 import '../lib/pages/components_d/pagination_page.dart';
 import '../lib/pages/components_d/qrcode_page.dart';
 import '../lib/pages/components_d/select_page.dart';
+import '../lib/pages/components_d/tree_page.dart';
 
 void main() {
   testWidgets('qrcode page renders source variants offline', (tester) async {
@@ -190,5 +192,69 @@ void main() {
     await tester.tap(find.text('20条/页'));
     await tester.pump();
     expect(find.text('每页：20'), findsOneWidget);
+  });
+
+  testWidgets('tree page expands and cascades checked children',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const TreePage(),
+      ),
+    );
+
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('tree-page-checkbox')),
+        matching: find.text('子节点一'),
+      ),
+      findsOneWidget,
+    );
+    await tester.tap(find.byKey(const ValueKey('up-tree-checkbox-root')));
+    await tester.pump();
+    expect(
+      find.text('已选：root,child-1,grandchild-1,child-2'),
+      findsOneWidget,
+    );
+    expect(find.textContaining('disabled'), findsNothing);
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('tree-page-checkbox')),
+        matching: find.text('禁用节点'),
+      ),
+      findsOneWidget,
+    );
+  });
+
+  testWidgets('dragsort page reorders with a real drag gesture',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const DragsortPage(),
+      ),
+    );
+
+    final first = find.byKey(const ValueKey('dragsort-page-item-0'));
+    final second = find.byKey(const ValueKey('dragsort-page-item-1'));
+    final firstHandle = find.byKey(const ValueKey('dragsort-page-handle-0'));
+    final dragState = tester.state<UPDragSortState>(
+      find.byKey(const ValueKey('dragsort-page-basic')),
+    );
+    expect(first, findsOneWidget);
+    expect(second, findsOneWidget);
+    expect(firstHandle, findsOneWidget);
+    final gesture = await tester.startGesture(tester.getCenter(firstHandle));
+    await tester.pump(const Duration(milliseconds: 100));
+    await gesture.moveBy(const Offset(0, 20));
+    await tester.pump(const Duration(milliseconds: 100));
+    await gesture.moveBy(const Offset(0, 60));
+    await tester.pump(const Duration(milliseconds: 100));
+    await gesture.moveBy(const Offset(0, 60));
+    await tester.pump(const Duration(milliseconds: 100));
+    await gesture.up();
+    await tester.pumpAndSettle();
+    expect(dragState.value, <String>['第二项', '第一项', '第三项']);
+    expect(find.text('排序：第二项,第一项,第三项'), findsOneWidget);
   });
 }
