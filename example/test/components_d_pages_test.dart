@@ -3,6 +3,7 @@ import 'package:flutter/services.dart';
 import 'package:flutter_test/flutter_test.dart';
 import 'package:ultra_ui/ultra_ui.dart';
 
+import '../lib/pages/components_d/barcode_page.dart';
 import '../lib/pages/components_d/copy_page.dart';
 import '../lib/pages/components_d/box_page.dart';
 import '../lib/pages/components_d/cate_tab_page.dart';
@@ -390,5 +391,30 @@ void main() {
       findsOneWidget,
     );
     expect(find.textContaining('滚动位置：'), findsOneWidget);
+  });
+
+  testWidgets('barcode page renders every source barcode variant',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const BarcodePage(),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('example-page-componentsD/barcode/barcode')),
+      findsOneWidget,
+    );
+    expect(find.byType(UPBarcode), findsNWidgets(8));
+    expect(
+      find.byKey(const ValueKey('barcode-page-code128')),
+      findsOneWidget,
+    );
+    expect(find.byKey(const ValueKey('barcode-page-ean5')), findsOneWidget);
+    expect(find.byKey(const ValueKey('barcode-page-ean2')), findsOneWidget);
+    expect(find.byKey(const ValueKey('barcode-page-custom')), findsOneWidget);
+    expect(find.text('自定义样式条形码'), findsOneWidget);
+    expect(find.text('CUSTOM123'), findsOneWidget);
   });
 }
