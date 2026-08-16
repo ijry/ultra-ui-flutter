@@ -133,10 +133,10 @@ testWidgets('city locate page resolves local location and selects a city',
 
 - [ ] **Step 2: Run the focused test and verify it fails**
 
-Run from the repository root:
+Run from `example/`:
 
 ```text
-flutter test example/test/components_d_pages_test.dart --plain-name "city locate page resolves local location and selects a city" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "city locate page resolves local location and selects a city" --reporter expanded
 ```
 
 Expected: FAIL at compilation because `CityLocatePage` and its import target
@@ -214,9 +214,11 @@ Flutter replacement.
 
 - [ ] **Step 4: Format and run the focused test**
 
+Run formatting from the repository root, then the test from `example/`:
+
 ```text
 dart format example/lib/pages/components_d/city_locate_page.dart example/test/components_d_pages_test.dart
-flutter test example/test/components_d_pages_test.dart --plain-name "city locate page resolves local location and selects a city" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "city locate page resolves local location and selects a city" --reporter expanded
 ```
 
 Expected: PASS. The callback reports `南京` after the post-frame location
@@ -280,8 +282,10 @@ testWidgets('title page renders source default and custom prefix variants',
 
 - [ ] **Step 2: Run the focused test and verify it fails**
 
+Run from `example/`:
+
 ```text
-flutter test example/test/components_d_pages_test.dart --plain-name "title page renders source default and custom prefix variants" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "title page renders source default and custom prefix variants" --reporter expanded
 ```
 
 Expected: FAIL at compilation because `TitlePage` is absent.
@@ -321,9 +325,11 @@ tap behavior because neither source example has one.
 
 - [ ] **Step 4: Format and run the focused test**
 
+Run formatting from the repository root, then the test from `example/`:
+
 ```text
 dart format example/lib/pages/components_d/title_page.dart example/test/components_d_pages_test.dart
-flutter test example/test/components_d_pages_test.dart --plain-name "title page renders source default and custom prefix variants" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "title page renders source default and custom prefix variants" --reporter expanded
 ```
 
 Expected: PASS.
@@ -393,8 +399,10 @@ testWidgets('pull refresh page responds to a real downward drag',
 
 - [ ] **Step 2: Run the focused test and verify it fails**
 
+Run from `example/`:
+
 ```text
-flutter test example/test/components_d_pages_test.dart --plain-name "pull refresh page responds to a real downward drag" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "pull refresh page responds to a real downward drag" --reporter expanded
 ```
 
 Expected: FAIL at compilation because `PullRefreshPage` is absent.
@@ -551,9 +559,11 @@ source examples.
 
 - [ ] **Step 4: Format and run the focused gesture test**
 
+Run formatting from the repository root, then the test from `example/`:
+
 ```text
 dart format example/lib/pages/components_d/pull_refresh_page.dart example/test/components_d_pages_test.dart
-flutter test example/test/components_d_pages_test.dart --plain-name "pull refresh page responds to a real downward drag" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "pull refresh page responds to a real downward drag" --reporter expanded
 ```
 
 Expected: PASS. The test reaches the component's actual drag handler and
@@ -624,8 +634,10 @@ testWidgets('virtual list page scrolls real visible rows', (tester) async {
 
 - [ ] **Step 2: Run the focused test and verify it fails**
 
+Run from `example/`:
+
 ```text
-flutter test example/test/components_d_pages_test.dart --plain-name "virtual list page scrolls real visible rows" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "virtual list page scrolls real visible rows" --reporter expanded
 ```
 
 Expected: FAIL at compilation because `VirtualListPage` is absent.
@@ -676,9 +688,11 @@ Use `ExamplePageScaffold(title: '虚拟列表')` and a route-keyed root
 
 - [ ] **Step 4: Format and run the focused scroll test**
 
+Run formatting from the repository root, then the test from `example/`:
+
 ```text
 dart format example/lib/pages/components_d/virtual_list_page.dart example/test/components_d_pages_test.dart
-flutter test example/test/components_d_pages_test.dart --plain-name "virtual list page scrolls real visible rows" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "virtual list page scrolls real visible rows" --reporter expanded
 ```
 
 Expected: PASS. The drag changes the widget's scroll position and visible
@@ -745,8 +759,10 @@ testWidgets('barcode page renders every source barcode variant',
 
 - [ ] **Step 2: Run the focused test and verify it fails**
 
+Run from `example/`:
+
 ```text
-flutter test example/test/components_d_pages_test.dart --plain-name "barcode page renders every source barcode variant" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "barcode page renders every source barcode variant" --reporter expanded
 ```
 
 Expected: FAIL at compilation because `BarcodePage` is absent.
@@ -850,9 +866,11 @@ Use exact titles `CODE128 条形码`, `EAN-13 条形码`,
 
 - [ ] **Step 4: Format and run the focused test**
 
+Run formatting from the repository root, then the test from `example/`:
+
 ```text
 dart format example/lib/pages/components_d/barcode_page.dart example/test/components_d_pages_test.dart
-flutter test example/test/components_d_pages_test.dart --plain-name "barcode page renders every source barcode variant" --reporter expanded
+flutter test test/components_d_pages_test.dart --plain-name "barcode page renders every source barcode variant" --reporter expanded
 ```
 
 Expected: PASS. No package encoder change is made for EAN5/EAN2.
@@ -915,8 +933,10 @@ callback can settle.
 
 - [ ] **Step 2: Run the route catalog test and verify it fails**
 
+Run from `example/`:
+
 ```text
-flutter test example/test/route_catalog_test.dart --reporter expanded
+flutter test test/route_catalog_test.dart --reporter expanded
 ```
 
 Expected: FAIL because the five source IDs are not yet registered and the
@@ -992,9 +1012,11 @@ for VirtualList, PullRefresh, Title, Barcode, and CityLocate from
 
 - [ ] **Step 4: Format and verify route registration**
 
+Run formatting from the repository root, then the test from `example/`:
+
 ```text
 dart format example/lib/routes/example_catalog.dart example/lib/routes/example_preview_catalog.dart example/test/route_catalog_test.dart
-flutter test example/test/route_catalog_test.dart --reporter expanded
+flutter test test/route_catalog_test.dart --reporter expanded
 ```
 
 Expected: PASS. The literal list contains 15 Components D IDs in source order,
@@ -1021,6 +1043,8 @@ git commit -m "test(example): register components d batch 3 routes"
 
 - [ ] **Step 1: Format all changed Dart files**
 
+Run from the repository root:
+
 ```text
 dart format example/lib/pages/components_d/city_locate_page.dart example/lib/pages/components_d/title_page.dart example/lib/pages/components_d/pull_refresh_page.dart example/lib/pages/components_d/virtual_list_page.dart example/lib/pages/components_d/barcode_page.dart example/lib/routes/example_catalog.dart example/lib/routes/example_preview_catalog.dart example/test/components_d_pages_test.dart example/test/route_catalog_test.dart
 ```
@@ -1030,9 +1054,11 @@ steps.
 
 - [ ] **Step 2: Run focused example regressions**
 
+Run from `example/`:
+
 ```text
-flutter test example/test/components_d_pages_test.dart --reporter expanded
-flutter test example/test/route_catalog_test.dart --reporter expanded
+flutter test test/components_d_pages_test.dart --reporter expanded
+flutter test test/route_catalog_test.dart --reporter expanded
 ```
 
 Expected: all existing ten Components D tests plus the five new page tests
@@ -1040,11 +1066,14 @@ pass, and the catalog test reports 98 completed routes.
 
 - [ ] **Step 3: Run full Flutter regression and analysis**
 
+Run the first two commands from `example/`, then the final two from
+`packages/ultra_ui/`:
+
 ```text
-flutter test example
-flutter analyze example
-flutter test packages/ultra_ui
-flutter analyze packages/ultra_ui
+flutter test
+flutter analyze
+flutter test
+flutter analyze
 ```
 
 Expected: example tests and analysis pass. Package tests pass. If the package
@@ -1052,6 +1081,9 @@ analyzer reports pre-existing warnings and exits nonzero, record them without
 changing package files; this batch must introduce no package diagnostics.
 
 - [ ] **Step 4: Check the final diff and build Android debug APK**
+
+Run `git diff --check` and `git status --short` from the repository root;
+run the Android build from `example/`:
 
 ```text
 git diff --check
