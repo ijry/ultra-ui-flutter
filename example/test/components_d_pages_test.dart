@@ -11,6 +11,7 @@ import '../lib/pages/components_d/dragsort_page.dart';
 import '../lib/pages/components_d/float_button_page.dart';
 import '../lib/pages/components_d/navbar_mini_page.dart';
 import '../lib/pages/components_d/pagination_page.dart';
+import '../lib/pages/components_d/pull_refresh_page.dart';
 import '../lib/pages/components_d/qrcode_page.dart';
 import '../lib/pages/components_d/select_page.dart';
 import '../lib/pages/components_d/title_page.dart';
@@ -315,5 +316,48 @@ void main() {
     expect(find.text('等级3'), findsOneWidget);
     expect(find.byType(UPTitle), findsNWidgets(2));
     expect(find.byType(UPIcon), findsOneWidget);
+  });
+
+  testWidgets('pull refresh page responds to a real downward drag',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const PullRefreshPage(),
+      ),
+    );
+
+    expect(
+      find.byKey(
+        const ValueKey('example-page-componentsD/pullRefresh/pullRefresh'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('pull-refresh-page-basic')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('pull-refresh-page-custom')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('pull-refresh-page-virtual')),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('pull-refresh-page-loadmore')),
+      findsOneWidget,
+    );
+
+    final basic = find.byKey(const ValueKey('pull-refresh-page-basic'));
+    final gesture = await tester.startGesture(tester.getCenter(basic));
+    await gesture.moveBy(const Offset(0, 160));
+    await tester.pump();
+    await gesture.up();
+    await tester.pump();
+
+    expect(find.text('基础刷新次数：1'), findsOneWidget);
+    await tester.pump(const Duration(milliseconds: 300));
   });
 }
