@@ -16,6 +16,7 @@ import '../lib/pages/components_d/qrcode_page.dart';
 import '../lib/pages/components_d/select_page.dart';
 import '../lib/pages/components_d/title_page.dart';
 import '../lib/pages/components_d/tree_page.dart';
+import '../lib/pages/components_d/virtual_list_page.dart';
 
 void main() {
   testWidgets('qrcode page renders source variants offline', (tester) async {
@@ -359,5 +360,35 @@ void main() {
 
     expect(find.text('基础刷新次数：1'), findsOneWidget);
     await tester.pump(const Duration(milliseconds: 300));
+  });
+
+  testWidgets('virtual list page scrolls real visible rows', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const VirtualListPage(),
+      ),
+    );
+    await tester.pump();
+
+    expect(
+      find.byKey(
+        const ValueKey('example-page-componentsD/virtualList/virtualList'),
+      ),
+      findsOneWidget,
+    );
+    final list = find.byKey(const ValueKey('virtual-list-page-basic'));
+    expect(list, findsOneWidget);
+    expect(find.text('Item 0'), findsOneWidget);
+
+    await tester.drag(list, const Offset(0, -420));
+    await tester.pump();
+
+    expect(find.text('Item 8'), findsWidgets);
+    expect(
+      find.byKey(const ValueKey('virtual-list-page-result')),
+      findsOneWidget,
+    );
+    expect(find.textContaining('滚动位置：'), findsOneWidget);
   });
 }
