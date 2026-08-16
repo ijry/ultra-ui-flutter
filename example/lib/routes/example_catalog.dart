@@ -83,16 +83,21 @@ import '../pages/components_c/datetime_picker_page.dart';
 import '../pages/components_c/modal_page.dart';
 import '../pages/components_c/picker_page.dart';
 import '../pages/components_c/subsection_page.dart';
+import '../pages/components_d/barcode_page.dart';
 import '../pages/components_d/box_page.dart';
 import '../pages/components_d/cate_tab_page.dart';
+import '../pages/components_d/city_locate_page.dart';
 import '../pages/components_d/copy_page.dart';
 import '../pages/components_d/dragsort_page.dart';
 import '../pages/components_d/float_button_page.dart';
 import '../pages/components_d/navbar_mini_page.dart';
 import '../pages/components_d/pagination_page.dart';
+import '../pages/components_d/pull_refresh_page.dart';
 import '../pages/components_d/qrcode_page.dart';
 import '../pages/components_d/select_page.dart';
+import '../pages/components_d/title_page.dart';
 import '../pages/components_d/tree_page.dart';
+import '../pages/components_d/virtual_list_page.dart';
 import 'example_route.dart';
 
 const List<String> componentARouteIds = <String>[
@@ -773,6 +778,41 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsD,
     builder: _buildDragsort,
   ),
+  const ExampleRoute(
+    id: 'componentsD/cityLocate/cityLocate',
+    sourcePath: 'pages/componentsD/cityLocate/cityLocate',
+    title: '城市定位',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildCityLocate,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/title/title',
+    sourcePath: 'pages/componentsD/title/title',
+    title: '标题',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildTitle,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/pullRefresh/pullRefresh',
+    sourcePath: 'pages/componentsD/pullRefresh/pullRefresh',
+    title: '下拉刷新',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildPullRefresh,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/virtualList/virtualList',
+    sourcePath: 'pages/componentsD/virtualList/virtualList',
+    title: '虚拟列表',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildVirtualList,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/barcode/barcode',
+    sourcePath: 'pages/componentsD/barcode/barcode',
+    title: '条码',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildBarcode,
+  ),
 ];
 
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
@@ -868,6 +908,11 @@ Widget _buildSelect(BuildContext context) => const SelectPage();
 Widget _buildPagination(BuildContext context) => const PaginationPage();
 Widget _buildTree(BuildContext context) => const TreePage();
 Widget _buildDragsort(BuildContext context) => const DragsortPage();
+Widget _buildCityLocate(BuildContext context) => const CityLocatePage();
+Widget _buildTitle(BuildContext context) => const TitlePage();
+Widget _buildPullRefresh(BuildContext context) => const PullRefreshPage();
+Widget _buildVirtualList(BuildContext context) => const VirtualListPage();
+Widget _buildBarcode(BuildContext context) => const BarcodePage();
 
 ExampleRoute findExampleRoute(String id) {
   return exampleRoutes.firstWhere(

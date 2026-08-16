@@ -18,6 +18,11 @@ const List<String> componentDRouteIds = <String>[
   'componentsD/pagination/pagination',
   'componentsD/tree/tree',
   'componentsD/dragsort/dragsort',
+  'componentsD/cityLocate/cityLocate',
+  'componentsD/title/title',
+  'componentsD/pullRefresh/pullRefresh',
+  'componentsD/virtualList/virtualList',
+  'componentsD/barcode/barcode',
 ];
 
 void main() {
@@ -95,7 +100,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(93));
+    expect(exampleRoutes, hasLength(98));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -245,6 +250,11 @@ void main() {
         'pages/componentsD/pagination/pagination',
         'pages/componentsD/tree/tree',
         'pages/componentsD/dragsort/dragsort',
+        'pages/componentsD/cityLocate/cityLocate',
+        'pages/componentsD/title/title',
+        'pages/componentsD/pullRefresh/pullRefresh',
+        'pages/componentsD/virtualList/virtualList',
+        'pages/componentsD/barcode/barcode',
       }),
     );
   });
@@ -427,6 +437,11 @@ void main() {
               'pages/componentsD/pagination/pagination',
               'pages/componentsD/tree/tree',
               'pages/componentsD/dragsort/dragsort',
+              'pages/componentsD/cityLocate/cityLocate',
+              'pages/componentsD/title/title',
+              'pages/componentsD/pullRefresh/pullRefresh',
+              'pages/componentsD/virtualList/virtualList',
+              'pages/componentsD/barcode/barcode',
             }.contains(route.sourcePath),
           )
           .every((route) => route.available),

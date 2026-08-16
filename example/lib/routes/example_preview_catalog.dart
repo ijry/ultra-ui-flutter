@@ -172,7 +172,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/virtualList/virtualList',
       title: 'VirtualList 虚拟列表',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/progress/progress',
       title: 'Progress 进度条',
@@ -272,7 +272,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/pullRefresh/pullRefresh',
       title: 'PullRefresh 下拉刷新',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/signature/signature',
       title: 'Signature 签名签字',
@@ -352,7 +352,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/title/title',
       title: 'Title 标题',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/shortVideo/shortVideo',
       title: 'ShortVideo 短视频切换',
@@ -492,7 +492,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/barcode/barcode',
       title: 'Barcode 条码',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/colorPicker/colorPicker',
       title: 'ColorPicker 颜色选择器',
@@ -512,7 +512,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       sourcePath: 'pages/componentsD/cityLocate/cityLocate',
       title: 'CityLocate 城市定位',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/pdfReader/pdfReader',
       title: 'PdfReader PDF阅读器',
