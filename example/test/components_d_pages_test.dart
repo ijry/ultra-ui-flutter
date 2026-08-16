@@ -6,6 +6,7 @@ import 'package:ultra_ui/ultra_ui.dart';
 import '../lib/pages/components_d/copy_page.dart';
 import '../lib/pages/components_d/box_page.dart';
 import '../lib/pages/components_d/cate_tab_page.dart';
+import '../lib/pages/components_d/city_locate_page.dart';
 import '../lib/pages/components_d/dragsort_page.dart';
 import '../lib/pages/components_d/float_button_page.dart';
 import '../lib/pages/components_d/navbar_mini_page.dart';
@@ -256,5 +257,39 @@ void main() {
     await tester.pumpAndSettle();
     expect(dragState.value, <String>['第二项', '第一项', '第三项']);
     expect(find.text('排序：第二项,第一项,第三项'), findsOneWidget);
+  });
+
+  testWidgets('city locate page resolves local location and selects a city',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const CityLocatePage(),
+      ),
+    );
+    await tester.pump();
+    await tester.pump();
+
+    expect(
+      find.byKey(
+        const ValueKey('example-page-componentsD/cityLocate/cityLocate'),
+      ),
+      findsOneWidget,
+    );
+    expect(
+      find.byKey(const ValueKey('city-locate-page-basic')),
+      findsOneWidget,
+    );
+    expect(find.text('当前定位：南京'), findsOneWidget);
+
+    final shanghai = find.descendant(
+      of: find.byKey(const ValueKey('city-locate-page-basic')),
+      matching: find.text('上海'),
+    );
+    expect(shanghai, findsWidgets);
+    await tester.tap(shanghai.first);
+    await tester.pump();
+
+    expect(find.text('已选择：上海'), findsOneWidget);
   });
 }
