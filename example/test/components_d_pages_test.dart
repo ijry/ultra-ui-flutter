@@ -13,6 +13,7 @@ import '../lib/pages/components_d/navbar_mini_page.dart';
 import '../lib/pages/components_d/pagination_page.dart';
 import '../lib/pages/components_d/qrcode_page.dart';
 import '../lib/pages/components_d/select_page.dart';
+import '../lib/pages/components_d/title_page.dart';
 import '../lib/pages/components_d/tree_page.dart';
 
 void main() {
@@ -291,5 +292,28 @@ void main() {
     await tester.pump();
 
     expect(find.text('已选择：上海'), findsOneWidget);
+  });
+
+  testWidgets('title page renders source default and custom prefix variants',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const TitlePage(),
+      ),
+    );
+
+    expect(
+      find.byKey(const ValueKey('example-page-componentsD/title/title')),
+      findsOneWidget,
+    );
+    expect(find.text('默认'), findsOneWidget);
+    expect(find.text('自定义前缀'), findsOneWidget);
+    expect(find.byKey(const ValueKey('title-page-default')), findsOneWidget);
+    expect(find.byKey(const ValueKey('title-page-prefix')), findsOneWidget);
+    expect(find.text('默认标题'), findsOneWidget);
+    expect(find.text('等级3'), findsOneWidget);
+    expect(find.byType(UPTitle), findsNWidgets(2));
+    expect(find.byType(UPIcon), findsOneWidget);
   });
 }
