@@ -16,12 +16,12 @@
 | 指标 | 数值 |
 |---|---|
 | 源组件总数 | 140 |
-| ✅ 已复刻 | 117 |
+| ✅ 已复刻 | 119 |
 | 🟡 部分 | 21 |
-| ⛔ 未复刻 | 3 |
-| props 覆盖 | 1524/1579 |
-| emits 覆盖 | 293/332 |
-| methods + computed 覆盖 | 1201/1333 |
+| ⛔ 未复刻 | 1 |
+| props 覆盖 | 1543/1579 |
+| emits 覆盖 | 297/332 |
+| methods + computed 覆盖 | 1210/1333 |
 
 ### 状态含义
 
@@ -213,10 +213,10 @@
 | `u-canvas` | `UPCanvas` | 🟡 部分 | 7/7 | 4/4 | 55/70 | Flutter `CustomPainter` 替代 uni canvas context；缺 methods: `arcTo`, `createPattern`, `ellipse`, `estimateTextWidth` 等 15 |
 | `u-message-input` | `UPMessageInput` | ✅ 已复刻 | 12/12 | 2/2 | 5/5 | 接口与样式对齐 |
 | `u-refresh-virtual-list` | `UPRefreshVirtualList` | ✅ 已复刻 | 5/5 | — | 5/5 | 接口与样式对齐 |
-| `u-root-toast-host` | `—` | ⛔ 未复刻 | — | — | — | **待实现**；替代 `uni.$u.setRootToastRef`，注册全局 toast/notify 宿主 |
+| `u-root-toast-host` | `UPRootToastHost` | ✅ 已复刻 | — | — | — | 替代 `uni.$u.setRootToastRef`，注册全局 toast/notify 宿主 |
 | `u-safe-bottom` | `UPSafeBottom` | ✅ 已复刻 | — | — | 1/1 | 接口与样式对齐 |
 | `u-section` | `UPSection` | ✅ 已复刻 | — | — | — | 接口与样式对齐 |
 | `u-status-bar` | `UPStatusBar` | ✅ 已复刻 | 2/2 | 1/1 | 1/1 | 接口与样式对齐 |
-| `u-tabs-pro` | `—` | ⛔ 未复刻 | 0/19 | 0/4 | 0/9 | **待实现** |
+| `u-tabs-pro` | `UPTabsPro` | ✅ 已复刻 | 19/19 | 4/4 | 9/9 | 接口与样式对齐 |
 | `u-toolbar` | `UPToolbar` | ✅ 已复刻 | 7/7 | 2/2 | 2/2 | 接口与样式对齐 |
 | `u-view` | `UPView` | ✅ 已复刻 | — | 1/1 | 2/2 | 接口与样式对齐 |
