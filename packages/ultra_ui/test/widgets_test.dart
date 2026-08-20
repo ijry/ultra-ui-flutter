@@ -30078,4 +30078,238 @@ void main() {
 
     expect(tester.widget<UPOverlay>(find.byType(UPOverlay)).duration, 350);
   });
+
+  testWidgets('UPTabsPro clamps current into the source list range',
+      (tester) async {
+    final key = GlobalKey<UPTabsProState>();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPTabsPro(
+            key: key,
+            current: 9,
+            list: const ['A', 'B', 'C'],
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    // Source normalizeCurrent clamps to list.length - 1.
+    expect(key.currentState!.innerCurrent, 2);
+    expect(key.currentState!.currentItem, 'C');
+
+    // Source Number() rejection: a non-numeric value falls back to 0.
+    expect(key.currentState!.normalizeCurrent('abc'), 0);
+    expect(key.currentState!.normalizeCurrent(-4), 0);
+    expect(key.currentState!.normalizeCurrent('1'), 1);
+  });
+
+  testWidgets('UPTabsPro reports the source item and value on change',
+      (tester) async {
+    const list = [
+      {'name': '推荐'},
+      {'name': '关注'},
+    ];
+    final key = GlobalKey<UPTabsProState>();
+    dynamic changedItem;
+    var changedIndex = -1;
+    final updates = <num>[];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPTabsPro(
+            key: key,
+            list: list,
+            onChange: (item, index) {
+              changedItem = item;
+              changedIndex = index;
+            },
+            onUpdateCurrent: updates.add,
+          ),
+        ),
+      ),
+    );
+    await tester.tap(find.text('关注'));
+    await tester.pumpAndSettle();
+
+    expect(changedIndex, 1);
+    expect(changedItem, list[1]);
+    expect(key.currentState!.innerCurrent, 1);
+    // Source computed currentValue reads through keyName.
+    expect(key.currentState!.currentValue, '关注');
+    // Source binds both update:current and change, so it reports twice.
+    expect(updates, [1, 1]);
+  });
+
+  testWidgets('UPTabsPro renders the source content slot scope',
+      (tester) async {
+    const list = [
+      {'name': '推荐'},
+      {'name': '关注'},
+    ];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPTabsPro(
+            list: list,
+            contentBuilder: (scope) => Text(
+              'pane ${scope.index} ${scope.value} of ${scope.list.length}',
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('pane 0 推荐 of 2'), findsOneWidget);
+
+    await tester.tap(find.text('关注'));
+    await tester.pumpAndSettle();
+    expect(find.text('pane 1 关注 of 2'), findsOneWidget);
+  });
+
+  testWidgets('UPTabsPro re-clamps and reports when the list shrinks',
+      (tester) async {
+    final key = GlobalKey<UPTabsProState>();
+    final updates = <num>[];
+    var list = const ['A', 'B', 'C', 'D'];
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: StatefulBuilder(
+            builder: (context, setState) => Column(
+              children: [
+                UPTabsPro(
+                  key: key,
+                  current: 3,
+                  list: list,
+                  onUpdateCurrent: updates.add,
+                ),
+                GestureDetector(
+                  onTap: () => setState(() => list = const ['A', 'B']),
+                  child: const Text('shrink'),
+                ),
+              ],
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+    expect(key.currentState!.innerCurrent, 3);
+    expect(updates, isEmpty);
+
+    await tester.tap(find.text('shrink'));
+    await tester.pumpAndSettle();
+
+    // Source list watcher clamps and emits update:current only when it moves.
+    expect(key.currentState!.innerCurrent, 1);
+    expect(updates, [1]);
+  });
+
+  testWidgets('UPTabsPro hides the content pane when showContent is false',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPTabsPro(
+            list: const ['A', 'B'],
+            showContent: false,
+            contentBuilder: (scope) => const Text('hidden pane'),
+          ),
+        ),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(find.text('hidden pane'), findsNothing);
+    expect(find.text('A'), findsOneWidget);
+  });
+
+  testWidgets('UPRootToastHost registers and clears the source global refs',
+      (tester) async {
+    addTearDown(() {
+      UPRootToastRegistry.setRootToastRef(null);
+      UPRootToastRegistry.setRootNotifyRef(null);
+    });
+
+    // Source guards on typeof === 'function', so calls without a host no-op.
+    expect(UPRootToastRegistry.hasToastRef, isFalse);
+    expect(UPRootToastRegistry.toast(message: 'no host'), isFalse);
+    expect(UPRootToastRegistry.notify(message: 'no host'), isFalse);
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: UPRootToastHost(child: Text('app body')),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    // Source onMounted registered both refs.
+    expect(UPRootToastRegistry.hasToastRef, isTrue);
+    expect(UPRootToastRegistry.hasNotifyRef, isTrue);
+    expect(find.text('app body'), findsOneWidget);
+
+    // Source onBeforeUnmount clears both refs.
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(body: Text('replaced')),
+      ),
+    );
+    await tester.pump();
+
+    expect(UPRootToastRegistry.hasToastRef, isFalse);
+    expect(UPRootToastRegistry.hasNotifyRef, isFalse);
+  });
+
+  testWidgets('UPRootToastHost drives toast and notify without a local widget',
+      (tester) async {
+    addTearDown(() {
+      UPRootToastRegistry.setRootToastRef(null);
+      UPRootToastRegistry.setRootNotifyRef(null);
+      UPToast.hide();
+    });
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: UPRootToastHost(child: Text('app body')),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    expect(UPRootToastRegistry.toast(message: 'global toast'), isTrue);
+    await tester.pump();
+    expect(find.text('global toast'), findsOneWidget);
+
+    expect(UPRootToastRegistry.hideToast(), isTrue);
+    await tester.pump();
+    expect(find.text('global toast'), findsNothing);
+
+    expect(
+      UPRootToastRegistry.notify(message: 'global notify', type: 'success'),
+      isTrue,
+    );
+    await tester.pump();
+    expect(find.text('global notify'), findsOneWidget);
+    expect(UPRootToastRegistry.notifyRef!.open, isTrue);
+
+    // UPNotify hides through UPTransition, which keeps its child mounted, so
+    // assert the closed state the way the existing UPNotify tests do.
+    expect(UPRootToastRegistry.closeNotify(), isTrue);
+    await tester.pumpAndSettle();
+    expect(UPRootToastRegistry.notifyRef!.open, isFalse);
+  });
 }
