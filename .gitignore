@@ -1,0 +1,7 @@
+# Generated scan data for docs/component-progress.md (regenerable via tool/).
+.scan/
+
+# Dart / Flutter build artifacts
+.dart_tool/
+build/
+pubspec.lock
