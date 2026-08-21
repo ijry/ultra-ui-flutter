@@ -290,10 +290,29 @@ class UPWaterfallState extends State<UPWaterfall> {
       clear(emit: false);
       return;
     }
+    // Source only takes the cheap append path when the new list starts with the
+    // old one; otherwise the items were reordered or replaced and must be
+    // redistributed, or stale entries would linger in the columns.
+    if (!isPureAppend(nextInput, previousInput)) {
+      // redistributeData re-reads the widget's current value, which is already
+      // nextInput at this point.
+      redistributeData();
+      return;
+    }
     final startIndex = previousInput.isEmpty ? 0 : previousInput.length;
     if (startIndex < nextInput.length) {
       handleData(nextInput.sublist(startIndex));
     }
+  }
+
+  /// Source `isPureAppend` — whether [newData] merely extends [oldData].
+  bool isPureAppend(List<dynamic>? newData, List<dynamic>? oldData) {
+    if (oldData == null || oldData.isEmpty) return true;
+    if (newData == null || newData.length < oldData.length) return false;
+    for (var i = 0; i < oldData.length; i++) {
+      if (jsonEncode(oldData[i]) != jsonEncode(newData[i])) return false;
+    }
+    return true;
   }
 
   List<dynamic> _cloneSourceList(List source) =>

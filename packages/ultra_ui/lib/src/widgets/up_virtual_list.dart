@@ -101,6 +101,9 @@ class UPVirtualListState extends State<UPVirtualList> {
       .clamp(0, widget.listData.length)
       .toInt();
 
+  /// Source computed `visibleCount` — rendered rows including the buffer.
+  int get visibleCount => _remain + widget.buffer;
+
   int get _windowEnd => (_windowStart + _remain + widget.buffer)
       .clamp(0, widget.listData.length)
       .toInt();

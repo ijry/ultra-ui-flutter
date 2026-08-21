@@ -21016,7 +21016,7 @@ void main() {
     expect(original.first['nested']['title'], 'source');
   });
 
-  testWidgets('UPWaterfall source watcher appends only a changed list tail',
+  testWidgets('UPWaterfall redistributes when a leading item changed',
       (tester) async {
     final widgetKey = GlobalKey<UPWaterfallState>();
     var values = <Map<String, dynamic>>[
@@ -21058,13 +21058,16 @@ void main() {
     });
     await tester.pumpAndSettle();
 
+    // Item 1's height changed from 100 to 20, so this is not a pure append:
+    // the source rebuilds the columns rather than only placing the new tail.
+    // Shortest-column-first over heights 20/20/1 puts 1 and 3 together.
     expect(
       widgetKey.currentState!.columns
           .map((column) => column.map((item) => item['id']).toList())
           .toList(),
       [
-        [1],
-        [2, 3],
+        [1, 3],
+        [2],
       ],
     );
   });
