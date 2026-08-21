@@ -93,10 +93,13 @@ class UPSwipeActionItem extends StatefulWidget {
     this.threshold = 20,
     this.options = const [],
     this.duration = 300,
+    this.scrolling = false,
     this.onClick,
     this.onOpen,
     this.onClose,
     this.onUpdateShow,
+    this.onScrolling,
+    this.onUpdateScrolling,
     this.button,
     required this.child,
     this.customStyle,
@@ -114,6 +117,18 @@ class UPSwipeActionItem extends StatefulWidget {
   final ValueChanged<dynamic>? onOpen;
   final ValueChanged<dynamic>? onClose;
   final ValueChanged<bool>? onUpdateShow;
+
+  /// Source prop `scrolling` — whether a horizontal swipe is in progress.
+  /// Bound with `v-model:scrolling` in the source so the page can pause its own
+  /// scrolling while the row is being dragged.
+  final bool scrolling;
+
+  /// Source emit `scrolling`.
+  final ValueChanged<bool>? onScrolling;
+
+  /// Source emit `update:scrolling`.
+  final ValueChanged<bool>? onUpdateScrolling;
+
   final Widget? button;
   final Widget child;
   final BoxDecoration? customStyle;
@@ -127,6 +142,9 @@ class UPSwipeActionItemState extends State<UPSwipeActionItem> {
   double _actionsWidth = 0;
   bool _open = false;
   bool _dragging = false;
+
+  /// Source data `innerScrolling`, seeded from the prop.
+  late bool _innerScrolling = widget.scrolling;
   bool _dragStartedOpen = false;
   double _dragDeltaX = 0;
   bool bindingUnbound = false;
@@ -159,10 +177,22 @@ class UPSwipeActionItemState extends State<UPSwipeActionItem> {
         close();
       }
     }
+    // Source watcher: an external scrolling value updates the cache silently,
+    // without re-emitting.
+    if (oldWidget.scrolling != widget.scrolling) {
+      _innerScrolling = widget.scrolling;
+    }
+    // Source watcher: becoming disabled cancels an in-flight swipe.
+    if (!oldWidget.disabled && widget.disabled) {
+      setScrolling(false);
+    }
   }
 
   @override
   void dispose() {
+    // Source beforeUnmount closes the row and clears the swipe flag, so a host
+    // paused on `scrolling` is not left stuck.
+    setScrolling(false);
     _parent?.unregister(this);
     super.dispose();
   }
@@ -322,6 +352,36 @@ class UPSwipeActionItemState extends State<UPSwipeActionItem> {
     }
   }
 
+  /// Source `setScrolling` — dedupes so one gesture cannot emit twice.
+  void setScrolling(dynamic value) {
+    final next = value == true;
+    if (_innerScrolling == next) return;
+    _innerScrolling = next;
+    widget.onUpdateScrolling?.call(next);
+    widget.onScrolling?.call(next);
+  }
+
+  /// Source data `innerScrolling`.
+  bool get innerScrolling => _innerScrolling;
+
+  /// Source computed `defaultButtonBgColor`.
+  Color defaultButtonBgColor(BuildContext context) {
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark ? const Color(0xFF4B5563) : const Color(0xFFC7C6CD);
+  }
+
+  /// Source computed `defaultButtonColor`.
+  Color defaultButtonColor(BuildContext context) => const Color(0xFFFFFFFF);
+
+  /// Source computed `wxsInit` — the prop list the source re-measures on.
+  List<dynamic> get wxsInit => <dynamic>[
+        widget.disabled,
+        widget.autoClose,
+        widget.threshold,
+        widget.options,
+        widget.duration,
+      ];
+
   void _onDragUpdate(DragUpdateDetails d) {
     if (widget.disabled || _actionsWidth <= 0) return;
     if (!_dragging) _beginDrag();
@@ -330,6 +390,7 @@ class UPSwipeActionItemState extends State<UPSwipeActionItem> {
 
   void _onDragEnd(DragEndDetails d) {
     _endDrag();
+    setScrolling(false);
   }
 
   void _beginDrag() {
@@ -337,6 +398,7 @@ class UPSwipeActionItemState extends State<UPSwipeActionItem> {
     _dragging = true;
     _dragStartedOpen = _open;
     _dragDeltaX = 0;
+    setScrolling(true);
     _parent?.closeOther(this);
   }
 
@@ -432,18 +494,16 @@ class UPSwipeActionItemState extends State<UPSwipeActionItem> {
     final hasRadius = style['borderRadius'] != null &&
         '${style['borderRadius']}'.trim().isNotEmpty;
     final radius = hasRadius ? UPUtils.getPx(style['borderRadius']) : 0.0;
+    // Source defaultButtonBgColor / defaultButtonColor.
+    final fallbackBg = defaultButtonBgColor(context);
     final bg = UPUtils.parseColor(
           style['backgroundColor'],
-          fallback: Theme.of(context).brightness == Brightness.dark
-              ? const Color(0xFF4B5563)
-              : const Color(0xFFC7C6CD),
+          fallback: fallbackBg,
         ) ??
-        (Theme.of(context).brightness == Brightness.dark
-            ? const Color(0xFF4B5563)
-            : const Color(0xFFC7C6CD));
-    final color =
-        UPUtils.parseColor(style['color'], fallback: const Color(0xFFFFFFFF)) ??
-            const Color(0xFFFFFFFF);
+        fallbackBg;
+    final fallbackColor = defaultButtonColor(context);
+    final color = UPUtils.parseColor(style['color'], fallback: fallbackColor) ??
+        fallbackColor;
     final fontSize =
         style['fontSize'] != null ? UPUtils.getPx(style['fontSize']) : 16.0;
     final iconSize = map['iconSize'] != null
