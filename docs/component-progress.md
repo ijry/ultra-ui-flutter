@@ -16,12 +16,12 @@
 | 指标 | 数值 |
 |---|---|
 | 源组件总数 | 140 |
-| ✅ 已复刻 | 127 |
-| 🟡 部分 | 14 |
+| ✅ 已复刻 | 128 |
+| 🟡 部分 | 13 |
 | ⛔ 未复刻 | 0 |
 | props 覆盖 | 1580/1581 |
 | emits 覆盖 | 329/332 |
-| methods + computed 覆盖 | 1260/1341 |
+| methods + computed 覆盖 | 1266/1341 |
 
 ### 状态含义
 
@@ -167,7 +167,7 @@
 | `u-dropdown` | `UPDropdown` | ✅ 已复刻 | 11/11 | 2/2 | 11/11 | 接口与样式对齐 |
 | `↳ u-dropdown-item` | `UPDropdownItem` | ✅ 已复刻 | 7/7 | 2/2 | 3/3 | 接口与样式对齐 |
 | `u-tabbar` | `UPTabbar` | ✅ 已复刻 | 17/17 | — | 4/4 | 接口与样式对齐 |
-| `↳ u-tabbar-item` | `UPTabbarItem` | 🟡 部分 | 17/17 | 2/2 | 18/24 | 缺 methods: `hasMidButtonText`, `midButtonBorderCircleStyle`, `midButtonBorderClipHeight`, `midButtonIconStyle` 等 6 |
+| `↳ u-tabbar-item` | `UPTabbarItem` | ✅ 已复刻 | 17/17 | 2/2 | 24/24 | 接口与样式对齐 |
 | `u-navbar` | `UPNavbar` | ✅ 已复刻 | 20/20 | 2/2 | 15/15 | 接口与样式对齐 |
 | `u-navbar-mini` | `UPNavbarMini` | ✅ 已复刻 | 9/9 | 2/2 | 2/2 | 接口与样式对齐 |
 | `u-tabs` | `UPTabs` | ✅ 已复刻 | 14/14 | 4/4 | 15/15 | 接口与样式对齐 |
