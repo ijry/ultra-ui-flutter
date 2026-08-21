@@ -9122,8 +9122,11 @@ void main() {
 """);
     expect(html.contains('<table>'), isTrue);
     expect(html.contains('<del>gone</del>') || html.contains('gone'), isTrue);
-    expect(html.contains('data-task="1"'), isTrue);
-    expect(html.contains('data-task="0"'), isTrue);
+    // Task lists come through as real checkbox inputs, matching the `marked`
+    // output the source component produces, rather than a private data-task
+    // attribute. UPParse accepts both forms.
+    expect(RegExp(r'<input[^>]*type="checkbox"').allMatches(html).length, 2);
+    expect(html.contains('checked'), isTrue);
   });
 
   testWidgets('UPMarkdown renders table and task list', (tester) async {
@@ -9150,6 +9153,10 @@ void main() {
     expect(find.textContaining('tom'), findsOneWidget);
     expect(find.textContaining('done item'), findsOneWidget);
     expect(find.textContaining('strike me'), findsOneWidget);
+    // The parser emits real checkbox inputs; UPParse must still resolve the
+    // checked and unchecked states rather than dropping them.
+    expect(find.byKey(const ValueKey('parse-task-1-1')), findsOneWidget);
+    expect(find.byKey(const ValueKey('parse-task-0-2')), findsOneWidget);
   });
 
   testWidgets('UPPoster export with image and qrcode views', (tester) async {

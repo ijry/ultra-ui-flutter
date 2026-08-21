@@ -1,4 +1,5 @@
 import 'package:flutter/widgets.dart';
+import 'package:markdown/markdown.dart' as md;
 
 import 'up_parse.dart';
 
@@ -115,197 +116,38 @@ class UPMarkdown extends StatelessWidget {
   void emitPlay([dynamic event]) => onPlay?.call(event ?? true);
   void emitError([dynamic event]) => onError?.call(event ?? true);
 
-  String _toHtml(String md) {
-    if (md.isEmpty) return '';
-    var s = md.replaceAll('\r\n', '\n');
+  /// Markdown -> HTML.
+  ///
+  /// The source component delegates parsing to the `marked` library and only
+  /// post-processes code blocks, so this uses the Dart `markdown` package the
+  /// same way rather than hand-rolling a parser. `gitHubFlavored` is the
+  /// extension set whose output matches the source bundle's: GFM tables,
+  /// strikethrough, fenced code and task lists, with no heading anchor ids.
+  String _toHtml(String source) {
+    if (source.isEmpty) return '';
+    final html = md.markdownToHtml(
+      source,
+      extensionSet: md.ExtensionSet.gitHubFlavored,
+    );
+    return showLineNumber ? _numberCodeBlocks(html) : html;
+  }
 
-    // fenced code
-    s = s.replaceAllMapped(RegExp(r'```([\w+-]*)\n([\s\S]*?)```'), (m) {
-      var code = (m.group(2) ?? '')
-          .replaceAll('&', '&amp;')
-          .replaceAll('<', '&lt;')
-          .replaceAll('>', '&gt;');
-      if (showLineNumber) {
-        final lines = code.split('\n');
-        // drop trailing empty from final newline
-        if (lines.isNotEmpty && lines.last.isEmpty) {
-          lines.removeLast();
-        }
-        final numbered = <String>[];
-        for (var i = 0; i < lines.length; i++) {
-          numbered.add('${i + 1}| ${lines[i]}');
-        }
-        code = numbered.join('\n');
-      }
-      final lang = (m.group(1) ?? '').trim();
-      final cls = lang.isEmpty ? '' : ' class="language-$lang"';
-      return '<pre><code$cls>$code</code></pre>';
-    });
-
-    // tables (GFM simple)
-    s = s.replaceAllMapped(
-      RegExp(
-        r'(?:^|\n)(\|[^\n]+\|\n\|[-:\s|]+\|\n(?:\|[^\n]+\|\n?)*)',
-        multiLine: true,
-      ),
+  /// Source `handleCodeBlock`'s line-number pass, applied to parser output.
+  static String _numberCodeBlocks(String html) {
+    return html.replaceAllMapped(
+      RegExp(r'<pre><code([^>]*)>([\s\S]*?)</code></pre>'),
       (m) {
-        final block = m.group(1)!.trim();
-        final lines =
-            block.split('\n').where((e) => e.trim().isNotEmpty).toList();
-        if (lines.length < 2) return m.group(0)!;
-        final rows = <String>[];
-        for (var i = 0; i < lines.length; i++) {
-          if (i == 1) continue; // separator
-          final cells = lines[i]
-              .split('|')
-              .where((c) => c.trim().isNotEmpty || c.isNotEmpty)
-              .toList();
-          // split('|') yields empty ends
-          final cleaned = lines[i]
-              .trim()
-              .replaceAll(RegExp(r'^\|'), '')
-              .replaceAll(RegExp(r'\|$'), '')
-              .split('|')
-              .map((c) => c.trim())
-              .toList();
-          final tag = i == 0 ? 'th' : 'td';
-          final tds = cleaned.map((c) => '<$tag>$c</$tag>').join();
-          rows.add('<tr>$tds</tr>');
-        }
-        return '\n<table>${rows.join()}</table>\n';
+        final attrs = m.group(1) ?? '';
+        final body = m.group(2) ?? '';
+        final lines = body.split('\n');
+        // Drop the trailing empty entry produced by the final newline.
+        if (lines.isNotEmpty && lines.last.isEmpty) lines.removeLast();
+        final numbered = <String>[
+          for (var i = 0; i < lines.length; i++) '${i + 1}| ${lines[i]}',
+        ].join('\n');
+        return '<pre><code$attrs>$numbered</code></pre>';
       },
     );
-
-    // headings
-    s = s.replaceAllMapped(
-      RegExp(r'^###### (.+)$', multiLine: true),
-      (m) => '<h6>${m.group(1)}</h6>',
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'^##### (.+)$', multiLine: true),
-      (m) => '<h5>${m.group(1)}</h5>',
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'^#### (.+)$', multiLine: true),
-      (m) => '<h4>${m.group(1)}</h4>',
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'^### (.+)$', multiLine: true),
-      (m) => '<h3>${m.group(1)}</h3>',
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'^## (.+)$', multiLine: true),
-      (m) => '<h2>${m.group(1)}</h2>',
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'^# (.+)$', multiLine: true),
-      (m) => '<h1>${m.group(1)}</h1>',
-    );
-
-    // hr
-    s = s.replaceAllMapped(
-      RegExp(r'^(?:---|\*\*\*|___)\s*$', multiLine: true),
-      (_) => '<hr/>',
-    );
-
-    // blockquote
-    s = s.replaceAllMapped(
-      RegExp(r'^> (.+)$', multiLine: true),
-      (m) => '<blockquote>${m.group(1)}</blockquote>',
-    );
-
-    // task lists
-    s = s.replaceAllMapped(
-      RegExp(r'^- \[(x|X| )\] (.+)$', multiLine: true),
-      (m) {
-        final checked = m.group(1)!.toLowerCase() == 'x';
-        return '<li data-task="${checked ? '1' : '0'}">${m.group(2)}</li>';
-      },
-    );
-
-    // images / links
-    s = s.replaceAllMapped(
-      RegExp(r'!\[([^\]]*)\]\(([^)]+)\)'),
-      (m) => '<img src="${m.group(2)}" alt="${m.group(1) ?? ''}"/>',
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'\[([^\]]+)\]\(([^)]+)\)'),
-      (m) => '<a href="${m.group(2)}">${m.group(1)}</a>',
-    );
-
-    // strike / bold / italic / code
-    s = s.replaceAllMapped(
-      RegExp(r'~~([^~]+)~~'),
-      (m) => '<del>${m.group(1)}</del>',
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'\*\*([^*]+)\*\*'),
-      (m) => '<strong>${m.group(1)}</strong>',
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'__([^_]+)__'),
-      (m) => '<strong>${m.group(1)}</strong>',
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'(?<!\*)\*([^*]+)\*(?!\*)'),
-      (m) => '<em>${m.group(1)}</em>',
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'(?<!_)_([^_]+)_(?!_)'),
-      (m) => '<em>${m.group(1)}</em>',
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'`([^`]+)`'),
-      (m) => '<code>${m.group(1)}</code>',
-    );
-
-    // ordered / unordered lists (simple consecutive lines)
-    s = s.replaceAllMapped(
-      RegExp(r'(?:^|\n)((?:\d+\. .+\n?)+)'),
-      (m) {
-        final body = m.group(1)!;
-        final items = RegExp(r'\d+\. (.+)')
-            .allMatches(body)
-            .map((x) => '<li>${x.group(1)}</li>')
-            .join();
-        return '\n<ol>$items</ol>\n';
-      },
-    );
-    s = s.replaceAllMapped(
-      RegExp(r'(?:^|\n)((?:(?:- |\* )(?!\[).+\n?)+)'),
-      (m) {
-        final body = m.group(1)!;
-        final items = RegExp(r'[-*] (.+)')
-            .allMatches(body)
-            .map((x) => '<li>${x.group(1)}</li>')
-            .join();
-        return '\n<ul>$items</ul>\n';
-      },
-    );
-    // wrap bare task lis
-    s = s.replaceAllMapped(
-      RegExp(r'(?:^|\n)((?:<li data-task="[01]">.*?</li>\n?)+)'),
-      (m) => '\n<ul>${m.group(1)}</ul>\n',
-    );
-
-    // paragraphs
-    s = s.split(RegExp(r'\n{2,}')).map((p) {
-      final t = p.trim();
-      if (t.isEmpty) return '';
-      if (t.startsWith('<h') ||
-          t.startsWith('<pre') ||
-          t.startsWith('<ul') ||
-          t.startsWith('<ol') ||
-          t.startsWith('<blockquote') ||
-          t.startsWith('<hr') ||
-          t.startsWith('<img') ||
-          t.startsWith('<table') ||
-          t.startsWith('<li')) {
-        return t;
-      }
-      return '<p>${t.replaceAll('\n', '<br/>')}</p>';
-    }).join('\n');
-    return s;
   }
 
   @override
