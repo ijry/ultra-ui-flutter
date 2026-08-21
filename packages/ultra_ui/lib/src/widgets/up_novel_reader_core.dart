@@ -1,5 +1,7 @@
 import 'dart:convert';
 
+import 'package:flutter/painting.dart' show Color;
+
 /// Pure logic ported from the u-novel-reader support modules:
 /// `reader-core.js`, `content-normalizer.js`, `measure-adapter.js`,
 /// `layout-engine.js` and `persistence.js`.
@@ -790,3 +792,109 @@ Map<String, dynamic> buildPersistedState({
     'updatedAt': nowMs,
   };
 }
+
+// ---------------------------------------------------------------------------
+// Theme tokens (u-novel-reader.vue THEME_TOKENS / theme-vars.scss)
+// ---------------------------------------------------------------------------
+
+/// Resolved palette for one reader theme.
+///
+/// Values come from the source `THEME_TOKENS` map, which `theme-vars.scss`
+/// mirrors exactly as CSS custom properties.
+class UPNovelReaderTheme {
+  const UPNovelReaderTheme({
+    required this.name,
+    required this.background,
+    required this.text,
+    required this.muted,
+    required this.toolbar,
+    required this.border,
+    required this.active,
+    required this.disabled,
+  });
+
+  final String name;
+  final Color background;
+  final Color text;
+  final Color muted;
+  final Color toolbar;
+  final Color border;
+  final Color active;
+  final Color disabled;
+}
+
+/// Source `THEME_TOKENS`.
+const Map<String, UPNovelReaderTheme> kNovelReaderThemes =
+    <String, UPNovelReaderTheme>{
+  'day': UPNovelReaderTheme(
+    name: 'day',
+    background: Color(0xFFF7F8FA),
+    text: Color(0xFF303133),
+    muted: Color(0xFF909399),
+    toolbar: Color(0xFFFFFFFF),
+    border: Color(0x1F303133), // rgba(48, 49, 51, 0.12)
+    active: Color(0xFF2979FF),
+    disabled: Color(0xFFC8C9CC),
+  ),
+  'paper': UPNovelReaderTheme(
+    name: 'paper',
+    background: Color(0xFFF3EAD7),
+    text: Color(0xFF51483D),
+    muted: Color(0xFF8F806D),
+    toolbar: Color(0xFFF7EFDF),
+    border: Color(0x2951483D), // rgba(81, 72, 61, 0.16)
+    active: Color(0xFF9B7653),
+    disabled: Color(0xFFC7B9A3),
+  ),
+  'green': UPNovelReaderTheme(
+    name: 'green',
+    background: Color(0xFFE7F1E4),
+    text: Color(0xFF3F5140),
+    muted: Color(0xFF708371),
+    toolbar: Color(0xFFEEF6EB),
+    border: Color(0x293F5140), // rgba(63, 81, 64, 0.16)
+    active: Color(0xFF4D8B55),
+    disabled: Color(0xFFB6C7B4),
+  ),
+  'night': UPNovelReaderTheme(
+    name: 'night',
+    background: Color(0xFF202124),
+    text: Color(0xFFD6D7DA),
+    muted: Color(0xFF9CA0A8),
+    toolbar: Color(0xFF292B30),
+    border: Color(0x29D6D7DA), // rgba(214, 215, 218, 0.16)
+    active: Color(0xFF7DA7FF),
+    disabled: Color(0xFF62656D),
+  ),
+  'dark': UPNovelReaderTheme(
+    name: 'dark',
+    background: Color(0xFF111214),
+    text: Color(0xFFE5E7EB),
+    muted: Color(0xFF9CA3AF),
+    toolbar: Color(0xFF1B1D21),
+    border: Color(0x29E5E7EB), // rgba(229, 231, 235, 0.16)
+    active: Color(0xFF8AB4FF),
+    disabled: Color(0xFF5F6368),
+  ),
+};
+
+/// Source: `THEME_TOKENS[theme] ? theme : 'day'`.
+UPNovelReaderTheme resolveNovelReaderTheme(dynamic theme) =>
+    kNovelReaderThemes[theme] ?? kNovelReaderThemes['day']!;
+
+/// Themes the source settings panel offers, with its own preview swatches.
+const List<Map<String, dynamic>> kNovelReaderThemeOptions =
+    <Map<String, dynamic>>[
+  <String, dynamic>{'value': 'day', 'label': '日间'},
+  <String, dynamic>{'value': 'paper', 'label': '护眼'},
+  <String, dynamic>{'value': 'green', 'label': '豆沙'},
+  <String, dynamic>{'value': 'night', 'label': '夜间'},
+  <String, dynamic>{'value': 'dark', 'label': '深色'},
+];
+
+/// The source settings panel hardcodes this blue for its sliders, toggles, and
+/// active swatch ring in every theme, rather than deriving it from `active`.
+const Color kNovelReaderPanelAccent = Color(0xFF2979FF);
+
+/// Source catalog `.is-current` tint — also hardcoded blue across all themes.
+const Color kNovelReaderCurrentTint = Color(0x142979FF); // rgba(41,121,255,.08)

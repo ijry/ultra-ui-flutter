@@ -152,6 +152,7 @@ export 'src/widgets/up_navbar.dart';
 export 'src/widgets/up_no_network.dart';
 export 'src/widgets/up_notice_bar.dart';
 export 'src/widgets/up_notify.dart';
+export 'src/widgets/up_novel_reader.dart';
 export 'src/widgets/up_novel_reader_core.dart';
 export 'src/widgets/up_number_box.dart';
 export 'src/widgets/up_overlay.dart';
