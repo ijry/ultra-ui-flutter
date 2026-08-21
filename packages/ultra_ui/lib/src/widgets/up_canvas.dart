@@ -1,4 +1,5 @@
 import 'dart:math' as math;
+import 'dart:typed_data';
 import 'dart:ui' as ui;
 
 import 'package:flutter/rendering.dart';
@@ -92,9 +93,75 @@ class UPCanvasController {
       case 'draw':
         draw(args.isEmpty ? true : args.first == true);
         return null;
+      case 'save':
+        save();
+        return null;
+      case 'restore':
+        restore();
+        return null;
+      case 'clip':
+        clip();
+        return null;
+      case 'resetTransform':
+        resetTransform();
+        return null;
+      case 'getLineDash':
+        return getLineDash();
+      case 'setLineDash':
+        setLineDash(args.isEmpty
+            ? const <dynamic>[]
+            : (args.first is List ? args.first as List : args));
+        return null;
+      default:
+        return _callContextWithArgs(method, args);
+    }
+  }
+
+  /// Numeric-argument half of [callContext], split out to keep each switch
+  /// readable.
+  dynamic _callContextWithArgs(String method, List args) {
+    double at(int i, [double fallback = 0]) {
+      if (i >= args.length) return fallback;
+      return (num.tryParse('${args[i]}') ?? fallback).toDouble();
+    }
+
+    bool flag(int i) => i < args.length && args[i] == true;
+
+    switch (method) {
+      case 'moveTo':
+        moveTo(at(0), at(1));
+      case 'lineTo':
+        lineTo(at(0), at(1));
+      case 'rect':
+        rect(at(0), at(1), at(2), at(3));
+      case 'arc':
+        arc(at(0), at(1), at(2), at(3), at(4), flag(5));
+      case 'arcTo':
+        arcTo(at(0), at(1), at(2), at(3), at(4));
+      case 'bezierCurveTo':
+        bezierCurveTo(at(0), at(1), at(2), at(3), at(4), at(5));
+      case 'quadraticCurveTo':
+        quadraticCurveTo(at(0), at(1), at(2), at(3));
+      case 'ellipse':
+        ellipse(at(0), at(1), at(2), at(3), at(4), at(5), at(6), flag(7));
+      case 'translate':
+        translate(at(0), at(1));
+      case 'rotate':
+        rotate(at(0));
+      case 'scale':
+        scale(at(0), at(1, at(0)));
+      case 'setTransform':
+        setTransform(at(0), at(1), at(2), at(3), at(4), at(5));
+      case 'transform':
+        transform(at(0), at(1), at(2), at(3), at(4), at(5));
+      case 'setMiterLimit':
+        setMiterLimit(at(0, 10));
+      case 'setGlobalCompositeOperation':
+        setGlobalCompositeOperation(args.isEmpty ? '' : '${args.first}');
       default:
         return null;
     }
+    return null;
   }
 
   /// Source `getImageData`.
@@ -208,6 +275,146 @@ class UPCanvasController {
   void rotate(double angle) => _state?._rotate(angle);
   void scale(double x, [double? y]) => _state?._scale(x, y ?? x);
 
+  /// Source `arcTo`.
+  void arcTo(
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    double radius,
+  ) =>
+      _state?._arcTo(x1, y1, x2, y2, radius);
+
+  /// Source `ellipse`.
+  void ellipse(
+    double x,
+    double y,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    double startAngle,
+    double endAngle, [
+    bool anticlockwise = false,
+  ]) =>
+      _state?._ellipse(
+        x,
+        y,
+        radiusX,
+        radiusY,
+        rotation,
+        startAngle,
+        endAngle,
+        anticlockwise,
+      );
+
+  /// Source `setTransform` — replaces the current matrix.
+  void setTransform(
+    double a,
+    double b,
+    double c,
+    double d,
+    double e,
+    double f,
+  ) =>
+      _state?._setTransform(a, b, c, d, e, f);
+
+  /// Source `transform` — multiplies into the current matrix.
+  void transform(
+    double a,
+    double b,
+    double c,
+    double d,
+    double e,
+    double f,
+  ) =>
+      _state?._transform(a, b, c, d, e, f);
+
+  /// Source `resetTransform`.
+  void resetTransform() => _state?._resetTransform();
+
+  /// Source `setLineDash`.
+  void setLineDash([List<dynamic> segments = const <dynamic>[]]) {
+    _state?._setLineDash(<double>[
+      for (final s in segments) (num.tryParse('$s') ?? 0).toDouble(),
+    ]);
+  }
+
+  /// Source `getLineDash`.
+  List<double> getLineDash() => _state?._getLineDash() ?? <double>[];
+
+  /// Source `setMiterLimit`.
+  void setMiterLimit(dynamic miterLimit) =>
+      _state?._setMiterLimit((num.tryParse('$miterLimit') ?? 10).toDouble());
+
+  /// Source `setGlobalCompositeOperation`.
+  void setGlobalCompositeOperation(String operation) =>
+      _state?._setGlobalCompositeOperation(operation);
+
+  /// The composite operation currently set, for host inspection.
+  String get globalCompositeOperation =>
+      _state?._getGlobalCompositeOperation() ?? 'source-over';
+
+  /// Source `createPattern`.
+  ///
+  /// Returns an image shader usable as a fill or stroke style, mirroring the
+  /// source's canvas pattern object.
+  ui.ImageShader? createPattern(dynamic image, [String repetition = 'repeat']) {
+    final resolved = image is ui.Image
+        ? image
+        : (image is Map && image['image'] is ui.Image
+            ? image['image'] as ui.Image
+            : null);
+    if (resolved == null) return null;
+    final tile = switch (repetition) {
+      'repeat-x' || 'repeat-y' || 'repeat' => ui.TileMode.repeated,
+      'no-repeat' => ui.TileMode.clamp,
+      _ => ui.TileMode.repeated,
+    };
+    return ui.ImageShader(
+      resolved,
+      tile,
+      tile,
+      Matrix4.identity().storage,
+    );
+  }
+
+  /// Source `estimateTextWidth` — synchronous measurement helper.
+  double estimateTextWidth(dynamic text, [dynamic fontSize]) =>
+      _state?._estimateTextWidth(
+        '${text ?? ''}',
+        fontSize == null ? null : (num.tryParse('$fontSize'))?.toDouble(),
+      ) ??
+      0;
+
+  /// Source `measureTextAsync` — the source awaits a webview round trip; on
+  /// Flutter measurement is already synchronous, so this resolves immediately.
+  Future<Map<String, dynamic>> measureTextAsync(
+    dynamic text, [
+    dynamic fontSize,
+  ]) async =>
+      <String, dynamic>{'width': estimateTextWidth(text, fontSize)};
+
+  /// Source `onWebViewMessage` — the source's nvue/webview canvas bridge.
+  ///
+  /// Flutter draws directly, so there is no bridge to receive from; the payload
+  /// is recorded for host inspection and API compatibility.
+  dynamic lastWebViewMessage;
+  void onWebViewMessage([dynamic event]) {
+    lastWebViewMessage = event;
+  }
+
+  /// Source `onWebViewTouch`.
+  dynamic lastWebViewTouch;
+  void onWebViewTouch([dynamic message]) {
+    lastWebViewTouch = message;
+  }
+
+  /// Source `readNvueFileAsDataURL` — nvue-only file bridge.
+  ///
+  /// Flutter has no nvue file layer, so this resolves to null rather than
+  /// pretending to produce a data URL.
+  Future<String?> readNvueFileAsDataURL([dynamic path]) async => null;
+
   void setFillStyle(dynamic color) => _state?._setFill(color);
   void setStrokeStyle(dynamic color) => _state?._setStroke(color);
   void setLineWidth(dynamic width) =>
@@ -305,6 +512,22 @@ class UPCanvasController {
 
   Future<ui.Image?> toImage({double pixelRatio = 1}) =>
       _state?._toImage(pixelRatio: pixelRatio) ?? Future.value(null);
+
+  /// The committed picture, or null before the first `draw`.
+  ///
+  /// Exposed for tests and hosts that need the drawn output without going
+  /// through [toImage], which relies on `RenderRepaintBoundary` and therefore
+  /// cannot complete under `flutter_test`.
+  ui.Picture? get recordedPicture => _state?.picture;
+
+  /// Bounding box of the path built so far, for inspection and testing.
+  Rect get currentPathBounds => _state?._path.getBounds() ?? Rect.zero;
+
+  /// Sizes the recording surface without waiting for a paint pass.
+  ///
+  /// See [UPCanvasState.ensureSize].
+  void ensureSize(double width, double height) =>
+      _state?.ensureSize(Size(width, height));
 
   Future<Map> toTempFilePath({
     double? x,
@@ -407,12 +630,24 @@ class UPCanvasState extends State<UPCanvas> {
   Canvas? _recording;
   ui.PictureRecorder? recorder;
   Path _path = Path();
+
+  /// The path's current point, which Path itself does not expose.
+  Offset? _currentPoint;
   Size _size = Size.zero;
   Color fill = const Color(0xFF000000);
   Color stroke = const Color(0xFF000000);
   ui.Shader? fillShader;
   ui.Shader? strokeShader;
   double _lineWidth = 1;
+
+  /// Canvas 2D dash pattern from `setLineDash`.
+  List<double> _lineDash = <double>[];
+
+  /// Canvas 2D `miterLimit`.
+  double _miterLimit = 10;
+
+  /// Canvas 2D `globalCompositeOperation`, retained for host inspection.
+  String _globalCompositeOperation = 'source-over';
   double _globalAlpha = 1;
   double _fontSize = 14;
   String _fontFamily = 'sans-serif';
@@ -470,6 +705,7 @@ class UPCanvasState extends State<UPCanvas> {
       ..strokeWidth = _lineWidth
       ..strokeCap = _lineCap
       ..strokeJoin = _lineJoin
+      ..strokeMiterLimit = _miterLimit
       ..maskFilter = _shadowBlur > 0
           ? MaskFilter.blur(BlurStyle.normal, _shadowBlur)
           : null;
@@ -498,6 +734,13 @@ class UPCanvasState extends State<UPCanvas> {
       _ensure(_size);
     }
   }
+
+  /// Prepares the recording surface at an explicit size.
+  ///
+  /// Normally the size arrives from the painter's layout pass. Under
+  /// `flutter_test` no paint occurs unless something forces it, so a caller
+  /// that needs to draw before first paint can size the surface directly.
+  void ensureSize(Size size) => _ensure(size);
 
   dynamic getCanvasElement([dynamic _]) => this;
   dynamic getCanvasNode([dynamic _]) => getCanvasElement();
@@ -546,10 +789,22 @@ class UPCanvasState extends State<UPCanvas> {
     _commit();
   }
 
-  void _beginPath() => _path = Path();
+  void _beginPath() {
+    _path = Path();
+    _currentPoint = null;
+  }
+
   void _closePath() => _path.close();
-  void _moveTo(double x, double y) => _path.moveTo(x, y);
-  void _lineTo(double x, double y) => _path.lineTo(x, y);
+  void _moveTo(double x, double y) {
+    _path.moveTo(x, y);
+    _currentPoint = Offset(x, y);
+  }
+
+  void _lineTo(double x, double y) {
+    _path.lineTo(x, y);
+    _currentPoint = Offset(x, y);
+  }
+
   void _rect(double x, double y, double w, double h) =>
       _path.addRect(Rect.fromLTWH(x, y, w, h));
   void _arc(
@@ -578,9 +833,24 @@ class UPCanvasState extends State<UPCanvas> {
     double x,
     double y,
   ) =>
-      _path.cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
-  void _quadratic(double cpx, double cpy, double x, double y) =>
-      _path.quadraticBezierTo(cpx, cpy, x, y);
+      _cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
+
+  void _cubicTo(
+    double cp1x,
+    double cp1y,
+    double cp2x,
+    double cp2y,
+    double x,
+    double y,
+  ) {
+    _path.cubicTo(cp1x, cp1y, cp2x, cp2y, x, y);
+    _currentPoint = Offset(x, y);
+  }
+
+  void _quadratic(double cpx, double cpy, double x, double y) {
+    _path.quadraticBezierTo(cpx, cpy, x, y);
+    _currentPoint = Offset(x, y);
+  }
 
   void _fill() => _recording?.drawPath(_path, _fillPaint());
   void _stroke() => _recording?.drawPath(_path, _strokePaint());
@@ -652,11 +922,177 @@ class UPCanvasState extends State<UPCanvas> {
     return painter.width;
   }
 
+  /// Source `estimateTextWidth` — measures at an overridden font size without
+  /// disturbing the context's own.
+  double _estimateTextWidth(String text, double? fontSize) {
+    if (fontSize == null) return _measureText(text);
+    final previous = _fontSize;
+    _fontSize = fontSize;
+    final width = _measureText(text);
+    _fontSize = previous;
+    return width;
+  }
+
   void _save() => _recording?.save();
   void _restore() => _recording?.restore();
   void _translate(double x, double y) => _recording?.translate(x, y);
   void _rotate(double angle) => _recording?.rotate(angle);
   void _scale(double x, double y) => _recording?.scale(x, y);
+
+  /// Canvas 2D `arcTo` — an arc of [radius] tangent to both the line from the
+  /// current point to (x1,y1) and the line from (x1,y1) to (x2,y2).
+  ///
+  /// Not `Path.arcToPoint`, which arcs *to* the given point: the 2D operation
+  /// fillets the corner at (x1,y1) and generally stops short of (x2,y2). It
+  /// first draws a straight line to the arc's start tangent point.
+  void _arcTo(
+    double x1,
+    double y1,
+    double x2,
+    double y2,
+    double radius,
+  ) {
+    // Path.computeMetrics reports nothing for a path that is only a moveTo, so
+    // the current point is tracked alongside it.
+    final p0 = _currentPoint;
+    if (p0 == null) {
+      // No current point: the spec makes this a moveTo.
+      _moveTo(x1, y1);
+      return;
+    }
+    final corner = Offset(x1, y1);
+    final p2 = Offset(x2, y2);
+
+    // Unit vectors from the corner back toward p0 and out toward p2.
+    final v1 = p0 - corner;
+    final v2 = p2 - corner;
+    final len1 = v1.distance;
+    final len2 = v2.distance;
+    if (radius <= 0 || len1 == 0 || len2 == 0) {
+      _lineTo(x1, y1);
+      return;
+    }
+    final u1 = v1 / len1;
+    final u2 = v2 / len2;
+
+    // Half the angle at the corner; the tangent distance is r / tan(theta).
+    final cosAngle = (u1.dx * u2.dx + u1.dy * u2.dy).clamp(-1.0, 1.0);
+    final angle = math.acos(cosAngle);
+    if (angle == 0 || angle == math.pi) {
+      // Collinear: no arc is possible, so the corner is just a line.
+      _lineTo(x1, y1);
+      return;
+    }
+    final tangentDistance = radius / math.tan(angle / 2);
+    if (tangentDistance > len1 || tangentDistance > len2) {
+      // The fillet does not fit between the points; degrade to the corner.
+      _lineTo(x1, y1);
+      return;
+    }
+
+    final start = corner + u1 * tangentDistance;
+    final end = corner + u2 * tangentDistance;
+    // Cross product sign gives the turn direction.
+    final clockwise = (u1.dx * u2.dy - u1.dy * u2.dx) < 0;
+
+    _lineTo(start.dx, start.dy);
+    _path.arcToPoint(
+      end,
+      radius: Radius.circular(radius),
+      clockwise: clockwise,
+    );
+    _currentPoint = end;
+  }
+
+  /// Canvas 2D `ellipse`.
+  void _ellipse(
+    double x,
+    double y,
+    double radiusX,
+    double radiusY,
+    double rotation,
+    double startAngle,
+    double endAngle,
+    bool anticlockwise,
+  ) {
+    final sweep = anticlockwise
+        ? -(2 * math.pi - (endAngle - startAngle)).abs()
+        : (endAngle - startAngle);
+    final rect = Rect.fromCenter(
+      center: Offset(x, y),
+      width: radiusX * 2,
+      height: radiusY * 2,
+    );
+    if (rotation == 0) {
+      _path.addArc(rect, startAngle, sweep);
+      return;
+    }
+    // Rotation is about the ellipse centre, so rotate around it rather than
+    // the canvas origin.
+    final rotated = Path()..addArc(rect, startAngle, sweep);
+    final matrix = Matrix4.identity()
+      ..translateByDouble(x, y, 0, 1)
+      ..rotateZ(rotation)
+      ..translateByDouble(-x, -y, 0, 1);
+    _path.addPath(rotated.transform(matrix.storage), Offset.zero);
+  }
+
+  /// Canvas 2D `setTransform` — replaces the current matrix.
+  ///
+  /// Flutter's Canvas has no absolute-matrix setter, so the transform is
+  /// reset to the recording's base state first, matching the 2D semantics.
+  void _setTransform(
+    double a,
+    double b,
+    double c,
+    double d,
+    double e,
+    double f,
+  ) {
+    _resetTransform();
+    _transform(a, b, c, d, e, f);
+  }
+
+  /// Canvas 2D `transform` — multiplies into the current matrix.
+  void _transform(
+    double a,
+    double b,
+    double c,
+    double d,
+    double e,
+    double f,
+  ) {
+    // 2D order is [a c e / b d f], column-major into a 4x4.
+    _recording?.transform(Float64List.fromList(<double>[
+      a, b, 0, 0, //
+      c, d, 0, 0, //
+      0, 0, 1, 0, //
+      e, f, 0, 1, //
+    ]));
+  }
+
+  /// Canvas 2D `resetTransform`.
+  ///
+  /// Restores to the transform captured when recording began, which is the
+  /// closest equivalent to resetting to the identity matrix.
+  void _resetTransform() {
+    _recording?.restore();
+    _recording?.save();
+  }
+
+  void _setLineDash(List<double> segments) {
+    _lineDash = List<double>.from(segments);
+  }
+
+  List<double> _getLineDash() => List<double>.from(_lineDash);
+
+  void _setMiterLimit(double limit) => _miterLimit = limit;
+
+  void _setGlobalCompositeOperation(String operation) {
+    _globalCompositeOperation = operation;
+  }
+
+  String _getGlobalCompositeOperation() => _globalCompositeOperation;
 
   void _setFill(dynamic color) {
     if (color is UPCanvasGradient) {
