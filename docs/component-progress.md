@@ -16,12 +16,12 @@
 | 指标 | 数值 |
 |---|---|
 | 源组件总数 | 140 |
-| ✅ 已复刻 | 119 |
-| 🟡 部分 | 22 |
+| ✅ 已复刻 | 124 |
+| 🟡 部分 | 17 |
 | ⛔ 未复刻 | 0 |
-| props 覆盖 | 1577/1579 |
-| emits 覆盖 | 318/332 |
-| methods + computed 覆盖 | 1232/1333 |
+| props 覆盖 | 1577/1581 |
+| emits 覆盖 | 327/332 |
+| methods + computed 覆盖 | 1233/1340 |
 
 ### 状态含义
 
@@ -68,17 +68,17 @@
 |---|---|---|---|---|---|---|
 | `u-form` | `UPForm` | ✅ 已复刻 | 8/8 | — | 6/6 | 接口与样式对齐 |
 | `↳ u-form-item` | `UPFormItem` | ✅ 已复刻 | 10/10 | 1/1 | 8/8 | 接口与样式对齐 |
-| `u-calendar` | `UPCalendar` | 🟡 部分 | 59/59 | 4/5 | 68/68 | 缺 emits: `closed` |
-| `u-keyboard` | `UPKeyboard` | 🟡 部分 | 16/16 | 5/6 | 6/6 | 缺 emits: `closed` |
+| `u-calendar` | `UPCalendar` | ✅ 已复刻 | 59/59 | 5/5 | 68/68 | 接口与样式对齐 |
+| `u-keyboard` | `UPKeyboard` | ✅ 已复刻 | 16/16 | 6/6 | 6/6 | 接口与样式对齐 |
 | `u-number-keyboard` | `UPNumberKeyboard` | ✅ 已复刻 | 3/3 | 2/2 | 6/6 | 接口与样式对齐 |
 | `u-car-keyboard` | `UPCarKeyboard` | ✅ 已复刻 | 2/2 | 2/2 | 6/6 | 接口与样式对齐 |
-| `u-picker` | `UPPicker` | 🟡 部分 | 33/33 | 6/7 | 18/18 | 缺 emits: `closed` |
+| `u-picker` | `UPPicker` | ✅ 已复刻 | 33/33 | 7/7 | 18/18 | 接口与样式对齐 |
 | `↳ u-picker-column` | `UPPickerColumn` | ✅ 已复刻 | — | — | — | 接口与样式对齐 |
-| `↳ u-picker-data` | `UPPickerData` | 🟡 部分 | 6/6 | 4/5 | 6/6 | 缺 emits: `closed` |
+| `↳ u-picker-data` | `UPPickerData` | ✅ 已复刻 | 6/6 | 5/5 | 6/6 | 接口与样式对齐 |
 | `u-select` | `UPSelect` | ✅ 已复刻 | 18/18 | 2/2 | 13/13 | 根 Overlay 锚定面板替代绝对定位 DOM 层叠 |
 | `u-cascader` | `UPCascader` | ✅ 已复刻 | 12/12 | 5/5 | 15/15 | 接口与样式对齐 |
 | `u-choose` | `UPChoose` | ✅ 已复刻 | 10/10 | 2/2 | 1/1 | 接口与样式对齐 |
-| `u-datetime-picker` | `UPDatetimePicker` | 🟡 部分 | 37/37 | 5/6 | 22/23 | 缺 emits: `closed`；缺 methods: `reInitColumns` |
+| `u-datetime-picker` | `UPDatetimePicker` | 🟡 部分 | 37/37 | 6/6 | 22/23 | 缺 methods: `reInitColumns` |
 | `u-rate` | `UPRate` | ✅ 已复刻 | 14/14 | 2/2 | 16/16 | 接口与样式对齐 |
 | `u-search` | `UPSearch` | ✅ 已复刻 | 28/28 | 9/9 | 14/14 | 接口与样式对齐 |
 | `u-number-box` | `UPNumberBox` | ✅ 已复刻 | 27/27 | 7/7 | 24/24 | 接口与样式对齐 |
@@ -118,7 +118,7 @@
 | `u-tooltip` | `UPTooltip` | ✅ 已复刻 | 16/16 | 4/4 | 10/10 | 接口与样式对齐 |
 | `u-guide` | `UPGuide` | ✅ 已复刻 | 11/11 | 5/5 | 12/12 | `zIndex` 保留；真正全局固定层叠需状态保持 portal |
 | `u-popover` | `UPPopover` | ✅ 已复刻 | 10/10 | — | 5/5 | 接口与样式对齐 |
-| `u-action-sheet` | `UPActionSheet` | 🟡 部分 | 12/12 | 3/4 | 12/13 | 缺 emits: `closed`；缺 methods: `slotClickHandler` |
+| `u-action-sheet` | `UPActionSheet` | 🟡 部分 | 12/12 | 4/4 | 12/13 | 缺 methods: `slotClickHandler` |
 | `↳ u-action-sheet-data` | `UPActionSheetData` | ✅ 已复刻 | 6/6 | 1/1 | 2/2 | 接口与样式对齐 |
 | `u-alert` | `UPAlert` | ✅ 已复刻 | 12/12 | 4/4 | 4/4 | 接口与样式对齐 |
 | `u-toast` | `UPToast` | ✅ 已复刻 | — | — | 8/8 | 接口与样式对齐 |
@@ -130,7 +130,7 @@
 | `↳ u-swipe-action-item` | `UPSwipeActionItem` | 🟡 部分 | 8/9 | 2/4 | 4/8 | 缺 props: `scrolling`；缺 emits: `scrolling`, `update:scrolling`；缺 methods: `defaultButtonBgColor`, `defaultButtonColor`, `setScrolling`, `wxsInit` |
 | `u-collapse` | `UPCollapse` | ✅ 已复刻 | 3/3 | 3/3 | 3/3 | 接口与样式对齐 |
 | `↳ u-collapse-item` | `UPCollapseItem` | ✅ 已复刻 | 17/17 | — | 3/3 | 接口与样式对齐 |
-| `u-popup` | `UPPopup` | 🟡 部分 | 19/19 | 4/5 | 15/17 | 缺 emits: `closed`；缺 methods: `afterLeave`, `emitClose` |
+| `u-popup` | `UPPopup` | 🟡 部分 | 19/19 | 5/5 | 16/17 | 缺 methods: `emitClose` |
 | `u-modal` | `UPModal` | ✅ 已复刻 | 21/21 | 5/5 | 4/4 | 接口与样式对齐 |
 | `u-copy` | `UPCopy` | ✅ 已复刻 | 3/3 | 1/1 | 1/1 | 接口与样式对齐 |
 | `u-float-button` | `UPFloatButton` | ✅ 已复刻 | 10/10 | 2/2 | 2/2 | 接口与样式对齐 |
@@ -168,7 +168,7 @@
 | `↳ u-dropdown-item` | `UPDropdownItem` | ✅ 已复刻 | 7/7 | 2/2 | 3/3 | 接口与样式对齐 |
 | `u-tabbar` | `UPTabbar` | ✅ 已复刻 | 17/17 | — | 4/4 | 接口与样式对齐 |
 | `↳ u-tabbar-item` | `UPTabbarItem` | 🟡 部分 | 17/17 | 2/2 | 18/24 | 缺 methods: `hasMidButtonText`, `midButtonBorderCircleStyle`, `midButtonBorderClipHeight`, `midButtonIconStyle` 等 6 |
-| `u-navbar` | `UPNavbar` | ✅ 已复刻 | 18/18 | 2/2 | 7/7 | 接口与样式对齐 |
+| `u-navbar` | `UPNavbar` | 🟡 部分 | 18/20 | 2/2 | 7/14 | 缺 props: `mode`, `scrollTop`；缺 methods: `isIosMode`, `largeTitleHeight`, `navbarCenterOpacity`, `navbarFlowSpacerHeight` 等 7 |
 | `u-navbar-mini` | `UPNavbarMini` | ✅ 已复刻 | 9/9 | 2/2 | 2/2 | 接口与样式对齐 |
 | `u-tabs` | `UPTabs` | ✅ 已复刻 | 14/14 | 4/4 | 15/15 | 接口与样式对齐 |
 | `↳ u-tabs-item` | `UPTabsItem` | ✅ 已复刻 | — | — | — | 接口与样式对齐 |
@@ -202,9 +202,9 @@
 | `u-qrcode` | `UPQrcode` | 🟡 部分 | 19/19 | 3/3 | 6/8 | 缺 methods: `_empty`, `_queueMakeCode` |
 | `u-coupon` | `UPCoupon` | ✅ 已复刻 | 15/15 | — | 3/3 | 接口与样式对齐 |
 | `u-barcode` | `UPBarcode` | ✅ 已复刻 | 20/20 | — | 12/12 | 接口与样式对齐 |
-| `u-color-picker` | `UPColorPicker` | 🟡 部分 | 2/2 | 3/4 | 40/40 | 缺 emits: `closed` |
+| `u-color-picker` | `UPColorPicker` | ✅ 已复刻 | 2/2 | 4/4 | 40/40 | 接口与样式对齐 |
 | `u-poster` | `UPPoster` | 🟡 部分 | 1/1 | — | 6/8 | 缺 methods: `flushPosterCanvas`, `getRpxRatio` |
-| `u-goods-sku` | `UPGoodsSku` | 🟡 部分 | 7/7 | 3/4 | 15/15 | 缺 emits: `closed` |
+| `u-goods-sku` | `UPGoodsSku` | ✅ 已复刻 | 7/7 | 4/4 | 15/15 | 接口与样式对齐 |
 | `u-city-locate` | `UPCityLocate` | ✅ 已复刻 | 5/5 | 2/2 | 4/4 | 宿主通过 `locationHandler` 替代 `uni.getLocation` |
 | `u-pdf-reader` | `UPPdfReader` | ✅ 已复刻 | 3/3 | — | — | 宿主通过 `viewerBuilder` 注入真实 PDF 视图 |
 | `u-novel-reader` | `UPNovelReader` | 🟡 部分 | 34/35 | 21/24 | 22/80 | 分页测量用源码 measure-adapter 启发式宽度；持久化经宿主钩子；缺 props: `themeTokens`；缺 emits: `content-scroll`, `page-change`, `tap-zone`；缺 methods: `articleStyle`, `catalogPopupStyle`, `catalogStyle`, `clearControlsHideTimer` 等 58 |
