@@ -16,12 +16,12 @@
 | 指标 | 数值 |
 |---|---|
 | 源组件总数 | 140 |
-| ✅ 已复刻 | 128 |
-| 🟡 部分 | 13 |
+| ✅ 已复刻 | 130 |
+| 🟡 部分 | 11 |
 | ⛔ 未复刻 | 0 |
 | props 覆盖 | 1580/1581 |
 | emits 覆盖 | 329/332 |
-| methods + computed 覆盖 | 1266/1341 |
+| methods + computed 覆盖 | 1268/1341 |
 
 ### 状态含义
 
@@ -100,7 +100,7 @@
 |---|---|---|---|---|---|---|
 | `u-list` | `UPList` | ✅ 已复刻 | 19/19 | 9/9 | 10/10 | 接口与样式对齐 |
 | `↳ u-list-item` | `UPListItem` | 🟡 部分 | 1/1 | — | 3/4 | 缺 methods: `resize` |
-| `u-virtual-list` | `UPVirtualList` | 🟡 部分 | 6/6 | 2/2 | 12/13 | 缺 methods: `visibleCount` |
+| `u-virtual-list` | `UPVirtualList` | ✅ 已复刻 | 6/6 | 2/2 | 13/13 | 接口与样式对齐 |
 | `u-line-progress` | `UPLineProgress` | ✅ 已复刻 | 6/6 | — | 5/5 | 接口与样式对齐 |
 | `u-circle-progress` | `UPCircleProgress` | ✅ 已复刻 | 1/1 | — | 3/3 | 接口与样式对齐 |
 | `u-table` | `UPTable` | ✅ 已复刻 | 7/7 | — | 5/5 | 接口与样式对齐 |
@@ -153,7 +153,7 @@
 | `↳ u-swiper-indicator` | `UPSwiperIndicator` | ✅ 已复刻 | 5/5 | — | 2/2 | 接口与样式对齐 |
 | `u-skeleton` | `UPSkeleton` | ✅ 已复刻 | 11/11 | — | 3/3 | 接口与样式对齐 |
 | `u-sticky` | `UPSticky` | ✅ 已复刻 | 6/6 | — | 11/11 | 接口与样式对齐 |
-| `u-waterfall` | `UPWaterfall` | 🟡 部分 | 7/7 | 3/3 | 11/12 | 缺 methods: `isPureAppend` |
+| `u-waterfall` | `UPWaterfall` | ✅ 已复刻 | 7/7 | 3/3 | 12/12 | 接口与样式对齐 |
 | `u-divider` | `UPDivider` | ✅ 已复刻 | 8/8 | 1/1 | 4/4 | 接口与样式对齐 |
 | `u-box` | `UPBox` | ✅ 已复刻 | 10/10 | — | — | 接口与样式对齐 |
 | `u-cate-tab` | `UPCateTab` | ✅ 已复刻 | 6/6 | 1/1 | 1/1 | `follow` 用滚动位置跟踪替代 IntersectionObserver |
