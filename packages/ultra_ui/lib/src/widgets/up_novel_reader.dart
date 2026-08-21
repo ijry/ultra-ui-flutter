@@ -147,6 +147,7 @@ class UPNovelReader extends StatefulWidget {
     this.persist = true,
     this.initialProgress,
     this.initialBookmarks = const <UPNovelBookmark>[],
+    this.defaultSettings,
     this.settings,
     this.mode = 'page',
     this.showBack = true,
@@ -197,6 +198,12 @@ class UPNovelReader extends StatefulWidget {
 
   /// Source prop `initialBookmarks`.
   final List<UPNovelBookmark> initialBookmarks;
+
+  /// Source prop `defaultSettings`.
+  ///
+  /// The lowest-priority settings layer: source `resolvedSettings` merges
+  /// `defaultSettings`, then persisted/local settings, then [settings].
+  final Map<String, dynamic>? defaultSettings;
 
   /// Source prop `settings`.
   final Map<String, dynamic>? settings;
@@ -660,7 +667,9 @@ class UPNovelReaderState extends State<UPNovelReader> {
   @override
   void initState() {
     super.initState();
+    // Source merge order: defaultSettings, then local/persisted, then settings.
     _resolvedSettings = mergeReaderSettings(<Map<String, dynamic>?>[
+      widget.defaultSettings,
       widget.settings,
     ]);
     _resolvedMode = normalizeReaderMode(widget.mode);
@@ -732,9 +741,12 @@ class UPNovelReaderState extends State<UPNovelReader> {
     setState(() {
       final storedSettings = state['settings'];
       if (storedSettings is Map) {
+        // Source order: defaultSettings, then persisted/local, then the
+        // explicit `settings` prop — which therefore still wins over storage.
         _resolvedSettings = mergeReaderSettings(<Map<String, dynamic>?>[
-          _resolvedSettings,
+          widget.defaultSettings,
           Map<String, dynamic>.from(storedSettings),
+          widget.settings,
         ]);
       }
       final storedProgress = state['progress'];

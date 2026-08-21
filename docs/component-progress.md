@@ -17,11 +17,11 @@
 |---|---|
 | 源组件总数 | 140 |
 | ✅ 已复刻 | 119 |
-| 🟡 部分 | 21 |
-| ⛔ 未复刻 | 1 |
-| props 覆盖 | 1543/1579 |
-| emits 覆盖 | 297/332 |
-| methods + computed 覆盖 | 1210/1333 |
+| 🟡 部分 | 22 |
+| ⛔ 未复刻 | 0 |
+| props 覆盖 | 1577/1579 |
+| emits 覆盖 | 318/332 |
+| methods + computed 覆盖 | 1232/1333 |
 
 ### 状态含义
 
@@ -37,6 +37,11 @@
   公开 API 暴露以保持调用兼容。
 - 比对基于符号名（含 `snake_case`、`onXxx` 事件前缀等价形式），因此**只能证明缺失，
   不能证明行为正确**。行为与样式一致性由 `packages/ultra_ui/test` 的用例保证。
+- `UPNovelReader` 的 4 个子面板（toolbar/catalog/settings/content）在本移植中是私有
+  Flutter widget，其内部 handler 与 style computed 未作为公开 API 暴露，因此计入缺失。
+  这与其它组件“computed 也公开”的取向不同，是有意的取舍：这些成员属于子组件实现细节，
+  而非 `u-novel-reader` 的对外接口。核心算法（分页/测量/持久化）已在
+  `test/novel_reader_core_test.dart` 中对齐真实源码 JS 输出。
 - 分组与排序镜像源码 `src/pages/example/components.config.js`，
   子组件缩进显示在父组件下方。
 
@@ -202,7 +207,7 @@
 | `u-goods-sku` | `UPGoodsSku` | 🟡 部分 | 7/7 | 3/4 | 15/15 | 缺 emits: `closed` |
 | `u-city-locate` | `UPCityLocate` | ✅ 已复刻 | 5/5 | 2/2 | 4/4 | 宿主通过 `locationHandler` 替代 `uni.getLocation` |
 | `u-pdf-reader` | `UPPdfReader` | ✅ 已复刻 | 3/3 | — | — | 宿主通过 `viewerBuilder` 注入真实 PDF 视图 |
-| `u-novel-reader` | `—` | ⛔ 未复刻 | 0/35 | 0/24 | 0/80 | **待实现**；分页测量用源码 measure-adapter 启发式宽度；持久化经宿主钩子 |
+| `u-novel-reader` | `UPNovelReader` | 🟡 部分 | 34/35 | 21/24 | 22/80 | 分页测量用源码 measure-adapter 启发式宽度；持久化经宿主钩子；缺 props: `themeTokens`；缺 emits: `content-scroll`, `page-change`, `tap-zone`；缺 methods: `articleStyle`, `catalogPopupStyle`, `catalogStyle`, `clearControlsHideTimer` 等 58 |
 
 ## 未在演示分组中出现的组件
 

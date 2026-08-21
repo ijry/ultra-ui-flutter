@@ -427,7 +427,51 @@ void main() {
     expect(key.currentState!.readingTime, 5000);
   });
 
-  testWidgets('persisted state seeds settings, bookmarks, and reading time',
+  testWidgets('defaultSettings sits below the settings prop', (tester) async {
+    await tester.pumpWidget(_host(const UPNovelReader(
+      chapters: _chapters,
+      defaultSettings: <String, dynamic>{'theme': 'green', 'fontSize': 20},
+      settings: <String, dynamic>{'theme': 'paper'},
+    )));
+    await tester.pumpAndSettle();
+
+    // settings wins for theme; defaultSettings still supplies fontSize.
+    final box = tester.widget<ColoredBox>(find
+        .descendant(
+          of: find.byType(UPNovelReader),
+          matching: find.byType(ColoredBox),
+        )
+        .first);
+    expect(box.color, kNovelReaderThemes['paper']!.background);
+  });
+
+  testWidgets('the settings prop outranks persisted settings', (tester) async {
+    await tester.pumpWidget(_host(UPNovelReader(
+      chapters: _chapters,
+      storageKey: 'book-1',
+      settings: const <String, dynamic>{'theme': 'green'},
+      hooks: UPNovelReaderHooks(
+        readPersisted: (k) async => <String, dynamic>{
+          'version': 1,
+          'readingTime': 0,
+          'updatedAt': 1,
+          // Storage disagrees with the prop; the source lets the prop win.
+          'settings': <String, dynamic>{'theme': 'night'},
+        },
+      ),
+    )));
+    await tester.pumpAndSettle();
+
+    final box = tester.widget<ColoredBox>(find
+        .descendant(
+          of: find.byType(UPNovelReader),
+          matching: find.byType(ColoredBox),
+        )
+        .first);
+    expect(box.color, kNovelReaderThemes['green']!.background);
+  });
+
+  testWidgets('persisted settings apply when no settings prop is given',
       (tester) async {
     final clock = _Clock();
     final key = GlobalKey<UPNovelReaderState>();
