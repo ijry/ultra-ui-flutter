@@ -16,12 +16,12 @@
 | 指标 | 数值 |
 |---|---|
 | 源组件总数 | 140 |
-| ✅ 已复刻 | 124 |
-| 🟡 部分 | 17 |
+| ✅ 已复刻 | 126 |
+| 🟡 部分 | 15 |
 | ⛔ 未复刻 | 0 |
-| props 覆盖 | 1577/1581 |
-| emits 覆盖 | 327/332 |
-| methods + computed 覆盖 | 1233/1340 |
+| props 覆盖 | 1580/1581 |
+| emits 覆盖 | 329/332 |
+| methods + computed 覆盖 | 1245/1341 |
 
 ### 状态含义
 
@@ -127,7 +127,7 @@
 | `↳ u-row-notice` | `UPRowNotice` | ✅ 已复刻 | 7/7 | 2/2 | 8/8 | 接口与样式对齐 |
 | `u-notify` | `UPNotify` | ✅ 已复刻 | 8/8 | — | 6/6 | 接口与样式对齐 |
 | `u-swipe-action` | `UPSwipeAction` | 🟡 部分 | 2/2 | 1/1 | 3/4 | 缺 methods: `parentData` |
-| `↳ u-swipe-action-item` | `UPSwipeActionItem` | 🟡 部分 | 8/9 | 2/4 | 4/8 | 缺 props: `scrolling`；缺 emits: `scrolling`, `update:scrolling`；缺 methods: `defaultButtonBgColor`, `defaultButtonColor`, `setScrolling`, `wxsInit` |
+| `↳ u-swipe-action-item` | `UPSwipeActionItem` | ✅ 已复刻 | 9/9 | 4/4 | 8/8 | 接口与样式对齐 |
 | `u-collapse` | `UPCollapse` | ✅ 已复刻 | 3/3 | 3/3 | 3/3 | 接口与样式对齐 |
 | `↳ u-collapse-item` | `UPCollapseItem` | ✅ 已复刻 | 17/17 | — | 3/3 | 接口与样式对齐 |
 | `u-popup` | `UPPopup` | 🟡 部分 | 19/19 | 5/5 | 16/17 | 缺 methods: `emitClose` |
@@ -168,7 +168,7 @@
 | `↳ u-dropdown-item` | `UPDropdownItem` | ✅ 已复刻 | 7/7 | 2/2 | 3/3 | 接口与样式对齐 |
 | `u-tabbar` | `UPTabbar` | ✅ 已复刻 | 17/17 | — | 4/4 | 接口与样式对齐 |
 | `↳ u-tabbar-item` | `UPTabbarItem` | 🟡 部分 | 17/17 | 2/2 | 18/24 | 缺 methods: `hasMidButtonText`, `midButtonBorderCircleStyle`, `midButtonBorderClipHeight`, `midButtonIconStyle` 等 6 |
-| `u-navbar` | `UPNavbar` | 🟡 部分 | 18/20 | 2/2 | 7/14 | 缺 props: `mode`, `scrollTop`；缺 methods: `isIosMode`, `largeTitleHeight`, `navbarCenterOpacity`, `navbarFlowSpacerHeight` 等 7 |
+| `u-navbar` | `UPNavbar` | ✅ 已复刻 | 20/20 | 2/2 | 15/15 | 接口与样式对齐 |
 | `u-navbar-mini` | `UPNavbarMini` | ✅ 已复刻 | 9/9 | 2/2 | 2/2 | 接口与样式对齐 |
 | `u-tabs` | `UPTabs` | ✅ 已复刻 | 14/14 | 4/4 | 15/15 | 接口与样式对齐 |
 | `↳ u-tabs-item` | `UPTabsItem` | ✅ 已复刻 | — | — | — | 接口与样式对齐 |
