@@ -31,6 +31,8 @@ class UPNavbar extends StatelessWidget implements PreferredSizeWidget {
     this.leftIconSize = 20,
     this.leftIconColor = '',
     this.autoBack = false,
+    this.mode = 'default',
+    this.scrollTop = 0,
     this.titleStyle,
     this.customStyle,
     this.leftSlot,
@@ -60,6 +62,15 @@ class UPNavbar extends StatelessWidget implements PreferredSizeWidget {
   final dynamic leftIconSize;
   final dynamic leftIconColor;
   final bool autoBack;
+
+  /// Source prop `mode`: 'default' or 'ios' (large frosted title).
+  final String mode;
+
+  /// Source prop `scrollTop`: page scroll offset, driving the iOS-mode
+  /// compression. The source receives it from the page's `onPageScroll`; on
+  /// Flutter the host passes its own scroll offset.
+  final dynamic scrollTop;
+
   final TextStyle? titleStyle;
   final BoxDecoration? customStyle;
   final Widget? leftSlot;
@@ -102,6 +113,97 @@ class UPNavbar extends StatelessWidget implements PreferredSizeWidget {
     }
   }
 
+  /// Source `LARGE_TITLE_HEIGHT`.
+  ///
+  /// Also the denominator of [navbarProgress], so changing it changes the
+  /// scroll range over which the large title compresses.
+  static const double kLargeTitleHeight = 52;
+
+  /// Source computed: isIosMode.
+  ///
+  /// The source disables ios mode on nvue, which lacks the filter pipeline and
+  /// reliable page scrolling. Flutter has neither limitation, so the mode is
+  /// available whenever it is requested.
+  bool get isIosMode => mode == 'ios';
+
+  /// Source computed: largeTitleHeight — collapses to 0 with no title.
+  double get largeTitleHeight => title.isNotEmpty ? kLargeTitleHeight : 0;
+
+  /// Source computed: navbarProgress.
+  ///
+  /// 1 means the large title has just fully receded into the bar.
+  double get navbarProgress {
+    if (!isIosMode) return 1;
+    final height = largeTitleHeight;
+    if (height <= 0) return 1;
+    final offset = UPUtils.getPx(scrollTop);
+    return (offset / height).clamp(0.0, 1.0).toDouble();
+  }
+
+  /// Source computed: navbarGlassOpacity.
+  ///
+  /// The frost completes over the first half of the scroll, laying an opaque
+  /// base before the centred title appears.
+  double get navbarGlassOpacity {
+    if (!isIosMode) return 0;
+    return (navbarProgress / 0.5).clamp(0.0, 1.0).toDouble();
+  }
+
+  /// Source computed: navbarCenterOpacity.
+  ///
+  /// The centred title only starts appearing in the last quarter, once the
+  /// glass is fully opaque, so it never bleeds through the large title.
+  double get navbarCenterOpacity {
+    if (!isIosMode) return 1;
+    return ((navbarProgress - 0.75) / 0.25).clamp(0.0, 1.0).toDouble();
+  }
+
+  /// Source `CENTER_TITLE_RISE` — how far the centred title travels upward as
+  /// it fades in.
+  static const double kCenterTitleRise = 12;
+
+  /// Source computed: navbarCenterStyle.
+  ///
+  /// The centred title rises into place over the same stretch as its fade, so
+  /// the offset reaches zero exactly when it becomes fully opaque.
+  Map<String, dynamic> get navbarCenterStyle {
+    if (!isIosMode) return const <String, dynamic>{};
+    final opacity = navbarCenterOpacity;
+    return <String, dynamic>{
+      'opacity': opacity,
+      'transform': 'translateY(${(1 - opacity) * kCenterTitleRise}px)',
+    };
+  }
+
+  /// Vertical offset the centred title is drawn at, from [navbarCenterStyle].
+  double get navbarCenterTranslateY =>
+      isIosMode ? (1 - navbarCenterOpacity) * kCenterTitleRise : 0;
+
+  /// Source computed: navbarFlowSpacerHeight — in-flow spacer that reserves
+  /// room for the fixed layer. Needs the context for the status-bar inset.
+  double navbarFlowSpacerHeight(BuildContext context) {
+    final statusBarHeight =
+        safeAreaInsetTop ? MediaQuery.paddingOf(context).top : 0.0;
+    return UPUtils.getPx(
+          height,
+          screenWidth: MediaQuery.sizeOf(context).width,
+        ) +
+        statusBarHeight;
+  }
+
+  /// Source computed: navbarGlassBgColor.
+  ///
+  /// The source's 0.82 opacity is a readability floor: where the backdrop blur
+  /// does not apply, that alpha alone has to keep text legible over content.
+  Color navbarGlassBgColor(BuildContext context) {
+    final explicit = UPUtils.parseColor(bgColor);
+    if (explicit != null) return explicit;
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    return isDark
+        ? const Color(0xD11C1C1E) // rgba(28, 28, 30, 0.82)
+        : const Color(0xD1FFFFFF); // rgba(255, 255, 255, 0.82)
+  }
+
   /// Source computed: navbarBgColor.
   dynamic get navbarBgColor {
     if (bgColor != null && '$bgColor'.trim().isNotEmpty) return bgColor;
@@ -127,8 +229,12 @@ class UPNavbar extends StatelessWidget implements PreferredSizeWidget {
   dynamic get navbarRightColor => '#303133';
 
   /// Source computed: navbarInnerStyle.
+  ///
+  /// In ios mode the fixed layer must be transparent, or the backdrop filter
+  /// samples its own background and blurs nothing; the glass layer supplies the
+  /// background instead, fading in with scroll.
   dynamic get navbarInnerStyle => <String, dynamic>{
-        'background': navbarBgColor,
+        'background': isIosMode ? 'transparent' : navbarBgColor,
       };
 
   @override
@@ -185,23 +291,31 @@ class UPNavbar extends StatelessWidget implements PreferredSizeWidget {
           ),
           // center title (IgnorePointer so side hit targets stay clickable)
           IgnorePointer(
-            child: centerSlot ??
-                (titleText.isEmpty
-                    ? const SizedBox.shrink()
-                    : SizedBox(
-                        width: titleW,
-                        child: Text(
-                          titleText,
-                          maxLines: 1,
-                          overflow: TextOverflow.ellipsis,
-                          textAlign: TextAlign.center,
-                          style: TextStyle(
-                            color: tColor,
-                            fontSize: 16,
-                            fontWeight: FontWeight.w500,
-                          ).merge(titleStyle),
-                        ),
-                      )),
+            child: Transform.translate(
+              // Source navbarCenterStyle: rises as it fades in.
+              offset: Offset(0, navbarCenterTranslateY),
+              child: Opacity(
+                // Source binds opacity here; in default mode this is always 1.
+                opacity: navbarCenterOpacity,
+                child: centerSlot ??
+                    (titleText.isEmpty
+                        ? const SizedBox.shrink()
+                        : SizedBox(
+                            width: titleW,
+                            child: Text(
+                              titleText,
+                              maxLines: 1,
+                              overflow: TextOverflow.ellipsis,
+                              textAlign: TextAlign.center,
+                              style: TextStyle(
+                                color: tColor,
+                                fontSize: 16,
+                                fontWeight: FontWeight.w500,
+                              ).merge(titleStyle),
+                            ),
+                          )),
+              ),
+            ),
           ),
           // right
           if (rightSlot != null || rightIcon.isNotEmpty || rightText.isNotEmpty)
@@ -242,8 +356,10 @@ class UPNavbar extends StatelessWidget implements PreferredSizeWidget {
 
     Widget inner = Container(
       decoration: BoxDecoration(
-        color: bg,
-        border: border
+        // Source: the fixed layer goes transparent in ios mode so the glass
+        // layer below supplies the background.
+        color: isIosMode ? Colors.transparent : bg,
+        border: border && !isIosMode
             ? Border(
                 bottom: BorderSide(color: tokens.borderColor, width: 0.5),
               )
@@ -253,13 +369,72 @@ class UPNavbar extends StatelessWidget implements PreferredSizeWidget {
         mainAxisSize: MainAxisSize.min,
         children: [
           if (safeAreaInsetTop)
-            SizedBox(height: topInset, child: ColoredBox(color: statusBg)),
+            SizedBox(
+              height: topInset,
+              child: ColoredBox(
+                color: isIosMode ? Colors.transparent : statusBg,
+              ),
+            ),
           bar,
         ],
       ),
     );
 
     final totalH = h + topInset;
+
+    if (isIosMode) {
+      // Source ios layout: an in-flow layer carrying the spacer and the large
+      // title, with the bar fixed above it behind a scroll-driven glass layer.
+      return Stack(
+        children: <Widget>[
+          Column(
+            mainAxisSize: MainAxisSize.min,
+            children: <Widget>[
+              SizedBox(height: navbarFlowSpacerHeight(context)),
+              if (titleText.isNotEmpty)
+                SizedBox(
+                  height: largeTitleHeight,
+                  child: Align(
+                    alignment: Alignment.centerLeft,
+                    child: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: 13),
+                      child: Text(
+                        titleText,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        style: TextStyle(
+                          color: tColor,
+                          fontSize: 34,
+                          fontWeight: FontWeight.w700,
+                        ).merge(titleStyle),
+                      ),
+                    ),
+                  ),
+                ),
+            ],
+          ),
+          Positioned(
+            top: 0,
+            left: 0,
+            right: 0,
+            child: Stack(
+              children: <Widget>[
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: Opacity(
+                      opacity: navbarGlassOpacity,
+                      child: ColoredBox(color: navbarGlassBgColor(context)),
+                    ),
+                  ),
+                ),
+                inner,
+              ],
+            ),
+          ),
+        ],
+      );
+    }
+
     if (fixed) {
       return Column(
         mainAxisSize: MainAxisSize.min,
