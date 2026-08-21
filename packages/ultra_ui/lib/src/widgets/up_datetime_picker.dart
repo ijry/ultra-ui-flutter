@@ -49,6 +49,7 @@ class UPDatetimePicker extends StatefulWidget {
     this.maskStyle,
     this.maskClass = '',
     this.onClose,
+    this.onClosed,
     this.onCancel,
     this.onConfirm,
     this.onChange,
@@ -106,6 +107,10 @@ class UPDatetimePicker extends StatefulWidget {
   final dynamic maskStyle;
   final String maskClass;
   final VoidCallback? onClose;
+
+  /// Source emit `closed` — the nested popup finished its leave
+  /// animation, unlike `close` which fires at dismissal.
+  final VoidCallback? onClosed;
   final VoidCallback? onCancel;
   final ValueChanged<dynamic>? onConfirm;
   final ValueChanged<dynamic>? onChange;
@@ -801,6 +806,7 @@ class UPDatetimePickerState extends State<UPDatetimePicker> {
       maskStyle: widget.maskStyle,
       pageInline: widget.pageInline,
       onClose: _handlePickerClose,
+      onClosed: widget.onClosed,
       onCancel: cancel,
       onChange: (values, idxs, col) {
         final composed = _compose(values);

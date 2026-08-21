@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:math' as math;
 
 import 'package:flutter/material.dart';
@@ -23,6 +24,7 @@ class UPColorPicker extends StatefulWidget {
     this.onUpdateModelValue,
     this.onConfirm,
     this.onClose,
+    this.onClosed,
     this.customStyle,
   });
 
@@ -40,6 +42,10 @@ class UPColorPicker extends StatefulWidget {
   final ValueChanged<String>? onUpdateModelValue;
   final ValueChanged<String>? onConfirm;
   final VoidCallback? onClose;
+
+  /// Source emit `closed` — the nested popup finished its leave
+  /// animation, unlike `close` which fires at dismissal.
+  final VoidCallback? onClosed;
 
   final BoxDecoration? customStyle;
 
@@ -124,6 +130,10 @@ class UPColorPickerState extends State<UPColorPicker> {
   bool showDirectionPicker = false;
   HSVColor get hsvValue => hsv;
   bool? _localShow;
+
+  /// Pending `closed` emission.
+  Timer? _closedTimer;
+
   bool get isShown => _localShow ?? widget.show;
 
   /// Source retained direction/state fields.
@@ -161,6 +171,23 @@ class UPColorPickerState extends State<UPColorPicker> {
     if (emit) widget.onUpdateShow?.call(true);
   }
 
+  /// Source `closed` — the source wraps this component in `u-popup`, whose
+  /// leave animation runs for the popup default of 300ms before emitting.
+  /// This port renders inline, so the timing is reproduced directly.
+  void _emitClosed() {
+    if (widget.onClosed == null) return;
+    _closedTimer?.cancel();
+    _closedTimer = Timer(const Duration(milliseconds: 300), () {
+      if (mounted) widget.onClosed?.call();
+    });
+  }
+
+  @override
+  void dispose() {
+    _closedTimer?.cancel();
+    super.dispose();
+  }
+
   void close({bool emit = true}) {
     if (!isShown) return;
     setState(() => _localShow = false);
@@ -168,6 +195,7 @@ class UPColorPickerState extends State<UPColorPicker> {
       widget.onUpdateShow?.call(false);
       widget.onClose?.call();
     }
+    _emitClosed();
   }
 
   void toggle({bool emit = true}) {

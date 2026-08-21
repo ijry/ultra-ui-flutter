@@ -25,6 +25,7 @@ class UPActionSheet extends StatefulWidget {
     this.openType = '',
     this.onSelect,
     this.onClose,
+    this.onClosed,
     this.onCancel,
     this.onUpdateShow,
     this.customStyle,
@@ -45,6 +46,10 @@ class UPActionSheet extends StatefulWidget {
   final String openType;
   final void Function(dynamic item, int index)? onSelect;
   final VoidCallback? onClose;
+
+  /// Source emit `closed` — the nested popup finished its leave
+  /// animation, unlike `close` which fires at dismissal.
+  final VoidCallback? onClosed;
   final VoidCallback? onCancel;
   final ValueChanged<bool>? onUpdateShow;
   final BoxDecoration? customStyle;
@@ -275,6 +280,7 @@ class UPActionSheetState extends State<UPActionSheet> {
       closeOnClickOverlay: widget.closeOnClickOverlay,
       maxHeight: widget.wrapMaxHeight,
       onClose: closeHandler,
+      onClosed: widget.onClosed,
       child: Material(
         color: tokens.cardBgColor,
         child: Column(

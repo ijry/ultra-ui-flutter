@@ -30086,6 +30086,121 @@ void main() {
     expect(tester.widget<UPOverlay>(find.byType(UPOverlay)).duration, 350);
   });
 
+  testWidgets('UPPopup emits closed only after the leave animation',
+      (tester) async {
+    final key = GlobalKey<UPPopupState>();
+    var closes = 0;
+    var closeds = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        home: Scaffold(
+          body: UPPopup(
+            key: key,
+            show: true,
+            duration: 300,
+            onClose: () => closes++,
+            onClosed: () => closeds++,
+            child: const Text('popup'),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    key.currentState!.close();
+    await tester.pump();
+    // close fires at dismissal; closed waits for the animation to finish.
+    expect(closes, 1);
+    expect(closeds, 0);
+
+    await tester.pump(const Duration(milliseconds: 320));
+    expect(closeds, 1);
+  });
+
+  testWidgets('UPPopup emits closed for an external show change',
+      (tester) async {
+    var closeds = 0;
+    Widget build(bool show) => MaterialApp(
+          home: Scaffold(
+            body: UPPopup(
+              show: show,
+              duration: 200,
+              onClosed: () => closeds++,
+              child: const Text('popup'),
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(build(true));
+    await tester.pump();
+    await tester.pumpWidget(build(false));
+    await tester.pump();
+    expect(closeds, 0);
+
+    await tester.pump(const Duration(milliseconds: 220));
+    expect(closeds, 1,
+        reason: 'the source watcher re-emits closed when show goes false '
+            'externally, so it is observable however the popup closed');
+  });
+
+  testWidgets('UPPopup reopening cancels a pending closed emission',
+      (tester) async {
+    var closeds = 0;
+    Widget build(bool show) => MaterialApp(
+          home: Scaffold(
+            body: UPPopup(
+              show: show,
+              duration: 300,
+              onClosed: () => closeds++,
+              child: const Text('popup'),
+            ),
+          ),
+        );
+
+    await tester.pumpWidget(build(true));
+    await tester.pump();
+    await tester.pumpWidget(build(false));
+    await tester.pump(const Duration(milliseconds: 100));
+    // Reopen before the leave finishes.
+    await tester.pumpWidget(build(true));
+    await tester.pump(const Duration(milliseconds: 400));
+
+    expect(closeds, 0, reason: 'the popup never finished disappearing');
+  });
+
+  testWidgets('UPActionSheet forwards the nested popup closed emit',
+      (tester) async {
+    final key = GlobalKey<UPActionSheetState>();
+    var closes = 0;
+    var closeds = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPActionSheet(
+            key: key,
+            show: true,
+            actions: const <Map<String, dynamic>>[
+              <String, dynamic>{'name': 'one'},
+            ],
+            onClose: () => closes++,
+            onClosed: () => closeds++,
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    key.currentState!.close();
+    await tester.pump();
+    expect(closes, 1);
+    expect(closeds, 0);
+
+    await tester.pump(const Duration(milliseconds: 320));
+    expect(closeds, 1,
+        reason: 'the source forwards its nested popup closed straight through');
+  });
+
   testWidgets('UPTabsPro clamps current into the source list range',
       (tester) async {
     final key = GlobalKey<UPTabsProState>();

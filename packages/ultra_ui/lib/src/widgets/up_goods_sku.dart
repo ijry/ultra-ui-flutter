@@ -1,3 +1,5 @@
+import 'dart:async';
+
 import 'package:flutter/material.dart';
 
 import '../theme/up_theme.dart';
@@ -22,6 +24,7 @@ class UPGoodsSku extends StatefulWidget {
     this.onOpen,
     this.onConfirm,
     this.onClose,
+    this.onClosed,
     this.customStyle,
   });
 
@@ -43,6 +46,10 @@ class UPGoodsSku extends StatefulWidget {
   final VoidCallback? onOpen;
   final ValueChanged<Map>? onConfirm;
   final VoidCallback? onClose;
+
+  /// Source emit `closed` — the nested popup finished its leave
+  /// animation, unlike `close` which fires at dismissal.
+  final VoidCallback? onClosed;
   final BoxDecoration? customStyle;
 
   @override
@@ -53,6 +60,9 @@ class UPGoodsSkuState extends State<UPGoodsSku> {
   final Map<String, dynamic> selectedSku = {};
   num buyNum = 1;
   late bool innerShow;
+
+  /// Pending `closed` emission.
+  Timer? _closedTimer;
 
   @override
   void initState() {
@@ -221,6 +231,24 @@ class UPGoodsSkuState extends State<UPGoodsSku> {
     setState(() => innerShow = false);
     widget.onUpdateShow?.call(false);
     widget.onClose?.call();
+    _emitClosed();
+  }
+
+  /// Source `closed` — the source wraps this component in `u-popup`, whose
+  /// leave animation runs for the popup default of 300ms before emitting.
+  /// This port renders inline, so the timing is reproduced directly.
+  void _emitClosed() {
+    if (widget.onClosed == null) return;
+    _closedTimer?.cancel();
+    _closedTimer = Timer(const Duration(milliseconds: 300), () {
+      if (mounted) widget.onClosed?.call();
+    });
+  }
+
+  @override
+  void dispose() {
+    _closedTimer?.cancel();
+    super.dispose();
   }
 
   /// Source method: clear selected sku and buy num.

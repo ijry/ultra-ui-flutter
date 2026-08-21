@@ -27,6 +27,7 @@ class UPKeyboard extends StatefulWidget {
     this.autoChange = false,
     this.onChange,
     this.onClose,
+    this.onClosed,
     this.onConfirm,
     this.onCancel,
     this.onBackspace,
@@ -53,6 +54,10 @@ class UPKeyboard extends StatefulWidget {
   final bool autoChange;
   final ValueChanged<dynamic>? onChange;
   final VoidCallback? onClose;
+
+  /// Source emit `closed` — the nested popup finished its leave
+  /// animation, unlike `close` which fires at dismissal.
+  final VoidCallback? onClosed;
   final VoidCallback? onConfirm;
   final VoidCallback? onCancel;
   final VoidCallback? onBackspace;
@@ -249,6 +254,7 @@ class UPKeyboardState extends State<UPKeyboard> {
       bgColor: 'rgb(214, 218, 220)',
       round: 0,
       onClose: () => close(),
+      onClosed: widget.onClosed,
       child: panel,
     );
 

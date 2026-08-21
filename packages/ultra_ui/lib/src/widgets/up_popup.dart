@@ -31,6 +31,7 @@ class UPPopup extends StatefulWidget {
     this.minHeight = '200px',
     this.maxHeight = '600px',
     this.onClose,
+    this.onClosed,
     this.onUpdateShow,
     this.onOpen,
     this.child,
@@ -57,6 +58,10 @@ class UPPopup extends StatefulWidget {
   final dynamic minHeight;
   final dynamic maxHeight;
   final VoidCallback? onClose;
+
+  /// Source emit `closed` — fires after the leave animation, when the popup has
+  /// actually disappeared, unlike [onClose] which fires at dismissal.
+  final VoidCallback? onClosed;
 
   /// Source update:show alias.
   final ValueChanged<bool>? onUpdateShow;
@@ -175,6 +180,9 @@ class UPPopupState extends State<UPPopup> {
 
   bool? _localShow;
 
+  /// Pending `closed` emission, cancelled if the popup reopens first.
+  Timer? _closedTimer;
+
   bool get isShown => _localShow ?? widget.show;
 
   /// Source data.
@@ -225,6 +233,9 @@ class UPPopupState extends State<UPPopup> {
       widget.onClose?.call();
       widget.onUpdateShow?.call(false);
     }
+    // `closed` follows the leave animation regardless of how the popup was
+    // dismissed, including a silent programmatic close.
+    _scheduleClosed();
   }
 
   void toggle({bool emit = true}) {
@@ -248,6 +259,31 @@ class UPPopupState extends State<UPPopup> {
   void afterEnter([dynamic _]) {
     entered = true;
     if (mounted) setState(() {});
+  }
+
+  /// Source `afterLeave` — the leave animation finished and the popup is gone.
+  ///
+  /// Distinct from `close`, which fires the moment dismissal is requested.
+  void afterLeave([dynamic _]) {
+    entered = false;
+    widget.onClosed?.call();
+  }
+
+  /// Schedules [afterLeave] for when the leave transition ends.
+  ///
+  /// The source gets this from its transition's own `afterLeave`; in
+  /// `pageInline` mode no leave animation runs, so it re-emits after the
+  /// configured duration instead. Both paths land here.
+  void _scheduleClosed() {
+    _closedTimer?.cancel();
+    final ms = int.tryParse('${widget.duration}') ?? 300;
+    if (ms <= 0) {
+      afterLeave();
+      return;
+    }
+    _closedTimer = Timer(Duration(milliseconds: ms), () {
+      if (mounted) afterLeave();
+    });
   }
 
   double _eventY(dynamic e) {
@@ -364,7 +400,21 @@ class UPPopupState extends State<UPPopup> {
     super.didUpdateWidget(oldWidget);
     if (oldWidget.show != widget.show) {
       _localShow = null;
+      if (widget.show) {
+        // Reopened before the previous leave finished: cancel the pending emit.
+        _closedTimer?.cancel();
+      } else {
+        // Source watcher re-emits for an external show -> false, so `closed`
+        // is observable no matter how the popup was dismissed.
+        _scheduleClosed();
+      }
     }
+  }
+
+  @override
+  void dispose() {
+    _closedTimer?.cancel();
+    super.dispose();
   }
 
   Alignment get _alignment {

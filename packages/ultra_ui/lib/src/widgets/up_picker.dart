@@ -48,6 +48,7 @@ class UPPicker extends StatefulWidget {
     this.maskClass = '',
     this.pageInline = false,
     this.onClose,
+    this.onClosed,
     this.onCancel,
     this.onConfirm,
     this.onChange,
@@ -95,6 +96,10 @@ class UPPicker extends StatefulWidget {
   final String maskClass;
   final bool pageInline;
   final VoidCallback? onClose;
+
+  /// Source emit `closed` — the nested popup finished its leave
+  /// animation, unlike `close` which fires at dismissal.
+  final VoidCallback? onClosed;
   final VoidCallback? onCancel;
   final void Function(List values, List indexes)? onConfirm;
   final void Function(List values, List indexes, int columnIndex)? onChange;
@@ -686,6 +691,7 @@ class UPPickerState extends State<UPPicker> {
       pageInline: widget.pageInline,
       closeOnClickOverlay: widget.closeOnClickOverlay,
       onClose: _close,
+      onClosed: widget.onClosed,
       child: pickerBody,
     );
 
@@ -734,6 +740,7 @@ class UPPickerData extends StatefulWidget {
     this.onConfirm,
     this.onCancel,
     this.onClose,
+    this.onClosed,
     this.customStyle,
   });
 
@@ -752,6 +759,10 @@ class UPPickerData extends StatefulWidget {
   final VoidCallback? onConfirm;
   final VoidCallback? onCancel;
   final VoidCallback? onClose;
+
+  /// Source emit `closed` — the nested picker's popup finished its leave
+  /// animation, unlike `close` which fires at dismissal.
+  final VoidCallback? onClosed;
   final BoxDecoration? customStyle;
 
   dynamic get effectiveValue => modelValue != '' && modelValue != null
@@ -890,6 +901,7 @@ class UPPickerDataState extends State<UPPickerData> {
           onClose: () {
             close();
           },
+          onClosed: widget.onClosed,
         ),
       ],
     );

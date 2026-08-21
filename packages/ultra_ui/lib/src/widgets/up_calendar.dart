@@ -59,6 +59,7 @@ class UPCalendar extends StatefulWidget {
     this.scrollIntoView = '',
     this.onConfirm,
     this.onClose,
+    this.onClosed,
     this.onUpdateShow,
     this.onChange,
     this.onMonthSelected,
@@ -139,6 +140,10 @@ class UPCalendar extends StatefulWidget {
   final dynamic scrollIntoView;
   final ValueChanged<List<DateTime>>? onConfirm;
   final VoidCallback? onClose;
+
+  /// Source emit `closed` — the nested popup finished its leave
+  /// animation, unlike `close` which fires at dismissal.
+  final VoidCallback? onClosed;
 
   /// Source update:show alias.
   final ValueChanged<bool>? onUpdateShow;
@@ -1271,6 +1276,7 @@ class UPCalendarState extends State<UPCalendar> {
       bgColor: widget.bgColor,
       pageInline: widget.pageInline,
       onClose: widget.onClose,
+      onClosed: widget.onClosed,
       child: body,
     );
     return root;
