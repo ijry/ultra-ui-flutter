@@ -324,6 +324,14 @@ def main() -> None:
   这与其它组件“computed 也公开”的取向不同，是有意的取舍：这些成员属于子组件实现细节，
   而非 `u-novel-reader` 的对外接口。核心算法（分页/测量/持久化）已在
   `test/novel_reader_core_test.dart` 中对齐真实源码 JS 输出。
+- 其余少量缺失是**源码为绕开 Vue / 小程序限制而存在的胶水代码**，在 Flutter 无对应
+  语义，刻意不实现：
+  - `u-swipe-action.parentData` / `u-list-item.resize`：源码注释说明其用于「子组件
+    无法实时监听父组件参数变化」，Flutter 的 InheritedWidget 与 build 机制天然解决。
+  - `u-popup.emitClose`：源码用一次性标记抑制 watcher 重复补发 `close`；本移植的
+    close 路径本就只发一次。
+  - `_set` / `_hook` / `_onMessage` / `_empty` / `_queueMakeCode` 等下划线前缀成员：
+    源码内部实现细节，非对外接口。
 - 分组与排序镜像源码 `src/pages/example/components.config.js`，
   子组件缩进显示在父组件下方。
 """

@@ -68,6 +68,15 @@ class UPPosterState extends State<UPPoster> {
     return UPUtils.getPx(v);
   }
 
+  /// Source `getRpxRatio` — px per 1rpx.
+  ///
+  /// The source needs this because `uni.upx2px` picks a different base width
+  /// per value on very wide screens, which made poster width and height use
+  /// different scales and skewed the aspect ratio. [UPUtils.rpx2px] already
+  /// applies one uniform ratio, so that hazard does not arise here; the method
+  /// is exposed for call compatibility and to report the ratio in use.
+  double getRpxRatio() => UPUtils.rpx2px(1000) / 1000;
+
   /// Source poster helpers (Batch J + BI).
   dynamic getPosterCanvas([dynamic _]) => this;
   final List lastDrawOps = <dynamic>[];
