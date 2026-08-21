@@ -652,15 +652,15 @@ class _BarcodePainter extends CustomPainter {
       [for (final ch in bits.split('')) ch == '1' ? 1 : 0];
 
   static List<int> _ean13(String raw) {
-    var d = _digitsOnly(raw, 13);
+    // Do not pad here: a 12-digit payload is a full EAN-13 body awaiting its
+    // check digit, so left-padding it to 13 would shift every digit right and
+    // then discard the real last digit as if it were the check digit.
+    var d = _digitsOnly(raw, 13, padLeft: false);
     if (d.length < 12) d = d.padLeft(12, '0');
-    if (d.length == 12) {
-      d = '$d${_eanChecksum(d)}';
-    } else {
-      // recompute check if provided wrong
-      final body = d.substring(0, 12);
-      d = '$body${_eanChecksum(body)}';
-    }
+    // Always derive the check digit from the leading 12 digits, which also
+    // corrects a wrong one supplied by the caller.
+    final body = d.substring(0, 12);
+    d = '$body${_eanChecksum(body)}';
     final first = int.parse(d[0]);
     final parity = _ean13Parity[first];
     final modules = <int>[
@@ -684,14 +684,12 @@ class _BarcodePainter extends CustomPainter {
   }
 
   static List<int> _ean8(String raw) {
-    var d = _digitsOnly(raw, 8);
+    // Same reasoning as _ean13: 7 digits is a body awaiting its check digit,
+    // so padding to 8 first would shift the digits and drop the last one.
+    var d = _digitsOnly(raw, 8, padLeft: false);
     if (d.length < 7) d = d.padLeft(7, '0');
-    if (d.length == 7) {
-      d = '$d${_eanChecksum(d)}';
-    } else {
-      final body = d.substring(0, 7);
-      d = '$body${_eanChecksum(body)}';
-    }
+    final body = d.substring(0, 7);
+    d = '$body${_eanChecksum(body)}';
     final modules = <int>[
       ...List.filled(10, 0),
       ..._bits('101'),
@@ -709,7 +707,10 @@ class _BarcodePainter extends CustomPainter {
   }
 
   static List<int> _upca(String raw) {
-    var d = _digitsOnly(raw, 12);
+    // 11 digits is a UPC-A body awaiting its check digit; padding it to 12
+    // first would shift the digits, so keep the caller's length and let
+    // _ean13 derive the check digit.
+    final d = _digitsOnly(raw, 12, padLeft: false);
     // UPC-A is EAN-13 with leading 0.
     return _ean13('0$d');
   }
