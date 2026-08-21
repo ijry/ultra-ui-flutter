@@ -292,6 +292,17 @@ def main() -> None:
 > python tool/extract_groups.py
 > python tool/gen_progress_doc.py
 > ```
+>
+> 本表只覆盖 **API 面**（props / emits / methods 是否存在）。**配色一致性**由另一个
+> 独立脚本核对 —— 它解析源码 `libs/css/theme-vars-core.scss` 的 CSS 变量，与
+> `UPThemeTokens` 的 light / dark 双色板逐项比对：
+>
+> ```bash
+> python tool/theme_parity_scan.py   # 期望 mismatches 0、unmapped 为空
+> ```
+>
+> 该脚本只能证明 token 取值一致，不能证明组件读了正确的 token；后者由
+> `packages/ultra_ui/test/theme_parity_test.dart` 断言。
 
 ## 总览
 
