@@ -16,12 +16,12 @@
 | 指标 | 数值 |
 |---|---|
 | 源组件总数 | 140 |
-| ✅ 已复刻 | 126 |
-| 🟡 部分 | 15 |
+| ✅ 已复刻 | 127 |
+| 🟡 部分 | 14 |
 | ⛔ 未复刻 | 0 |
 | props 覆盖 | 1580/1581 |
 | emits 覆盖 | 329/332 |
-| methods + computed 覆盖 | 1245/1341 |
+| methods + computed 覆盖 | 1260/1341 |
 
 ### 状态含义
 
@@ -215,7 +215,7 @@
 |---|---|---|---|---|---|---|
 | `u-back-top` | `UPBackTop` | ✅ 已复刻 | 10/10 | 1/1 | 4/4 | 接口与样式对齐 |
 | `u-calendar-strip` | `UPCalendarStrip` | ✅ 已复刻 | 15/15 | 5/5 | 37/37 | 滑动手势用月份按钮模拟 |
-| `u-canvas` | `UPCanvas` | 🟡 部分 | 7/7 | 4/4 | 55/70 | Flutter `CustomPainter` 替代 uni canvas context；缺 methods: `arcTo`, `createPattern`, `ellipse`, `estimateTextWidth` 等 15 |
+| `u-canvas` | `UPCanvas` | ✅ 已复刻 | 7/7 | 4/4 | 70/70 | Flutter `CustomPainter` 替代 uni canvas context |
 | `u-message-input` | `UPMessageInput` | ✅ 已复刻 | 12/12 | 2/2 | 5/5 | 接口与样式对齐 |
 | `u-refresh-virtual-list` | `UPRefreshVirtualList` | ✅ 已复刻 | 5/5 | — | 5/5 | 接口与样式对齐 |
 | `u-root-toast-host` | `UPRootToastHost` | ✅ 已复刻 | — | — | — | 替代 `uni.$u.setRootToastRef`，注册全局 toast/notify 宿主 |
