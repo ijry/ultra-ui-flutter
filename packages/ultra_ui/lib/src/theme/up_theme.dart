@@ -42,6 +42,17 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
     required this.table2HeaderBgColor,
     required this.table2ZebraBgColor,
     required this.table2HighlightBgColor,
+    required this.subsectionBgColor,
+    required this.subsectionBarColor,
+    required this.subsectionInactiveColor,
+    required this.subsectionDisabledTextColor,
+    required this.subsectionDisabledBorderColor,
+    required this.subsectionDisabledBarColor,
+    required this.switchInactiveColor,
+    required this.switchDotInactiveColor,
+    required this.switchLoadingInactiveColor,
+    required this.tagCloseBgColor,
+    required this.noticeBarBgColor,
   });
 
   final Color mainColor;
@@ -88,6 +99,21 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
   final Color table2ZebraBgColor;
   final Color table2HighlightBgColor;
 
+  /// Per-component tokens from each component's own theme-vars.scss. These
+  /// have distinct dark values, so hardcoding the light color would be wrong
+  /// in dark mode.
+  final Color subsectionBgColor;
+  final Color subsectionBarColor;
+  final Color subsectionInactiveColor;
+  final Color subsectionDisabledTextColor;
+  final Color subsectionDisabledBorderColor;
+  final Color subsectionDisabledBarColor;
+  final Color switchInactiveColor;
+  final Color switchDotInactiveColor;
+  final Color switchLoadingInactiveColor;
+  final Color tagCloseBgColor;
+  final Color noticeBarBgColor;
+
   factory UPThemeTokens.light() {
     return const UPThemeTokens(
       mainColor: Color(0xFF303133),
@@ -129,6 +155,17 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
       table2HeaderBgColor: Color(0xFFF5F7FA),
       table2ZebraBgColor: Color(0xFFFAFAFA),
       table2HighlightBgColor: Color(0xFFF5F7FA),
+      subsectionBgColor: Color(0xFFEEEEEF),
+      subsectionBarColor: Color(0xFFFFFFFF),
+      subsectionInactiveColor: Color(0xFF303133),
+      subsectionDisabledTextColor: Color(0xFFC8C9CC),
+      subsectionDisabledBorderColor: Color(0xFFD4D4D4),
+      subsectionDisabledBarColor: Color(0xFFF5F5F5),
+      switchInactiveColor: Color(0xFFFFFFFF),
+      switchDotInactiveColor: Color(0xFFFFFFFF),
+      switchLoadingInactiveColor: Color(0xFFAAABAD),
+      tagCloseBgColor: Color(0xFFC8C9CC),
+      noticeBarBgColor: Color(0xFFFDF6EC),
     );
   }
 
@@ -174,6 +211,17 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
       table2HeaderBgColor: Color(0xFF2A2D33),
       table2ZebraBgColor: Color(0xFF23262B),
       table2HighlightBgColor: Color(0xFF2F3440),
+      subsectionBgColor: Color(0xFF2B2C30),
+      subsectionBarColor: Color(0xFF3A3B40),
+      subsectionInactiveColor: Color(0xFFD1D5DB),
+      subsectionDisabledTextColor: Color(0xFF6B7280),
+      subsectionDisabledBorderColor: Color(0xFF3A3A3C),
+      subsectionDisabledBarColor: Color(0xFF3A3A3C),
+      switchInactiveColor: Color(0xFF3A3A3C),
+      switchDotInactiveColor: Color(0xFFD1D5DB),
+      switchLoadingInactiveColor: Color(0xFF9CA3AF),
+      tagCloseBgColor: Color(0xFF4B5563),
+      noticeBarBgColor: Color(0xFF3D2F1B),
     );
   }
 
@@ -234,6 +282,17 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
     Color? table2HeaderBgColor,
     Color? table2ZebraBgColor,
     Color? table2HighlightBgColor,
+    Color? subsectionBgColor,
+    Color? subsectionBarColor,
+    Color? subsectionInactiveColor,
+    Color? subsectionDisabledTextColor,
+    Color? subsectionDisabledBorderColor,
+    Color? subsectionDisabledBarColor,
+    Color? switchInactiveColor,
+    Color? switchDotInactiveColor,
+    Color? switchLoadingInactiveColor,
+    Color? tagCloseBgColor,
+    Color? noticeBarBgColor,
   }) {
     return UPThemeTokens(
       mainColor: mainColor ?? this.mainColor,
@@ -278,6 +337,23 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
       table2ZebraBgColor: table2ZebraBgColor ?? this.table2ZebraBgColor,
       table2HighlightBgColor:
           table2HighlightBgColor ?? this.table2HighlightBgColor,
+      subsectionBgColor: subsectionBgColor ?? this.subsectionBgColor,
+      subsectionBarColor: subsectionBarColor ?? this.subsectionBarColor,
+      subsectionInactiveColor:
+          subsectionInactiveColor ?? this.subsectionInactiveColor,
+      subsectionDisabledTextColor:
+          subsectionDisabledTextColor ?? this.subsectionDisabledTextColor,
+      subsectionDisabledBorderColor:
+          subsectionDisabledBorderColor ?? this.subsectionDisabledBorderColor,
+      subsectionDisabledBarColor:
+          subsectionDisabledBarColor ?? this.subsectionDisabledBarColor,
+      switchInactiveColor: switchInactiveColor ?? this.switchInactiveColor,
+      switchDotInactiveColor:
+          switchDotInactiveColor ?? this.switchDotInactiveColor,
+      switchLoadingInactiveColor:
+          switchLoadingInactiveColor ?? this.switchLoadingInactiveColor,
+      tagCloseBgColor: tagCloseBgColor ?? this.tagCloseBgColor,
+      noticeBarBgColor: noticeBarBgColor ?? this.noticeBarBgColor,
     );
   }
 
@@ -328,6 +404,23 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
       table2ZebraBgColor: l(table2ZebraBgColor, other.table2ZebraBgColor),
       table2HighlightBgColor:
           l(table2HighlightBgColor, other.table2HighlightBgColor),
+      subsectionBgColor: l(subsectionBgColor, other.subsectionBgColor),
+      subsectionBarColor: l(subsectionBarColor, other.subsectionBarColor),
+      subsectionInactiveColor:
+          l(subsectionInactiveColor, other.subsectionInactiveColor),
+      subsectionDisabledTextColor:
+          l(subsectionDisabledTextColor, other.subsectionDisabledTextColor),
+      subsectionDisabledBorderColor:
+          l(subsectionDisabledBorderColor, other.subsectionDisabledBorderColor),
+      subsectionDisabledBarColor:
+          l(subsectionDisabledBarColor, other.subsectionDisabledBarColor),
+      switchInactiveColor: l(switchInactiveColor, other.switchInactiveColor),
+      switchDotInactiveColor:
+          l(switchDotInactiveColor, other.switchDotInactiveColor),
+      switchLoadingInactiveColor:
+          l(switchLoadingInactiveColor, other.switchLoadingInactiveColor),
+      tagCloseBgColor: l(tagCloseBgColor, other.tagCloseBgColor),
+      noticeBarBgColor: l(noticeBarBgColor, other.noticeBarBgColor),
     );
   }
 

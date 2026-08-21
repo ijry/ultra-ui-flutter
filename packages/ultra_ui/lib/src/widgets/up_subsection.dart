@@ -291,18 +291,26 @@ class UPSubsectionState extends State<UPSubsection> {
     final active =
         UPUtils.parseColor(widget.activeColor, fallback: tokens.primary) ??
             tokens.primary;
-    final inactive =
-        UPUtils.parseColor(widget.inactiveColor, fallback: tokens.mainColor) ??
-            tokens.mainColor;
-    final bg =
-        UPUtils.parseColor(widget.bgColor, fallback: const Color(0xFFEEEEEF)) ??
-            const Color(0xFFEEEEEF);
+    final inactive = UPUtils.parseColor(
+          widget.inactiveColor,
+          fallback: tokens.subsectionInactiveColor,
+        ) ??
+        tokens.subsectionInactiveColor;
+    final bg = UPUtils.parseColor(
+          widget.bgColor,
+          fallback: tokens.subsectionBgColor,
+        ) ??
+        tokens.subsectionBgColor;
     final isButton = widget.mode != 'subsection';
     final len = widget.list.length;
-    final disabledText = tokens.disabledColor;
-    final disabledBorder = tokens.borderColor;
+    // Source declares its own subsection-* variables with distinct dark values,
+    // rather than reusing the generic disabled/border colors.
+    final disabledText = tokens.subsectionDisabledTextColor;
+    final disabledBorder = tokens.subsectionDisabledBorderColor;
     final barColor = isButton
-        ? (widget.disabled ? const Color(0xFFF5F5F5) : const Color(0xFFFFFFFF))
+        ? (widget.disabled
+            ? tokens.subsectionDisabledBarColor
+            : tokens.subsectionBarColor)
         : (widget.disabled ? disabledBorder : active);
 
     return LayoutBuilder(
@@ -399,7 +407,7 @@ class UPSubsectionState extends State<UPSubsection> {
                   } else {
                     textColor = selected
                         ? (_itemColor(item, widget.activeColorKeyName) ??
-                            const Color(0xFFFFFFFF))
+                            tokens.subsectionBarColor)
                         : itemInactive;
                   }
 

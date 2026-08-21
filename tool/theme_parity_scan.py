@@ -13,6 +13,7 @@ Emits JSON on stdout:
 from __future__ import annotations
 
 import json
+import os
 import re
 import sys
 
@@ -23,6 +24,9 @@ SCSS = (
 THEME = (
     r"D:\Repos\xyito\open\ultra-ui-flutter\packages\ultra_ui\lib\src\theme"
     r"\up_theme.dart"
+)
+COMPONENTS = (
+    r"D:\Repos\xyito\open\uview-plus\src\uni_modules\uview-plus\components"
 )
 
 # CSS custom property -> Dart field on UPThemeTokens. Only tokens the Dart
@@ -142,6 +146,48 @@ def parse_dart() -> tuple[dict[str, str], dict[str, str]]:
     return collect(factory_body("light")), collect(factory_body("dark"))
 
 
+def parse_component_vars() -> dict[str, dict]:
+    """Per-component theme-vars.scss -> {var: {light, dark, differs}}.
+
+    Several components declare their own variables instead of reusing the core
+    palette, and those carry distinct dark values. A port that hardcodes the
+    light color is therefore wrong in dark mode, so the ones that actually
+    differ between palettes are reported for review.
+    """
+    out: dict[str, dict] = {}
+    if not os.path.isdir(COMPONENTS):
+        return out
+    for entry in sorted(os.listdir(COMPONENTS)):
+        path = os.path.join(COMPONENTS, entry, "theme-vars.scss")
+        if not os.path.exists(path):
+            continue
+        text = open(path, encoding="utf-8").read()
+        dark_start = text.find("prefers-color-scheme: dark")
+        light_text = text[:dark_start] if dark_start > 0 else text
+        dark_text = text[dark_start:] if dark_start > 0 else ""
+
+        def collect(chunk: str) -> dict[str, str]:
+            found: dict[str, str] = {}
+            for var, raw in DECL.findall(chunk):
+                color = normalize(raw)
+                if color:
+                    found.setdefault(var, color)
+            return found
+
+        light = collect(light_text)
+        dark = collect(dark_text)
+        for var, light_value in light.items():
+            dark_value = dark.get(var)
+            out[var] = {
+                "component": entry,
+                "light": light_value,
+                "dark": dark_value,
+                # Identical values are safe to hardcode; differing ones are not.
+                "differs": dark_value is not None and dark_value != light_value,
+            }
+    return out
+
+
 def main() -> int:
     scss_light, scss_dark = parse_scss()
     dart_light, dart_dark = parse_dart()
@@ -169,13 +215,23 @@ def main() -> int:
             }
         report[label] = entries
 
+    component_vars = parse_component_vars()
+    report["component_vars"] = component_vars
+
     report["_summary"] = {
+        "component_vars_with_dark_variant": sorted(
+            k for k, v in component_vars.items() if v["differs"]
+        ),
         "mismatches": mismatches,
         "compared": sum(len(v) for k, v in report.items() if k != "_summary"),
         "unmapped_source_vars": sorted(
             set(scss_light) - set(VAR_TO_FIELD)
         ),
     }
+    # `compared` counted the report dicts; exclude the component_vars map.
+    report["_summary"]["compared"] = sum(
+        len(report[label]) for label in ("light", "dark")
+    )
     json.dump(report, sys.stdout, ensure_ascii=False, indent=1)
     return 0
 

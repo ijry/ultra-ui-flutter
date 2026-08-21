@@ -329,9 +329,12 @@ class UPTag extends StatelessWidget {
         ? (UPUtils.parseColor(iconColor) ?? fg)
         : (plain ? typeColor : Colors.white);
 
+    // Source --up-tag-close-bg-color; it currently equals the disabled color in
+    // both palettes, but reading the named token keeps this right if they
+    // diverge upstream.
     final closeBg = closeColor.isNotEmpty && closeColor != '#C6C7CB'
-        ? (UPUtils.parseColor(closeColor) ?? tokens.disabledColor)
-        : tokens.disabledColor;
+        ? (UPUtils.parseColor(closeColor) ?? tokens.tagCloseBgColor)
+        : tokens.tagCloseBgColor;
 
     final tagBody = Container(
       height: _height,

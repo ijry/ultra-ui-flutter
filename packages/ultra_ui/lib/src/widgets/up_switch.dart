@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 
+import '../theme/up_theme.dart';
 import '../utils/up_utils.dart';
 import 'up_loading_icon.dart';
 
@@ -134,17 +135,24 @@ class UPSwitchState extends State<UPSwitch> {
     final height = s + 2;
     final spacePx = UPUtils.getPx(widget.space);
     final nodeSize = (s - spacePx).clamp(1.0, s);
+    final tokens = UPThemeTokens.of(context);
     final active =
         UPUtils.parseColor(widget.activeColor) ?? const Color(0xFF2979FF);
-    final inactive =
-        UPUtils.parseColor(widget.inactiveColor) ?? const Color(0xFFFFFFFF);
     final inactiveText = '${widget.inactiveColor}'.trim().toLowerCase();
     final hasCustomInactive = inactiveText.isNotEmpty &&
         inactiveText != '#ffffff' &&
         inactiveText != '#fff';
-    // Source default border: rgba(0, 0, 0, 0.12)
-    final borderColor =
-        hasCustomInactive ? const Color(0x00000000) : const Color(0x1F000000);
+    // Source only honors the prop when it differs from the default; otherwise
+    // --up-switch-inactive-color applies, which has its own dark value.
+    final inactive = hasCustomInactive
+        ? (UPUtils.parseColor(widget.inactiveColor) ??
+            tokens.switchInactiveColor)
+        : tokens.switchInactiveColor;
+    // Source default border: rgba(0, 0, 0, 0.12) in light, #4b5563 in dark.
+    final isDark = Theme.of(context).brightness == Brightness.dark;
+    final borderColor = hasCustomInactive
+        ? const Color(0x00000000)
+        : (isDark ? const Color(0xFF4B5563) : const Color(0x1F000000));
     final pad = spacePx > 0 ? spacePx / 2 : 1.0;
     final checked = isActive;
 

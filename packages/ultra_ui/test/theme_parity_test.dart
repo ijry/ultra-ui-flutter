@@ -156,4 +156,97 @@ void main() {
       );
     });
   });
+
+  group('per-component tokens with distinct dark values', () {
+    test('subsection, switch, tag and notice-bar match their theme-vars.scss',
+        () {
+      final light = UPThemeTokens.light();
+      expect(light.subsectionBgColor, const Color(0xFFEEEEEF));
+      expect(light.subsectionBarColor, const Color(0xFFFFFFFF));
+      expect(light.subsectionInactiveColor, const Color(0xFF303133));
+      expect(light.subsectionDisabledTextColor, const Color(0xFFC8C9CC));
+      expect(light.subsectionDisabledBorderColor, const Color(0xFFD4D4D4));
+      expect(light.subsectionDisabledBarColor, const Color(0xFFF5F5F5));
+      expect(light.switchInactiveColor, const Color(0xFFFFFFFF));
+      expect(light.switchDotInactiveColor, const Color(0xFFFFFFFF));
+      expect(light.switchLoadingInactiveColor, const Color(0xFFAAABAD));
+      expect(light.tagCloseBgColor, const Color(0xFFC8C9CC));
+      expect(light.noticeBarBgColor, const Color(0xFFFDF6EC));
+
+      final dark = UPThemeTokens.dark();
+      expect(dark.subsectionBgColor, const Color(0xFF2B2C30));
+      expect(dark.subsectionBarColor, const Color(0xFF3A3B40));
+      expect(dark.subsectionInactiveColor, const Color(0xFFD1D5DB));
+      expect(dark.subsectionDisabledTextColor, const Color(0xFF6B7280));
+      expect(dark.subsectionDisabledBorderColor, const Color(0xFF3A3A3C));
+      expect(dark.subsectionDisabledBarColor, const Color(0xFF3A3A3C));
+      expect(dark.switchInactiveColor, const Color(0xFF3A3A3C));
+      expect(dark.switchDotInactiveColor, const Color(0xFFD1D5DB));
+      expect(dark.switchLoadingInactiveColor, const Color(0xFF9CA3AF));
+      expect(dark.tagCloseBgColor, const Color(0xFF4B5563));
+      expect(dark.noticeBarBgColor, const Color(0xFF3D2F1B));
+    });
+
+    testWidgets('UPSwitch takes the token when inactiveColor is left default',
+        (tester) async {
+      for (final brightness in Brightness.values) {
+        await tester.pumpWidget(
+          _host(const UPSwitch(value: false), brightness: brightness),
+        );
+        await tester.pumpAndSettle();
+
+        final expected = brightness == Brightness.dark
+            ? UPThemeTokens.dark().switchInactiveColor
+            : UPThemeTokens.light().switchInactiveColor;
+        final painted = tester
+            .widgetList<Container>(find.descendant(
+              of: find.byType(UPSwitch),
+              matching: find.byType(Container),
+            ))
+            .any((c) => (c.decoration as BoxDecoration?)?.color == expected);
+        expect(painted, isTrue,
+            reason: 'an untouched inactiveColor must follow the theme in '
+                '$brightness, not stay #ffffff');
+      }
+    });
+
+    testWidgets('UPSwitch still honors an explicit inactiveColor',
+        (tester) async {
+      await tester.pumpWidget(
+        _host(const UPSwitch(value: false, inactiveColor: '#ff0000')),
+      );
+      await tester.pumpAndSettle();
+
+      final painted = tester
+          .widgetList<Container>(find.descendant(
+            of: find.byType(UPSwitch),
+            matching: find.byType(Container),
+          ))
+          .any((c) =>
+              (c.decoration as BoxDecoration?)?.color ==
+              const Color(0xFFFF0000));
+      expect(painted, isTrue);
+    });
+
+    testWidgets('UPNoticeBar takes the token when bgColor is left default',
+        (tester) async {
+      await tester.pumpWidget(_host(
+        const UPNoticeBar(text: 'hi'),
+        brightness: Brightness.dark,
+      ));
+      // A single pump: the notice bar scrolls continuously, so it never
+      // settles.
+      await tester.pump();
+
+      final expected = UPThemeTokens.dark().noticeBarBgColor;
+      final painted = tester
+          .widgetList<Container>(find.descendant(
+            of: find.byType(UPNoticeBar),
+            matching: find.byType(Container),
+          ))
+          .any((c) => (c.decoration as BoxDecoration?)?.color == expected);
+      expect(painted, isTrue,
+          reason: 'dark mode must use #3d2f1b, not the light #fdf6ec');
+    });
+  });
 }

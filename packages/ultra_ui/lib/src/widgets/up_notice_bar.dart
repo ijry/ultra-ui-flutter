@@ -2,6 +2,7 @@ import 'dart:async';
 
 import 'package:flutter/widgets.dart';
 
+import '../theme/up_theme.dart';
 import '../utils/up_utils.dart';
 import 'up_icon.dart';
 import 'up_link.dart';
@@ -157,7 +158,14 @@ class UPNoticeBarState extends State<UPNoticeBar> {
   @override
   Widget build(BuildContext context) {
     if (closed) return const SizedBox.shrink();
-    final bg = UPUtils.parseColor(widget.bgColor) ?? const Color(0xFFFDF6EC);
+    // Source only honors bgColor when it differs from the prop default;
+    // otherwise --up-notice-bar-bg-color applies, which has a dark value.
+    final bgText = '${widget.bgColor}'.trim().toLowerCase();
+    final hasCustomBg = bgText.isNotEmpty && bgText != '#fdf6ec';
+    final bg = hasCustomBg
+        ? (UPUtils.parseColor(widget.bgColor) ??
+            UPThemeTokens.of(context).noticeBarBgColor)
+        : UPThemeTokens.of(context).noticeBarBgColor;
     final isColumn = widget.direction == 'column' || widget.step;
     return Container(
       decoration: (widget.customStyle ?? BoxDecoration(color: bg)).copyWith(
