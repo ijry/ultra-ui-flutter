@@ -366,8 +366,8 @@ class UPSwipeActionItemState extends State<UPSwipeActionItem> {
 
   /// Source computed `defaultButtonBgColor`.
   Color defaultButtonBgColor(BuildContext context) {
-    final isDark = Theme.of(context).brightness == Brightness.dark;
-    return isDark ? const Color(0xFF4B5563) : const Color(0xFFC7C6CD);
+    // Source --up-swipe-action-button-bg-color, which carries both palettes.
+    return UPThemeTokens.of(context).swipeActionButtonBgColor;
   }
 
   /// Source computed `defaultButtonColor`.

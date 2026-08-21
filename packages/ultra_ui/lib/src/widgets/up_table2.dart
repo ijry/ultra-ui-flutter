@@ -923,13 +923,16 @@ class UPTable2State extends State<UPTable2> {
   }
 
   Color? _rowBg(Map row, int flatIndex) {
+    // Source uses dedicated --up-table2-* variables, which also carry the dark
+    // palette; a hardcoded light color would not follow the theme.
+    final tokens = UPThemeTokens.of(context);
     if (widget.highlightCurrentRow &&
         currentRow != null &&
         _rowKeyOf(currentRow!) == _rowKeyOf(row)) {
-      return UPThemeTokens.of(context).primary.withValues(alpha: 0.08);
+      return tokens.table2HighlightBgColor;
     }
     if (widget.stripe && flatIndex.isOdd) {
-      return const Color(0xFFFAFAFA);
+      return tokens.table2ZebraBgColor;
     }
     return null;
   }
@@ -1098,7 +1101,8 @@ class UPTable2State extends State<UPTable2> {
         alignment: alignment,
         padding: EdgeInsets.only(left: padLeft, right: 8),
         decoration: BoxDecoration(
-          color: background ?? (header ? const Color(0xFFF5F7FA) : null),
+          color: background ??
+              (header ? UPThemeTokens.of(context).table2HeaderBgColor : null),
           border: widget.border
               ? Border(
                   right: BorderSide(color: tokens.borderColor, width: 0.5),
@@ -1169,7 +1173,8 @@ class UPTable2State extends State<UPTable2> {
                           height: rh,
                           alignment: Alignment.center,
                           decoration: BoxDecoration(
-                            color: const Color(0xFFF5F7FA),
+                            color:
+                                UPThemeTokens.of(context).table2HeaderBgColor,
                             border: widget.border
                                 ? Border(
                                     right: BorderSide(

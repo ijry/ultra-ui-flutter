@@ -546,7 +546,9 @@ class UPIndexListState extends State<UPIndexList> {
                 height: 50,
                 alignment: Alignment.center,
                 decoration: BoxDecoration(
-                  color: active.withValues(alpha: 0.85),
+                  // Source --up-index-list-indicator-bg-color: a neutral grey
+                  // that also has a dark value, not the active accent.
+                  color: tokens.indexListIndicatorBgColor,
                   borderRadius: const BorderRadius.only(
                     topLeft: Radius.circular(25),
                     bottomLeft: Radius.circular(25),

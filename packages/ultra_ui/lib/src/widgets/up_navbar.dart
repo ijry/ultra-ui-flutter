@@ -241,7 +241,10 @@ class UPNavbar extends StatelessWidget implements PreferredSizeWidget {
   Widget build(BuildContext context) {
     final tokens = UPThemeTokens.of(context);
     final h = _barHeight(context);
-    final bg = UPUtils.parseColor(bgColor) ?? tokens.cardBgColor;
+    // Source uses a dedicated --up-navbar-bg-color; it currently matches
+    // card-bg-color in both palettes, but reading the right token keeps this
+    // correct if they diverge upstream.
+    final bg = UPUtils.parseColor(bgColor) ?? tokens.navbarBgColor;
     final statusBg = UPUtils.parseColor(statusBarBgColor) ?? bg;
     final tColor = UPUtils.parseColor(titleColor) ?? tokens.mainColor;
     final iconColor = UPUtils.parseColor(leftIconColor) ?? tokens.mainColor;

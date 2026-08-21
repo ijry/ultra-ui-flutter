@@ -39,9 +39,11 @@ class UPGap extends StatelessWidget {
     final hasCustomBackground = bgColor != null &&
         '$bgColor'.trim().isNotEmpty &&
         '$bgColor' != 'transparent';
-    final defaultColor = Theme.of(context).brightness == Brightness.dark
-        ? const Color(0xFF111111)
-        : const Color(0x00000000);
+    // Source resolves --up-gap-bg-color first and only falls back to
+    // dark ? #111111 : transparent when that variable is unset. Since the
+    // variable *is* set in theme-vars-core.scss for both palettes, the token
+    // is what actually applies.
+    final defaultColor = UPThemeTokens.of(context).gapBgColor;
     final color = UPUtils.parseColor(
           hasCustomBackground ? bgColor : null,
           fallback: defaultColor,

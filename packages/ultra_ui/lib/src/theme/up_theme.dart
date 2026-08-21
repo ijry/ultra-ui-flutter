@@ -32,6 +32,16 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
     required this.infoDark,
     required this.infoDisabled,
     required this.infoLight,
+    required this.hoverBgColor,
+    required this.navbarBgColor,
+    required this.gapBgColor,
+    required this.skeletonBgColor,
+    required this.skeletonShimmerColor,
+    required this.swipeActionButtonBgColor,
+    required this.indexListIndicatorBgColor,
+    required this.table2HeaderBgColor,
+    required this.table2ZebraBgColor,
+    required this.table2HighlightBgColor,
   });
 
   final Color mainColor;
@@ -64,6 +74,20 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
   final Color infoDisabled;
   final Color infoLight;
 
+  /// Component-scoped tokens from the source's theme-vars-core.scss. They are
+  /// separate variables there rather than reuses of the generic colors, so a
+  /// component must not substitute e.g. bgColor for skeletonBgColor.
+  final Color hoverBgColor;
+  final Color navbarBgColor;
+  final Color gapBgColor;
+  final Color skeletonBgColor;
+  final Color skeletonShimmerColor;
+  final Color swipeActionButtonBgColor;
+  final Color indexListIndicatorBgColor;
+  final Color table2HeaderBgColor;
+  final Color table2ZebraBgColor;
+  final Color table2HighlightBgColor;
+
   factory UPThemeTokens.light() {
     return const UPThemeTokens(
       mainColor: Color(0xFF303133),
@@ -95,6 +119,16 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
       infoDark: Color(0xFF767A82),
       infoDisabled: Color(0xFFC4C6C9),
       infoLight: Color(0xFFF4F4F5),
+      hoverBgColor: Color(0xFFE7EBF0),
+      navbarBgColor: Color(0xFFFFFFFF),
+      gapBgColor: Color(0xFFF3F4F6),
+      skeletonBgColor: Color(0xFFF1F2F4),
+      skeletonShimmerColor: Color(0xFFE6E6E6),
+      swipeActionButtonBgColor: Color(0xFFC7C6CD),
+      indexListIndicatorBgColor: Color(0xFFC9C9C9),
+      table2HeaderBgColor: Color(0xFFF5F7FA),
+      table2ZebraBgColor: Color(0xFFFAFAFA),
+      table2HighlightBgColor: Color(0xFFF5F7FA),
     );
   }
 
@@ -129,6 +163,17 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
       infoDark: Color(0xFFB0B3B8),
       infoDisabled: Color(0xFF5F6368),
       infoLight: Color(0xFF2F3238),
+      hoverBgColor: Color(0xFF343741),
+      navbarBgColor: Color(0xFF1C1C1E),
+      gapBgColor: Color(0xFF111111),
+      skeletonBgColor: Color(0xFF2F3135),
+      // rgba(255, 255, 255, 0.12) -> alpha byte 31.
+      skeletonShimmerColor: Color(0x1FFFFFFF),
+      swipeActionButtonBgColor: Color(0xFF4B5563),
+      indexListIndicatorBgColor: Color(0xFF4B5563),
+      table2HeaderBgColor: Color(0xFF2A2D33),
+      table2ZebraBgColor: Color(0xFF23262B),
+      table2HighlightBgColor: Color(0xFF2F3440),
     );
   }
 
@@ -179,6 +224,16 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
     Color? infoDark,
     Color? infoDisabled,
     Color? infoLight,
+    Color? hoverBgColor,
+    Color? navbarBgColor,
+    Color? gapBgColor,
+    Color? skeletonBgColor,
+    Color? skeletonShimmerColor,
+    Color? swipeActionButtonBgColor,
+    Color? indexListIndicatorBgColor,
+    Color? table2HeaderBgColor,
+    Color? table2ZebraBgColor,
+    Color? table2HighlightBgColor,
   }) {
     return UPThemeTokens(
       mainColor: mainColor ?? this.mainColor,
@@ -210,6 +265,19 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
       infoDark: infoDark ?? this.infoDark,
       infoDisabled: infoDisabled ?? this.infoDisabled,
       infoLight: infoLight ?? this.infoLight,
+      hoverBgColor: hoverBgColor ?? this.hoverBgColor,
+      navbarBgColor: navbarBgColor ?? this.navbarBgColor,
+      gapBgColor: gapBgColor ?? this.gapBgColor,
+      skeletonBgColor: skeletonBgColor ?? this.skeletonBgColor,
+      skeletonShimmerColor: skeletonShimmerColor ?? this.skeletonShimmerColor,
+      swipeActionButtonBgColor:
+          swipeActionButtonBgColor ?? this.swipeActionButtonBgColor,
+      indexListIndicatorBgColor:
+          indexListIndicatorBgColor ?? this.indexListIndicatorBgColor,
+      table2HeaderBgColor: table2HeaderBgColor ?? this.table2HeaderBgColor,
+      table2ZebraBgColor: table2ZebraBgColor ?? this.table2ZebraBgColor,
+      table2HighlightBgColor:
+          table2HighlightBgColor ?? this.table2HighlightBgColor,
     );
   }
 
@@ -247,10 +315,24 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
       infoDark: l(infoDark, other.infoDark),
       infoDisabled: l(infoDisabled, other.infoDisabled),
       infoLight: l(infoLight, other.infoLight),
+      hoverBgColor: l(hoverBgColor, other.hoverBgColor),
+      navbarBgColor: l(navbarBgColor, other.navbarBgColor),
+      gapBgColor: l(gapBgColor, other.gapBgColor),
+      skeletonBgColor: l(skeletonBgColor, other.skeletonBgColor),
+      skeletonShimmerColor: l(skeletonShimmerColor, other.skeletonShimmerColor),
+      swipeActionButtonBgColor:
+          l(swipeActionButtonBgColor, other.swipeActionButtonBgColor),
+      indexListIndicatorBgColor:
+          l(indexListIndicatorBgColor, other.indexListIndicatorBgColor),
+      table2HeaderBgColor: l(table2HeaderBgColor, other.table2HeaderBgColor),
+      table2ZebraBgColor: l(table2ZebraBgColor, other.table2ZebraBgColor),
+      table2HighlightBgColor:
+          l(table2HighlightBgColor, other.table2HighlightBgColor),
     );
   }
 
   static UPThemeTokens of(BuildContext context) {
-    return Theme.of(context).extension<UPThemeTokens>() ?? UPThemeTokens.light();
+    return Theme.of(context).extension<UPThemeTokens>() ??
+        UPThemeTokens.light();
   }
 }

@@ -243,8 +243,11 @@ class UPSkeletonState extends State<UPSkeleton>
   }
 
   Widget _bone(double width, double height, {double radius = 3}) {
-    final base = UPThemeTokens.of(context).bgColor;
-    final shimmer = const Color(0x1FFFFFFF);
+    // Source uses dedicated --up-skeleton-bg-color / --up-skeleton-shimmer-color
+    // variables, not the generic fill color.
+    final tokens = UPThemeTokens.of(context);
+    final base = tokens.skeletonBgColor;
+    final shimmer = tokens.skeletonShimmerColor;
     if (!widget.animate || _controller == null) {
       return Container(
         width: width,
