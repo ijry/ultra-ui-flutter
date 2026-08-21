@@ -28,6 +28,7 @@ class UPActionSheet extends StatefulWidget {
     this.onClosed,
     this.onCancel,
     this.onUpdateShow,
+    this.child,
     this.customStyle,
   });
 
@@ -51,6 +52,9 @@ class UPActionSheet extends StatefulWidget {
   /// animation, unlike `close` which fires at dismissal.
   final VoidCallback? onClosed;
   final VoidCallback? onCancel;
+
+  /// Source default slot — replaces the action list entirely.
+  final Widget? child;
   final ValueChanged<bool>? onUpdateShow;
   final BoxDecoration? customStyle;
 
@@ -142,6 +146,16 @@ class UPActionSheetState extends State<UPActionSheet> {
   /// Source `cancel`.
   void cancel() {
     widget.onCancel?.call();
+    _forcedShow = false;
+    widget.onUpdateShow?.call(false);
+    widget.onClose?.call();
+    if (mounted) setState(() {});
+  }
+
+  /// Source `slotClickHandler` — tapping custom slot content closes the sheet
+  /// when `closeOnClickAction` is set.
+  void slotClickHandler() {
+    if (!widget.closeOnClickAction) return;
     _forcedShow = false;
     widget.onUpdateShow?.call(false);
     widget.onClose?.call();
@@ -340,17 +354,27 @@ class UPActionSheetState extends State<UPActionSheet> {
                   ],
                 ),
               ),
-            if (widget.description.isNotEmpty)
-              Divider(height: 1, thickness: 0.5, color: tokens.borderColor),
-            Flexible(
-              child: ListView.separated(
-                shrinkWrap: true,
-                itemCount: widget.actions.length,
-                separatorBuilder: (_, __) => Divider(
-                    height: 1, thickness: 0.5, color: tokens.borderColor),
-                itemBuilder: (_, i) => itemTile(widget.actions[i], i),
+            // Source: a default slot replaces the whole action list, and
+            // tapping it closes when closeOnClickAction is set.
+            if (widget.child != null)
+              GestureDetector(
+                onTap: slotClickHandler,
+                behavior: HitTestBehavior.opaque,
+                child: widget.child,
+              )
+            else ...[
+              if (widget.description.isNotEmpty)
+                Divider(height: 1, thickness: 0.5, color: tokens.borderColor),
+              Flexible(
+                child: ListView.separated(
+                  shrinkWrap: true,
+                  itemCount: widget.actions.length,
+                  separatorBuilder: (_, __) => Divider(
+                      height: 1, thickness: 0.5, color: tokens.borderColor),
+                  itemBuilder: (_, i) => itemTile(widget.actions[i], i),
+                ),
               ),
-            ),
+            ],
             if (widget.cancelText.isNotEmpty) ...[
               Container(height: 8, color: tokens.bgColor),
               itemTile({}, -1, isCancel: true),

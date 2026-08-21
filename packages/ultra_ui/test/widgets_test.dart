@@ -30171,6 +30171,59 @@ void main() {
     expect(closeds, 0, reason: 'the popup never finished disappearing');
   });
 
+  testWidgets('UPActionSheet renders a slot instead of the action list',
+      (tester) async {
+    var closes = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPActionSheet(
+            show: true,
+            actions: const <Map<String, dynamic>>[
+              <String, dynamic>{'name': 'should not render'},
+            ],
+            onClose: () => closes++,
+            child: const Text('custom content'),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    // The source slot replaces the whole action list.
+    expect(find.text('custom content'), findsOneWidget);
+    expect(find.text('should not render'), findsNothing);
+
+    // Tapping it closes, per slotClickHandler.
+    await tester.tap(find.text('custom content'));
+    await tester.pump();
+    expect(closes, 1);
+  });
+
+  testWidgets('UPActionSheet slot tap is inert when closeOnClickAction is off',
+      (tester) async {
+    var closes = 0;
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPActionSheet(
+            show: true,
+            closeOnClickAction: false,
+            onClose: () => closes++,
+            child: const Text('custom content'),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    await tester.tap(find.text('custom content'));
+    await tester.pump();
+    expect(closes, 0);
+  });
+
   testWidgets('UPActionSheet forwards the nested popup closed emit',
       (tester) async {
     final key = GlobalKey<UPActionSheetState>();
