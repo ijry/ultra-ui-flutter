@@ -369,6 +369,48 @@ class UPTabbarItem extends StatelessWidget {
     return isMidButton ? '#3c9cff' : resolvedActiveColor;
   }
 
+  /// Source computed: midButtonIconStyle.
+  ///
+  /// Lifts the mid-button icon above the notch cut-out.
+  Map<String, dynamic> get midButtonIconStyle => isMidButton
+      ? <String, dynamic>{'position': 'relative', 'zIndex': 2}
+      : const <String, dynamic>{};
+
+  /// Source computed: hasMidButtonText.
+  bool get hasMidButtonText => text.isNotEmpty;
+
+  /// Source computed: resolvedMidButtonOffsetY — defaults to -10 when the prop
+  /// is not a finite number.
+  double get resolvedMidButtonOffsetY {
+    final offset = double.tryParse('$midButtonOffsetY');
+    return (offset != null && offset.isFinite) ? offset : -10;
+  }
+
+  /// Source computed: midButtonTranslateY.
+  String get midButtonTranslateY => '${resolvedMidButtonOffsetY}px';
+
+  /// Source computed: midButtonBorderClipHeight.
+  ///
+  /// How much of the ring's border is clipped by the bar. The base differs with
+  /// text because a labelled mid button sits lower in the bar; raising the
+  /// button (a more negative offset) exposes more of the ring, and the result is
+  /// clamped to 0..64.
+  String get midButtonBorderClipHeight {
+    final clipBaseHeight = hasMidButtonText ? 15.5 : 7.0;
+    final clipHeight = clipBaseHeight - resolvedMidButtonOffsetY;
+    return '${clipHeight.clamp(0.0, 64.0)}px';
+  }
+
+  /// Source computed: midButtonBorderCircleStyle — the ring only takes the
+  /// parent's border color, so it stays flush with the bar's own border.
+  Map<String, dynamic> get midButtonBorderCircleStyle {
+    final borderColor = parentData is Map ? parentData['borderColor'] : null;
+    if (!isMidButton || borderColor == null || '$borderColor'.isEmpty) {
+      return const <String, dynamic>{};
+    }
+    return <String, dynamic>{'borderColor': borderColor};
+  }
+
   /// Source computed: itemClassNames.
   dynamic get itemClassNames {
     final list = <String>[
@@ -457,6 +499,9 @@ class UPTabbarItem extends StatelessWidget {
       'activeBackgroundColor': parent?.activeBackgroundColor ?? '',
       'inactiveBackgroundColor': parent?.inactiveBackgroundColor ?? '',
       'textMode': parent?.textMode ?? scope?.textMode ?? 'always',
+      // Source midButtonBorderCircleStyle reads the parent's border color so
+      // the mid-button ring stays flush with the bar's own border.
+      'borderColor': parent?.borderColor ?? '',
     };
     final color = active
         ? (scope?.activeColor ?? const Color(0xFF1989FA))
@@ -507,6 +552,73 @@ class UPTabbarItem extends StatelessWidget {
       );
     }
 
+    Widget content = Column(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        iconWidget,
+        if (showText && text.isNotEmpty) ...[
+          const SizedBox(height: 2),
+          Text(
+            text,
+            style: TextStyle(color: color, fontSize: 11),
+          ),
+        ],
+      ],
+    );
+
+    if (isMidButton) {
+      // Source mid-button: a raised circle straddling the bar's top edge, with
+      // a ring in the bar's own border color and the icon lifted above it.
+      final midBg =
+          UPUtils.parseColor(midButtonBgColor) ?? const Color(0xFFFFFFFF);
+      final ringColor = UPUtils.parseColor(
+        (parentData is Map ? parentData['borderColor'] : null) ??
+            midButtonBorderCircleStyle['borderColor'],
+      );
+      const diameter = 50.0;
+      content = Transform.translate(
+        // Negative offset raises the button out of the bar.
+        offset: Offset(0, resolvedMidButtonOffsetY),
+        child: Column(
+          mainAxisSize: MainAxisSize.min,
+          mainAxisAlignment: MainAxisAlignment.center,
+          children: <Widget>[
+            Container(
+              width: diameter,
+              height: diameter,
+              decoration: BoxDecoration(
+                color: midBg,
+                shape: BoxShape.circle,
+                border: ringColor == null ? null : Border.all(color: ringColor),
+                boxShadow: UPUtils.parseColor(midButtonBoxShadow) == null
+                    ? null
+                    : <BoxShadow>[
+                        BoxShadow(
+                          color: UPUtils.parseColor(midButtonBoxShadow)!,
+                          blurRadius: 4,
+                        ),
+                      ],
+              ),
+              child: Center(
+                child: iconName.isEmpty
+                    ? const SizedBox.shrink()
+                    : UPIcon(
+                        name: iconName,
+                        size: UPUtils.getPx(midButtonIconSize),
+                        color: UPUtils.parseColor(resolvedMidButtonIconColor) ??
+                            color,
+                      ),
+              ),
+            ),
+            if (hasMidButtonText && showText) ...[
+              const SizedBox(height: 2),
+              Text(text, style: TextStyle(color: color, fontSize: 11)),
+            ],
+          ],
+        ),
+      );
+    }
+
     return GestureDetector(
       onTap: () {
         onClick?.call();
@@ -516,19 +628,9 @@ class UPTabbarItem extends StatelessWidget {
       child: Container(
         key: ValueKey('up-tabbar-item-$name'),
         decoration: itemDecoration,
-        child: Column(
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: [
-            iconWidget,
-            if (showText && text.isNotEmpty) ...[
-              const SizedBox(height: 2),
-              Text(
-                text,
-                style: TextStyle(color: color, fontSize: 11),
-              ),
-            ],
-          ],
-        ),
+        // Mid-button content overflows the bar, so it must not be clipped.
+        clipBehavior: Clip.none,
+        child: content,
       ),
     );
   }
