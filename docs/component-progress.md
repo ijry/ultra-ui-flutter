@@ -16,12 +16,12 @@
 | 指标 | 数值 |
 |---|---|
 | 源组件总数 | 140 |
-| ✅ 已复刻 | 130 |
-| 🟡 部分 | 11 |
+| ✅ 已复刻 | 131 |
+| 🟡 部分 | 10 |
 | ⛔ 未复刻 | 0 |
 | props 覆盖 | 1580/1581 |
 | emits 覆盖 | 329/332 |
-| methods + computed 覆盖 | 1268/1341 |
+| methods + computed 覆盖 | 1269/1341 |
 
 ### 状态含义
 
@@ -118,7 +118,7 @@
 | `u-tooltip` | `UPTooltip` | ✅ 已复刻 | 16/16 | 4/4 | 10/10 | 接口与样式对齐 |
 | `u-guide` | `UPGuide` | ✅ 已复刻 | 11/11 | 5/5 | 12/12 | `zIndex` 保留；真正全局固定层叠需状态保持 portal |
 | `u-popover` | `UPPopover` | ✅ 已复刻 | 10/10 | — | 5/5 | 接口与样式对齐 |
-| `u-action-sheet` | `UPActionSheet` | 🟡 部分 | 12/12 | 4/4 | 12/13 | 缺 methods: `slotClickHandler` |
+| `u-action-sheet` | `UPActionSheet` | ✅ 已复刻 | 12/12 | 4/4 | 13/13 | 接口与样式对齐 |
 | `↳ u-action-sheet-data` | `UPActionSheetData` | ✅ 已复刻 | 6/6 | 1/1 | 2/2 | 接口与样式对齐 |
 | `u-alert` | `UPAlert` | ✅ 已复刻 | 12/12 | 4/4 | 4/4 | 接口与样式对齐 |
 | `u-toast` | `UPToast` | ✅ 已复刻 | — | — | 8/8 | 接口与样式对齐 |
