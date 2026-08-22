@@ -303,6 +303,16 @@ def main() -> None:
 >
 > 该脚本只能证明 token 取值一致，不能证明组件读了正确的 token；后者由
 > `packages/ultra_ui/test/theme_parity_test.dart` 断言。
+>
+> **prop 默认值**由第三个脚本核对 —— 本表只看 prop 是否存在，存在但默认值写错
+> （尺寸、间距、时长差几个单位）是名称比对查不出的：
+>
+> ```bash
+> python tool/prop_default_scan.py   # 期望 mismatches 0
+> ```
+>
+> 刻意不同的默认值（如源码内联 base64 图片、`'-1'` 字符串 vs Dart int）在脚本里
+> 逐条注明原因并单独计数，不会掩盖真实回归。
 
 ## 总览
 
