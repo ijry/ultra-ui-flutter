@@ -30551,4 +30551,209 @@ void main() {
     );
     expect(painter.size, const Size(36, 36));
   });
+
+  testWidgets('UPCropper shows its source default slot until tapped',
+      (tester) async {
+    // The source guards the slot with `v-if="styleDisplay == 'none'"` and opens
+    // the cropper from it. Our port wrote styleDisplay but never read it, so the
+    // cropper was always visible and the demo's "tap the avatar" had no
+    // equivalent.
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: UPCropper(child: Text('avatar'), inner: true),
+        ),
+      ),
+    );
+
+    expect(find.text('avatar'), findsOneWidget);
+    expect(find.text('完成'), findsNothing);
+
+    await tester.tap(find.text('avatar'));
+    await tester.pumpAndSettle();
+
+    // Cropper open: the slot is replaced by the crop UI.
+    expect(find.text('avatar'), findsNothing);
+    expect(find.text('完成'), findsOneWidget);
+  });
+
+  testWidgets('UPCropper returns to its slot after cancel', (tester) async {
+    // hideImg assigned styleDisplay without setState. Once build started reading
+    // it, that silent write left the cropper on screen after cancel.
+    final key = GlobalKey<UPCropperState>();
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPCropper(key: key, child: const Text('avatar')),
+        ),
+      ),
+    );
+
+    await tester.tap(find.text('avatar'));
+    await tester.pumpAndSettle();
+    expect(find.text('avatar'), findsNothing);
+
+    key.currentState!.close();
+    await tester.pumpAndSettle();
+    expect(find.text('avatar'), findsOneWidget);
+  });
+
+  testWidgets('UPCropper without a slot stays visible', (tester) async {
+    // Every existing caller passes no slot and expects the crop area up front.
+    // The button row is not the marker to look for here: noTab defaults to true,
+    // so the source hides it unless `inner` is set.
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(body: UPCropper(imageSrc: 'x.png', inner: true)),
+      ),
+    );
+    expect(find.byType(UPCropper), findsOneWidget);
+    expect(find.text('完成'), findsOneWidget);
+  });
+
+  testWidgets('UPTag label shrinks inside a too-narrow fixed width',
+      (tester) async {
+    // u-choose sets `width: itemWidth` on the tag, so a label wider than that
+    // width is normal usage. The label used to demand its full intrinsic width
+    // and hard-overflow the Row (measured 165px of text in a 144px box).
+    final overflows = <String>[];
+    final previous = FlutterError.onError;
+    FlutterError.onError = (details) {
+      final text = details.exceptionAsString();
+      if (text.contains('overflowed')) {
+        overflows.add(text.split('\n').first);
+      } else {
+        previous?.call(details);
+      }
+    };
+
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: Align(
+            alignment: Alignment.topLeft,
+            child: SizedBox(
+              width: 170,
+              child: Padding(
+                padding: EdgeInsets.only(right: 8),
+                child: UPTag(
+                  text: '10:00-11:00',
+                  size: 'large',
+                  height: '70rpx',
+                  padding: '8px',
+                ),
+              ),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    FlutterError.onError = previous;
+
+    expect(overflows, isEmpty,
+        reason: 'a fixed-width tag must clip its label, not overflow');
+    final text = tester.renderObject<RenderBox>(find.text('10:00-11:00'));
+    expect(text.size.width, lessThanOrEqualTo(144),
+        reason: 'the label must fit the padded tag box');
+  });
+
+  testWidgets('UPTag keeps its intrinsic width when unconstrained',
+      (tester) async {
+    // The shrink must not make every tag collapse: with room available the tag
+    // still sizes to its label.
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: Align(
+            alignment: Alignment.topLeft,
+            child: UPTag(text: '10:00-11:00', size: 'large'),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+    final text = tester.renderObject<RenderBox>(find.text('10:00-11:00'));
+    expect(text.size.width, greaterThan(150),
+        reason: 'an unconstrained tag must not clip its label');
+  });
+
+  testWidgets('UPColorPicker opens from its source default slot',
+      (tester) async {
+    // The source renders the default slot as the tap target and the picker
+    // itself inside a u-popup. Without that slot the only way to open the
+    // picker was to drive `show` from outside, so the demo's "tap the swatch"
+    // interaction had no equivalent.
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPColorPicker(
+            modelValue: '#ff0000',
+            child: const Text('swatch'),
+          ),
+        ),
+      ),
+    );
+
+    // Closed: the trigger shows and the picker body is not mounted.
+    expect(find.text('swatch'), findsOneWidget);
+    expect(find.text('选择颜色'), findsNothing);
+
+    await tester.tap(find.text('swatch'));
+    await tester.pumpAndSettle();
+
+    // Open: the source keeps the trigger mounted alongside the picker.
+    expect(find.text('swatch'), findsOneWidget);
+    expect(find.text('选择颜色'), findsOneWidget);
+  });
+
+  testWidgets('UPColorPicker with a slot occupies only the trigger when closed',
+      (tester) async {
+    // UPPopup keeps a hidden child laid out rather than unmounted, so mounting
+    // it unconditionally made the *closed* picker reserve the whole panel
+    // height (measured 595px for a 40px swatch) and push the page down.
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: Column(
+            mainAxisSize: MainAxisSize.min,
+            children: [
+              UPColorPicker(
+                modelValue: '#ff0000',
+                child: Container(height: 40, color: const Color(0xFFFF0000)),
+              ),
+              const Text('BELOW'),
+            ],
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 400));
+
+    final picker = tester.renderObject<RenderBox>(find.byType(UPColorPicker));
+    expect(picker.size.height, 40,
+        reason: 'a closed picker must be exactly as tall as its trigger');
+    expect(tester.getTopLeft(find.text('BELOW')).dy, 40,
+        reason: 'content after the picker must not be pushed down');
+  });
+
+  testWidgets('UPColorPicker without a slot still renders inline',
+      (tester) async {
+    // Callers that drive `show` themselves rely on the picker rendering where
+    // it is placed, so adding the slot must not change that path.
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(body: UPColorPicker(modelValue: '#00ff00')),
+      ),
+    );
+    expect(find.text('选择颜色'), findsOneWidget);
+  });
 }

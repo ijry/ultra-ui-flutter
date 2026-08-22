@@ -34,6 +34,10 @@ class UPShortVideo extends StatefulWidget {
     this.onProgressChange,
     this.onProgressChanging,
     this.onLoadedMetadata,
+    this.menuSlot,
+    this.searchSlot,
+    this.actionsBuilder,
+    this.tabbarSlot,
     this.customStyle,
   });
 
@@ -62,6 +66,22 @@ class UPShortVideo extends StatefulWidget {
   final void Function(int index, double progress)? onProgressChange;
   final void Function(int index, double progress)? onProgressChanging;
   final void Function(int index)? onLoadedMetadata;
+
+  /// Source `menu` slot — leading header button, default a `grid` icon.
+  final Widget? menuSlot;
+
+  /// Source `search` slot — trailing header button, default a `search` icon.
+  final Widget? searchSlot;
+
+  /// Source `actions` slot, scoped `{item, index}` — replaces the whole
+  /// right-hand action column (like / comment / share / collect).
+  final Widget Function(BuildContext context, dynamic item, int index)?
+      actionsBuilder;
+
+  /// Source `tabbar` slot — bottom bar overlaying the player. The source default
+  /// is a `u-tabbar`; this port renders nothing unless a slot is supplied,
+  /// because a tabbar belongs to the host's navigation, not to the player.
+  final Widget? tabbarSlot;
 
   final BoxDecoration? customStyle;
   @override
@@ -384,34 +404,35 @@ class UPShortVideoState extends State<UPShortVideo> {
                       Positioned(
                         right: 12,
                         bottom: 80,
-                        child: Column(
-                          children: [
-                            action(
-                              isLiked ? 'thumb-up-fill' : 'thumb-up',
-                              '${likeCountOf(item, i)}',
-                              () => likeAt(i),
-                              key: ValueKey('short-like-$i'),
+                        child: widget.actionsBuilder?.call(context, item, i) ??
+                            Column(
+                              children: [
+                                action(
+                                  isLiked ? 'thumb-up-fill' : 'thumb-up',
+                                  '${likeCountOf(item, i)}',
+                                  () => likeAt(i),
+                                  key: ValueKey('short-like-$i'),
+                                ),
+                                const SizedBox(height: 16),
+                                action(
+                                  'chat',
+                                  '${item['commentCount'] ?? '评'}',
+                                  () => widget.onComment?.call(item, i),
+                                ),
+                                const SizedBox(height: 16),
+                                action(
+                                  isCollected ? 'star-fill' : 'star',
+                                  '${item['collectCount'] ?? '藏'}',
+                                  () => collectAt(i),
+                                ),
+                                const SizedBox(height: 16),
+                                action(
+                                  'share',
+                                  '${item['shareCount'] ?? '享'}',
+                                  () => widget.onShare?.call(item, i),
+                                ),
+                              ],
                             ),
-                            const SizedBox(height: 16),
-                            action(
-                              'chat',
-                              '${item['commentCount'] ?? '评'}',
-                              () => widget.onComment?.call(item, i),
-                            ),
-                            const SizedBox(height: 16),
-                            action(
-                              isCollected ? 'star-fill' : 'star',
-                              '${item['collectCount'] ?? '藏'}',
-                              () => collectAt(i),
-                            ),
-                            const SizedBox(height: 16),
-                            action(
-                              'share',
-                              '${item['shareCount'] ?? '享'}',
-                              () => widget.onShare?.call(item, i),
-                            ),
-                          ],
-                        ),
                       ),
                       Positioned(
                         left: 12,
@@ -452,21 +473,60 @@ class UPShortVideoState extends State<UPShortVideo> {
             right: 0,
             child: Container(
               color: Colors.black26,
-              child: UPTabs(
-                list: widget.tabsList,
-                current: tabIndex,
-                lineWidth: 20,
-                lineColor: '#ffffff',
-                activeStyle: const {'color': '#ffffff'},
-                inactiveStyle: const {'color': '#dddddd'},
-                onChange: (i) {
-                  setState(() => tabIndex = i);
-                  widget.onTabChange?.call(i);
-                  widget.onUpdateCurrentTab?.call(i);
-                },
+              // Source header is menu | tabs | search on one row. The icons are
+              // slot defaults, so they render even without a slot.
+              child: Row(
+                children: [
+                  widget.menuSlot ??
+                      const SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Center(
+                          child: UPIcon(
+                            name: 'grid',
+                            size: 24,
+                            color: Color(0xFFDDDDDD),
+                          ),
+                        ),
+                      ),
+                  Expanded(
+                    child: UPTabs(
+                      list: widget.tabsList,
+                      current: tabIndex,
+                      lineWidth: 20,
+                      lineColor: '#ffffff',
+                      activeStyle: const {'color': '#ffffff'},
+                      inactiveStyle: const {'color': '#dddddd'},
+                      onChange: (i) {
+                        setState(() => tabIndex = i);
+                        widget.onTabChange?.call(i);
+                        widget.onUpdateCurrentTab?.call(i);
+                      },
+                    ),
+                  ),
+                  widget.searchSlot ??
+                      const SizedBox(
+                        width: 40,
+                        height: 40,
+                        child: Center(
+                          child: UPIcon(
+                            name: 'search',
+                            size: 24,
+                            color: Color(0xFFDDDDDD),
+                          ),
+                        ),
+                      ),
+                ],
               ),
             ),
           ),
+          if (widget.tabbarSlot != null)
+            Positioned(
+              left: 0,
+              right: 0,
+              bottom: 0,
+              child: widget.tabbarSlot!,
+            ),
         ],
       ),
     );

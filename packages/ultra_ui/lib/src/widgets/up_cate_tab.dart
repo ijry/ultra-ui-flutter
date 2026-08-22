@@ -21,6 +21,8 @@ class UPCateTab extends StatefulWidget {
     this.onUpdateModelValue,
     this.onChange,
     this.itemBuilder,
+    this.itemListBuilder,
+    this.rightTopBuilder,
     this.tabBuilder,
     this.customStyle,
   });
@@ -43,12 +45,30 @@ class UPCateTab extends StatefulWidget {
 
   /// Alias callback for active index change.
   final ValueChanged<int>? onChange;
+
+  /// Source `pageItem` slot, scoped `{pageItem}` — replaces the rendering of one
+  /// child row within a tab's section.
   final Widget Function(
     BuildContext context,
     dynamic item,
     int tabIndex,
     int itemIndex,
   )? itemBuilder;
+
+  /// Source `itemList` slot, scoped `{item}` — replaces a tab's *whole* section
+  /// (its heading and all its rows) with one widget, receiving the tab itself
+  /// rather than a child. Distinct from [itemBuilder]: this one is called once
+  /// per tab, and a tab's children need not be a list of rows at all. The choose
+  /// demo relies on it to render a nested picker per day.
+  final Widget Function(
+    BuildContext context,
+    dynamic tab,
+    int tabIndex,
+  )? itemListBuilder;
+
+  /// Source `rightTop` slot, scoped `{tabList}` — header above the right pane.
+  final Widget Function(BuildContext context, List tabList)? rightTopBuilder;
+
   final Widget Function(
     BuildContext context,
     dynamic tab,
@@ -371,29 +391,50 @@ class UPCateTabState extends State<UPCateTab> {
     Widget right;
     if (widget.mode == 'tab') {
       final idx = tabs.isEmpty ? 0 : innerCurrent.clamp(0, tabs.length - 1);
-      final items = tabs.isEmpty ? const [] : itemsOf(tabs[idx]);
-      right = ListView.builder(
-        key: ValueKey('up-cate-tab-right-tab-$idx'),
-        controller: rightController,
-        itemCount: items.length,
-        itemBuilder: (context, i) {
-          final item = items[i];
-          if (widget.itemBuilder != null) {
-            return widget.itemBuilder!(context, item, innerCurrent, i);
-          }
-          return ListTile(
-            dense: true,
-            title: Text(
-              itemName(item),
-              style: TextStyle(color: tokens.mainColor, fontSize: 14),
-            ),
-          );
-        },
-      );
+      // itemList replaces the tab's whole section, so it short-circuits the
+      // per-row list rather than being applied inside it.
+      if (widget.itemListBuilder != null && tabs.isNotEmpty) {
+        right = SingleChildScrollView(
+          key: ValueKey('up-cate-tab-right-tab-$idx'),
+          controller: rightController,
+          child: widget.itemListBuilder!(context, tabs[idx], idx),
+        );
+      } else {
+        final items = tabs.isEmpty ? const [] : itemsOf(tabs[idx]);
+        right = ListView.builder(
+          key: ValueKey('up-cate-tab-right-tab-$idx'),
+          controller: rightController,
+          itemCount: items.length,
+          itemBuilder: (context, i) {
+            final item = items[i];
+            if (widget.itemBuilder != null) {
+              return widget.itemBuilder!(context, item, innerCurrent, i);
+            }
+            return ListTile(
+              dense: true,
+              title: Text(
+                itemName(item),
+                style: TextStyle(color: tokens.mainColor, fontSize: 14),
+              ),
+            );
+          },
+        );
+      }
     } else {
       final children = <Widget>[];
       for (var ti = 0; ti < tabs.length; ti++) {
         final tab = tabs[ti];
+        if (widget.itemListBuilder != null) {
+          // Section key stays on the outermost widget so `follow` mode can still
+          // measure this tab's scroll offset.
+          children.add(
+            KeyedSubtree(
+              key: sectionKeys[ti],
+              child: widget.itemListBuilder!(context, tab, ti),
+            ),
+          );
+          continue;
+        }
         children.add(
           Container(
             key: sectionKeys[ti],
@@ -437,7 +478,23 @@ class UPCateTabState extends State<UPCateTab> {
       child: Row(
         children: [
           left,
-          Expanded(child: Container(color: tokens.cardBgColor, child: right)),
+          Expanded(
+            child: Container(
+              color: tokens.cardBgColor,
+              // Source rightTop sits above the scrolling right pane, inside the
+              // same scroll view; placing it in a Column keeps it pinned, which
+              // is the useful reading of a header here.
+              child: widget.rightTopBuilder == null
+                  ? right
+                  : Column(
+                      crossAxisAlignment: CrossAxisAlignment.stretch,
+                      children: [
+                        widget.rightTopBuilder!(context, tabs),
+                        Expanded(child: right),
+                      ],
+                    ),
+            ),
+          ),
         ],
       ),
     );

@@ -28,6 +28,19 @@ const List<String> componentDRouteIds = <String>[
   'componentsD/tabsPro/tabsPro',
   'componentsD/rootToastHost/rootToastHost',
   'componentsD/novelReader/novelReader',
+  // Ported later than the rest, hence appended rather than in source order.
+  'componentsD/cascader/cascader',
+  'componentsD/choose/choose',
+  'componentsD/signature/signature',
+  'componentsD/agreement/agreement',
+  'componentsD/shortVideo/shortVideo',
+  'componentsD/markdown/markdown',
+  'componentsD/cropper/cropper',
+  'componentsD/coupon/coupon',
+  'componentsD/colorPicker/colorPicker',
+  'componentsD/poster/poster',
+  'componentsD/goodsSku/goodsSku',
+  'componentsD/pdfReader/pdfReader',
 ];
 
 void main() {
@@ -105,7 +118,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(101));
+    expect(exampleRoutes, hasLength(113));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),

@@ -52,6 +52,7 @@ class UPCropper extends StatefulWidget {
 
     /// Async loader by src when [imageProvider] is null.
     this.imageLoader,
+    this.child,
     this.customStyle,
   });
 
@@ -86,6 +87,12 @@ class UPCropper extends StatefulWidget {
   final VoidCallback? onAvtinit;
   final ui.Image? imageProvider;
   final Future<ui.Image?> Function(String src)? imageLoader;
+
+  /// Source default slot: shown in place of the cropper until an image is
+  /// selected, and tapped to select one (the source guards it with
+  /// `v-if="styleDisplay == 'none'"` and binds `@click="chooseImage(0, {})"`).
+  /// The demo relies on this to show an avatar that opens the cropper.
+  final Widget? child;
 
   final BoxDecoration? customStyle;
 
@@ -373,14 +380,14 @@ class UPCropperState extends State<UPCropper> {
     final tempPath = image != null
         ? 'memory://crop_${DateTime.now().millisecondsSinceEpoch}.png'
         : _src;
+    // Source confirm also returns to the slot (styleDisplay = 'none' + hideImg).
+    hideImg();
     widget.onConfirm?.call(_confirmPayload(image: image, tempPath: tempPath));
   }
 
   /// Source `close` / cancel alias.
   void close() {
-    styleDisplay = 'none';
-    styleTop = '-10000px';
-    showOper = false;
+    hideImg();
     widget.onCancel?.call();
   }
 
@@ -490,9 +497,20 @@ class UPCropperState extends State<UPCropper> {
   }
 
   void hideImg([dynamic _]) {
-    styleDisplay = 'none';
-    styleTop = '-10000px';
-    showOper = false;
+    // setState, not a bare assignment: build reads styleDisplay to decide
+    // between the slot and the cropper, so a silent write would leave the
+    // cropper on screen after cancel/confirm.
+    if (!mounted) {
+      styleDisplay = 'none';
+      styleTop = '-10000px';
+      showOper = false;
+      return;
+    }
+    setState(() {
+      styleDisplay = 'none';
+      styleTop = '-10000px';
+      showOper = false;
+    });
   }
 
   @override
@@ -693,6 +711,22 @@ class UPCropperState extends State<UPCropper> {
           ),
       ],
     );
+
+    // Source shows the default slot instead of the cropper while
+    // `styleDisplay == 'none'`, and opens the cropper when it is tapped. Without
+    // a slot the cropper is always visible, which is how every existing caller
+    // uses it.
+    if (widget.child != null && styleDisplay == 'none') {
+      return GestureDetector(
+        // Source binds `@click="chooseImage(0, {})"` on the slot wrapper.
+        onTap: () {
+          chooseImage();
+          start();
+        },
+        behavior: HitTestBehavior.opaque,
+        child: widget.child,
+      );
+    }
     return root;
   }
 

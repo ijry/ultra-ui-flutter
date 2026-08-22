@@ -100,6 +100,18 @@ import '../pages/components_d/title_page.dart';
 import '../pages/components_d/tree_page.dart';
 import '../pages/components_d/root_toast_host_page.dart';
 import '../pages/components_d/tabs_pro_page.dart';
+import '../pages/components_d/cascader_page.dart';
+import '../pages/components_d/choose_page.dart';
+import '../pages/components_d/signature_page.dart';
+import '../pages/components_d/agreement_page.dart';
+import '../pages/components_d/short_video_page.dart';
+import '../pages/components_d/markdown_page.dart';
+import '../pages/components_d/cropper_page.dart';
+import '../pages/components_d/coupon_page.dart';
+import '../pages/components_d/color_picker_page.dart';
+import '../pages/components_d/poster_page.dart';
+import '../pages/components_d/goods_sku_page.dart';
+import '../pages/components_d/pdf_reader_page.dart';
 import '../pages/components_d/virtual_list_page.dart';
 import 'example_route.dart';
 
@@ -837,11 +849,107 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsD,
     builder: _buildNovelReader,
   ),
+  const ExampleRoute(
+    id: 'componentsD/cascader/cascader',
+    sourcePath: 'pages/componentsD/cascader/cascader',
+    title: '级联选择器',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildCascader,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/choose/choose',
+    sourcePath: 'pages/componentsD/choose/choose',
+    title: '选项选择器',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildChoose,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/signature/signature',
+    sourcePath: 'pages/componentsD/signature/signature',
+    title: '签名',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildSignature,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/agreement/agreement',
+    sourcePath: 'pages/componentsD/agreement/agreement',
+    title: '协议',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildAgreement,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/shortVideo/shortVideo',
+    sourcePath: 'pages/componentsD/shortVideo/shortVideo',
+    title: '短视频',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildShortVideo,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/markdown/markdown',
+    sourcePath: 'pages/componentsD/markdown/markdown',
+    title: 'Markdown',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildMarkdown,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/cropper/cropper',
+    sourcePath: 'pages/componentsD/cropper/cropper',
+    title: '图片裁剪',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildCropper,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/coupon/coupon',
+    sourcePath: 'pages/componentsD/coupon/coupon',
+    title: '优惠券',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildCoupon,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/colorPicker/colorPicker',
+    sourcePath: 'pages/componentsD/colorPicker/colorPicker',
+    title: '颜色选择器',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildColorPicker,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/poster/poster',
+    sourcePath: 'pages/componentsD/poster/poster',
+    title: '海报',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildPoster,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/goodsSku/goodsSku',
+    sourcePath: 'pages/componentsD/goodsSku/goodsSku',
+    title: '商品SKU',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildGoodsSku,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/pdfReader/pdfReader',
+    sourcePath: 'pages/componentsD/pdfReader/pdfReader',
+    title: 'PDF阅读器',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildPdfReader,
+  ),
 ];
 
 Widget _buildTabsPro(BuildContext context) => const TabsProPage();
 Widget _buildRootToastHost(BuildContext context) => const RootToastHostPage();
 Widget _buildNovelReader(BuildContext context) => const NovelReaderPage();
+Widget _buildCascader(BuildContext context) => const CascaderPage();
+Widget _buildChoose(BuildContext context) => const ChoosePage();
+Widget _buildSignature(BuildContext context) => const SignaturePage();
+Widget _buildAgreement(BuildContext context) => const AgreementPage();
+Widget _buildShortVideo(BuildContext context) => const ShortVideoPage();
+Widget _buildMarkdown(BuildContext context) => const MarkdownPage();
+Widget _buildCropper(BuildContext context) => const CropperPage();
+Widget _buildCoupon(BuildContext context) => const CouponPage();
+Widget _buildColorPicker(BuildContext context) => const ColorPickerPage();
+Widget _buildPoster(BuildContext context) => const PosterPage();
+Widget _buildGoodsSku(BuildContext context) => const GoodsSkuPage();
+Widget _buildPdfReader(BuildContext context) => const PdfReaderPage();
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
 Widget _buildTemplatesHome(BuildContext context) => const TemplatesHomePage();
 Widget _buildMine(BuildContext context) => const MinePage();

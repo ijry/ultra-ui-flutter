@@ -6,6 +6,7 @@ import 'package:flutter/material.dart';
 import '../theme/up_theme.dart';
 import '../utils/up_utils.dart';
 import 'up_button.dart';
+import 'up_popup.dart';
 import 'up_subsection.dart';
 
 /// Port of u-color-picker / up-color-picker.
@@ -25,6 +26,7 @@ class UPColorPicker extends StatefulWidget {
     this.onConfirm,
     this.onClose,
     this.onClosed,
+    this.child,
     this.customStyle,
   });
 
@@ -46,6 +48,11 @@ class UPColorPicker extends StatefulWidget {
   /// Source emit `closed` — the nested popup finished its leave
   /// animation, unlike `close` which fires at dismissal.
   final VoidCallback? onClosed;
+
+  /// Source default slot: the tap target that opens the picker. The source
+  /// renders it inline and puts the picker itself in a `u-popup`, so without it
+  /// there is no way to open the picker other than driving `show` from outside.
+  final Widget? child;
 
   final BoxDecoration? customStyle;
 
@@ -937,19 +944,55 @@ class UPColorPickerState extends State<UPColorPicker> {
       ),
     );
 
-    if (!isShown) return body;
-    Widget root = Stack(
-      children: [
-        Positioned.fill(
-          child: GestureDetector(
-            onTap: () => close(),
-            child: Container(color: const Color(0x66000000)),
+    // No trigger: render the picker where it is placed, which is what callers
+    // driving `show` from the outside rely on.
+    if (widget.child == null) {
+      if (!isShown) return body;
+      return Stack(
+        children: [
+          Positioned.fill(
+            child: GestureDetector(
+              onTap: () => close(),
+              child: Container(color: const Color(0x66000000)),
+            ),
           ),
+          Center(
+              child: Padding(padding: const EdgeInsets.all(24), child: body)),
+        ],
+      );
+    }
+
+    // Source keeps the trigger inline and puts the picker in a `u-popup`, so the
+    // trigger stays visible and the overlay covers the page rather than just the
+    // trigger's own box. UPPopup already routes its mask to the root overlay,
+    // so it is used here instead of a local Stack, which a Stack sized to the
+    // trigger could not do.
+    //
+    // The popup is mounted only while shown: UPPopup keeps a hidden child laid
+    // out (slid offscreen) rather than unmounted, so keeping it always mounted
+    // made the *closed* picker reserve the panel's full height below the
+    // trigger and push the rest of the page down.
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.stretch,
+      children: [
+        GestureDetector(
+          // Source binds `@click="show = true"` on the wrapper.
+          onTap: () => open(),
+          behavior: HitTestBehavior.opaque,
+          child: widget.child,
         ),
-        Center(child: Padding(padding: const EdgeInsets.all(24), child: body)),
+        if (isShown)
+          UPPopup(
+            show: true,
+            mode: 'bottom',
+            round: '10',
+            closeOnClickOverlay: true,
+            onClose: () => close(),
+            child: body,
+          ),
       ],
     );
-    return root;
   }
 
   Alignment get _begin {

@@ -313,6 +313,18 @@ def main() -> None:
 >
 > 刻意不同的默认值（如源码内联 base64 图片、`'-1'` 字符串 vs Dart int）在脚本里
 > 逐条注明原因并单独计数，不会掩盖真实回归。
+>
+> **插槽（slot）**由第四个脚本核对 —— props / emits / methods 全绿也可能没有提供
+> 替换某段标记的入口。写演示页时就是这样暴露的：`u-cate-tab` 的 `itemList` 插槽在
+> 本表里显示"已复刻"，实际 Dart 侧没有对应参数，导致 choose 演示写不出来：
+>
+> ```bash
+> python tool/slot_scan.py
+> ```
+>
+> 该脚本靠命名约定匹配（`<name>Builder` / `<name>Slot` / `<name>Widget`），因此
+> **只能证明缺失，不能证明正确**：报出来的是真缺口，没报出来的只说明存在一个名字
+> 对得上的参数。命名刻意不同的（如 `pageItem` → `itemBuilder`）在脚本里逐条列出。
 
 ## 总览
 

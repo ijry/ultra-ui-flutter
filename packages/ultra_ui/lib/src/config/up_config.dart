@@ -25,8 +25,7 @@ class UPConfigData {
   const UPConfigData({
     this.version = '3',
     this.unit = 'px',
-    this.iconUrl =
-        'https://at.alicdn.com/t/font_2225171_8kdcwk4po24.ttf',
+    this.iconUrl = 'https://at.alicdn.com/t/font_2225171_8kdcwk4po24.ttf',
     this.loadFontOnce = false,
     this.nativeThemeSync = false,
   });

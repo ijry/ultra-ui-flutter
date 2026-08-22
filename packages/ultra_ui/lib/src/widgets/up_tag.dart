@@ -377,21 +377,30 @@ class UPTag extends StatelessWidget {
           if (contentWidget != null)
             contentWidget!
           else
-            DefaultTextStyle(
-              style: TextStyle(
-                color: fg,
-                fontSize: _fontSize,
-                height: 1.0,
-              ),
-              child: child ??
-                  Text(
-                    '$text',
-                    style: TextStyle(
-                      color: fg,
-                      fontSize: _fontSize,
-                      height: 1.0,
+            // Flexible, not a bare child: the source's label is a `<text>` in a
+            // flex container, which shrinks when the tag is given a width too
+            // narrow for it. Without this the Row demands the label's full
+            // intrinsic width and hard-overflows any fixed-width tag — which is
+            // exactly what `u-choose` does via `:style="{width: itemWidth}"`.
+            Flexible(
+              child: DefaultTextStyle(
+                style: TextStyle(
+                  color: fg,
+                  fontSize: _fontSize,
+                  height: 1.0,
+                ),
+                child: child ??
+                    Text(
+                      '$text',
+                      maxLines: 1,
+                      overflow: TextOverflow.ellipsis,
+                      style: TextStyle(
+                        color: fg,
+                        fontSize: _fontSize,
+                        height: 1.0,
+                      ),
                     ),
-                  ),
+              ),
             ),
         ],
       ),

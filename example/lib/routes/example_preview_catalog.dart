@@ -109,13 +109,13 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       icon: 'cascader',
       title: 'Cascader 级联选择器',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/choose/choose',
       icon: 'choose',
       title: 'Choose 选项选择器',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/datetimePicker/datetimePicker',
       icon: 'datetimePicker',
@@ -331,13 +331,13 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       icon: 'signature',
       title: 'Signature 签名签字',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/agreement/agreement',
       icon: 'agreement',
       title: 'agreement 弹窗协议',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/scrollList/scrollList',
       icon: 'scrollList',
@@ -427,7 +427,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       icon: 'shortVideo',
       title: 'ShortVideo 短视频切换',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsB/dropdown/dropdown',
       icon: 'dropdown',
@@ -511,7 +511,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       icon: 'markdown',
       title: 'Markdown 解析器',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/codeInput/codeInput',
       icon: 'messageInput',
@@ -529,7 +529,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       icon: 'cropper',
       title: 'cropper 图片裁剪',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsC/loadmore/loadmore',
       icon: 'loadmore',
@@ -583,7 +583,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       icon: 'coupon',
       title: 'Coupon 优惠券',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/barcode/barcode',
       icon: 'barcode',
@@ -613,19 +613,19 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       icon: 'colorPicker',
       title: 'ColorPicker 颜色选择器',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/poster/poster',
       icon: 'poster',
       title: 'Poster 海报生成',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/goodsSku/goodsSku',
       icon: 'goodsSku',
       title: 'GoodsSku 商品SKU',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/cityLocate/cityLocate',
       icon: 'cityLocate',
@@ -637,7 +637,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       icon: 'pdfReader',
       title: 'PdfReader PDF阅读器',
       group: ExampleRouteGroup.componentsD,
-      available: false),
+      available: true),
 ];
 
 const List<int> componentGroupLengths = <int>[11, 20, 7, 17, 15, 12, 23];
