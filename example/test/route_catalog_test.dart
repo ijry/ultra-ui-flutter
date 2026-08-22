@@ -118,7 +118,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(113));
+    expect(exampleRoutes, hasLength(114));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -175,6 +175,7 @@ void main() {
       'componentsC/text/text',
       'componentsC/steps/steps',
       'componentsC/navbar/navbar',
+      'componentsC/navbarIos/navbarIos',
       'componentsC/skeleton/skeleton',
       'componentsC/input/input',
       'componentsC/album/album',
@@ -391,6 +392,7 @@ void main() {
           'pages/componentsB/tabbar/tabbar',
           'pages/componentsA/backtop/backtop',
           'pages/componentsC/navbar/navbar',
+          'pages/componentsC/navbarIos/navbarIos',
           'pages/componentsD/navbarMini/navbarMini',
           'pages/componentsC/tabs/tabs',
           'pages/componentsC/subsection/subsection',

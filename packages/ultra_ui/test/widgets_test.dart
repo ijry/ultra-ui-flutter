@@ -30552,6 +30552,102 @@ void main() {
     expect(painter.size, const Size(36, 36));
   });
 
+  testWidgets('UPTabs content and icon slots replace the item label and icon',
+      (tester) async {
+    // Source order is `icon` slot else item.icon, then `content` slot else the
+    // label text. Both slots were missing, so the tabs demo could not show its
+    // 自定义内容插槽 section.
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: Scaffold(
+          body: UPTabs(
+            list: const [
+              {'name': '甲', 'icon': 'photo'},
+              {'name': '乙'},
+            ],
+            contentBuilder: (context, item, keyName, index) =>
+                Text('C:${item[keyName]}'),
+            iconBuilder: (context, item, keyName, index) => Text('I:$index'),
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    // The label is replaced, not augmented.
+    expect(find.text('C:甲'), findsOneWidget);
+    expect(find.text('甲'), findsNothing);
+    // The icon slot suppresses the item's own `icon` field.
+    expect(find.text('I:0'), findsOneWidget);
+    expect(find.byType(UPIcon), findsNothing);
+  });
+
+  testWidgets('UPTabs paints a url() lineColor as a slider image',
+      (tester) async {
+    // Source binds `background: lineColor`, so the demo passes a CSS image
+    // shorthand — `url(data:image/png;base64,...) 100% 100%`. We only parsed
+    // colours, so that value silently fell back to the primary colour.
+    const png =
+        'iVBORw0KGgoAAAANSUhEUgAAAAEAAAABCAYAAAAfFcSJAAAAC0lEQVR4nGP4z8AAAAMBAQAY3Y2wAAAAAElFTkSuQmCC';
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: UPTabs(
+            list: [
+              {'name': '甲'},
+              {'name': '乙'},
+            ],
+            lineColor: 'url(data:image/png;base64,$png) 100% 100%',
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final slider = tester.widgetList<Container>(find.byType(Container)).where(
+      (c) {
+        final d = c.decoration;
+        return d is BoxDecoration && d.image != null;
+      },
+    );
+    expect(slider, isNotEmpty,
+        reason: 'the slider must carry a decoration image');
+    final decoration = slider.first.decoration as BoxDecoration;
+    expect(decoration.image!.image, isA<MemoryImage>());
+    expect(decoration.color, isNull,
+        reason: 'an image slider must not also paint a colour fill');
+  });
+
+  testWidgets('UPTabs keeps a plain colour lineColor as a fill',
+      (tester) async {
+    // Adding url() support must not change the ordinary path.
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: UPTabs(
+            list: [
+              {'name': '甲'},
+              {'name': '乙'},
+            ],
+            lineColor: '#ff0000',
+          ),
+        ),
+      ),
+    );
+    await tester.pump();
+
+    final filled = tester.widgetList<Container>(find.byType(Container)).where(
+      (c) {
+        final d = c.decoration;
+        return d is BoxDecoration && d.color == const Color(0xFFFF0000);
+      },
+    );
+    expect(filled, isNotEmpty);
+  });
+
   testWidgets('UPCropper shows its source default slot until tapped',
       (tester) async {
     // The source guards the slot with `v-if="styleDisplay == 'none'"` and opens

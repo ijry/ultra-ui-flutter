@@ -58,6 +58,20 @@ OUR_TITLE = re.compile(
     re.S | re.I,
 )
 
+# Blocks fenced by `#ifdef MP-*` / `#ifdef APP-*` compile only for a mini-program
+# or the uni-app runtime, so the demos inside them have no Flutter counterpart by
+# construction (avatar's 小程序开放能力 shows a WeChat-only open-ability avatar).
+# Stripping them keeps the review list to sections that could actually be ported.
+PLATFORM_FENCE = re.compile(
+    r"<!--\s*#ifdef\s+(?:MP|APP)[^>]*-->.*?<!--\s*#endif\s*-->",
+    re.S,
+)
+
+
+def strip_platform_blocks(body: str) -> str:
+    return PLATFORM_FENCE.sub("", body)
+
+
 # id -> our page file, read from the catalog's builder wiring.
 ROUTE = re.compile(
     r"id:\s*'([^']*)'.*?builder:\s*_build(\w+)", re.S
@@ -112,7 +126,7 @@ def main() -> int:
             continue
         src = io.open(src_path, encoding="utf-8").read()
         m = re.search(r"<template>(.*)</template>", src, re.S)
-        body = m.group(1) if m else src
+        body = strip_platform_blocks(m.group(1) if m else src)
         src_titles = [t.strip() for t in SRC_TITLE.findall(body) if t.strip()]
         if not src_titles:
             continue

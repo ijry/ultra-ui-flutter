@@ -1,3 +1,6 @@
+import 'dart:convert';
+import 'dart:typed_data';
+
 import 'package:flutter/material.dart';
 
 import '../theme/up_theme.dart';
@@ -27,6 +30,8 @@ class UPTabs extends StatefulWidget {
     this.styles,
     this.left,
     this.right,
+    this.iconBuilder,
+    this.contentBuilder,
     this.onClick,
     this.onChange,
     this.onUpdateCurrent,
@@ -57,6 +62,25 @@ class UPTabs extends StatefulWidget {
   final dynamic styles;
   final Widget? left;
   final Widget? right;
+
+  /// Source `icon` slot, scoped `{item, keyName, index}` — replaces an item's
+  /// prefix icon.
+  final Widget Function(
+    BuildContext context,
+    dynamic item,
+    String keyName,
+    int index,
+  )? iconBuilder;
+
+  /// Source `content` slot, scoped `{item, keyName, index}` — replaces an item's
+  /// label. The source also accepts the default slot as a fallback for this one;
+  /// there is a single builder here because Dart has no unnamed-slot notion.
+  final Widget Function(
+    BuildContext context,
+    dynamic item,
+    String keyName,
+    int index,
+  )? contentBuilder;
   final void Function(dynamic item, int index)? onClick;
   final ValueChanged<int>? onChange;
   final ValueChanged<int>? onUpdateCurrent;
@@ -539,18 +563,28 @@ class UPTabsState extends State<UPTabs> {
     Widget content = Row(
       mainAxisSize: MainAxisSize.min,
       children: [
-        if (icon != null && icon.isNotEmpty) ...[
+        // Source `icon` slot replaces the prefix icon entirely (v-if/v-else),
+        // so a supplied builder suppresses the item's own `icon` field.
+        if (widget.iconBuilder != null) ...[
+          widget.iconBuilder!(context, item, widget.keyName, index),
+          const SizedBox(width: 4),
+        ] else if (icon != null && icon.isNotEmpty) ...[
           UPIcon(name: icon, size: iconSize, color: iconColor),
           const SizedBox(width: 4),
         ],
-        Text(
-          label,
-          style: TextStyle(
-            color: color,
-            fontSize: fs,
-            fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+        // Source order is `content` slot, else the default slot, else the label
+        // text — the default slot is a fallback for `content`, not a sibling.
+        if (widget.contentBuilder != null)
+          widget.contentBuilder!(context, item, widget.keyName, index)
+        else
+          Text(
+            label,
+            style: TextStyle(
+              color: color,
+              fontSize: fs,
+              fontWeight: selected ? FontWeight.w600 : FontWeight.w400,
+            ),
           ),
-        ),
         if (badge != null)
           Padding(
             padding: const EdgeInsets.only(left: 4),
@@ -605,11 +639,33 @@ class UPTabsState extends State<UPTabs> {
     );
   }
 
+  /// Source binds `background: lineColor`, so the value may be a CSS *image*
+  /// shorthand rather than a colour — the demo passes
+  /// `url(data:image/png;base64,...) 100% 100%` to give the slider a texture.
+  /// Returns the decoded bytes when [lineColor] is such a url(), else null.
+  Uint8List? _lineImageBytes() {
+    final raw = '${widget.lineColor}';
+    final match = RegExp(r'url\(\s*(?:"|\x27)?([^)"\x27\s]+)').firstMatch(raw);
+    if (match == null) return null;
+    final uri = match.group(1)!;
+    const marker = 'base64,';
+    final at = uri.indexOf(marker);
+    // Only data: URIs are decodable synchronously; a remote url() would need an
+    // image provider, which the source's own demo never exercises.
+    if (!uri.startsWith('data:') || at < 0) return null;
+    try {
+      return base64Decode(uri.substring(at + marker.length));
+    } catch (_) {
+      return null;
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     final tokens = UPThemeTokens.of(context);
     final ms = int.tryParse('${widget.duration}') ?? 300;
     final lineC = UPUtils.parseColor(widget.lineColor) ?? tokens.primary;
+    final lineImage = _lineImageBytes();
     final lw = UPUtils.getPx(widget.lineWidth);
     final lh = UPUtils.getPx(widget.lineHeight);
 
@@ -635,7 +691,19 @@ class UPTabsState extends State<UPTabs> {
               width: lw,
               height: lh,
               decoration: BoxDecoration(
-                color: lineC,
+                // An image slider draws no fill behind itself, matching CSS
+                // where `background: url(...)` replaces the colour.
+                color: lineImage == null ? lineC : null,
+                image: lineImage == null
+                    ? null
+                    : DecorationImage(
+                        image: MemoryImage(lineImage),
+                        fit: widget.lineBgSize == 'contain'
+                            ? BoxFit.contain
+                            : widget.lineBgSize == 'cover'
+                                ? BoxFit.cover
+                                : BoxFit.fill,
+                      ),
                 borderRadius: BorderRadius.circular(100),
               ),
             ),

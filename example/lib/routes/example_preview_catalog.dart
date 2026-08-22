@@ -453,6 +453,12 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       group: ExampleRouteGroup.componentsC,
       available: true),
   ExamplePreviewRoute(
+      sourcePath: 'pages/componentsC/navbarIos/navbarIos',
+      icon: 'navbar',
+      title: 'NavbarIos iOS 大标题',
+      group: ExampleRouteGroup.componentsC,
+      available: true),
+  ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/navbarMini/navbarMini',
       icon: 'navbar',
       title: 'NavbarMini 迷你导航栏',
@@ -640,7 +646,9 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       available: true),
 ];
 
-const List<int> componentGroupLengths = <int>[11, 20, 7, 17, 15, 12, 23];
+// Positional slices over componentPreviewRoutes: index 5 is 导航组件, which
+// gained navbarIos.
+const List<int> componentGroupLengths = <int>[11, 20, 7, 17, 15, 13, 23];
 
 const List<String> componentPreviewGroupTitles = <String>[
   '基础组件',

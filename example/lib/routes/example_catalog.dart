@@ -60,6 +60,7 @@ import '../pages/components_c/album_page.dart';
 import '../pages/components_c/input_page.dart';
 import '../pages/components_c/loadmore_page.dart';
 import '../pages/components_c/navbar_page.dart';
+import '../pages/components_c/navbar_ios_page.dart';
 import '../pages/components_c/no_network_page.dart';
 import '../pages/components_c/skeleton_page.dart';
 import '../pages/components_c/steps_page.dart';
@@ -577,6 +578,13 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     builder: _buildNavbar,
   ),
   const ExampleRoute(
+    id: 'componentsC/navbarIos/navbarIos',
+    sourcePath: 'pages/componentsC/navbarIos/navbarIos',
+    title: 'iOS 大标题',
+    group: ExampleRouteGroup.componentsC,
+    builder: _buildNavbarIos,
+  ),
+  const ExampleRoute(
     id: 'componentsC/skeleton/skeleton',
     sourcePath: 'pages/componentsC/skeleton/skeleton',
     title: '骨架屏',
@@ -938,6 +946,7 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
 Widget _buildTabsPro(BuildContext context) => const TabsProPage();
 Widget _buildRootToastHost(BuildContext context) => const RootToastHostPage();
 Widget _buildNovelReader(BuildContext context) => const NovelReaderPage();
+Widget _buildNavbarIos(BuildContext context) => const NavbarIosPage();
 Widget _buildCascader(BuildContext context) => const CascaderPage();
 Widget _buildChoose(BuildContext context) => const ChoosePage();
 Widget _buildSignature(BuildContext context) => const SignaturePage();

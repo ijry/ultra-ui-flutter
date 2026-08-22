@@ -75,6 +75,14 @@ class CellPage extends StatelessWidget {
                   label: '描述信息',
                   center: true,
                 ),
+              ],
+            ),
+            // Source keeps this as its own section: the slot cells were folded
+            // into the section above, so 自定义插槽 had no heading of its own and
+            // the value / right-icon slot cell was missing entirely.
+            _CellSection(
+              title: '自定义插槽',
+              children: <Widget>[
                 UPCell(
                   value: '内容',
                   titleSlot: const Row(
@@ -89,6 +97,12 @@ class CellPage extends StatelessWidget {
                           type: 'warning'),
                     ],
                   ),
+                ),
+                const UPCell(
+                  title: '单元格',
+                  isLink: true,
+                  valueSlot: Text('99'),
+                  rightIconSlot: Text('1'),
                 ),
               ],
             ),

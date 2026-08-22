@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:ultra_ui/ultra_ui.dart';
 
+import '../../routes/example_catalog.dart';
 import '../shared/example_demo_block.dart';
 import '../shared/example_page_scaffold.dart';
 
@@ -65,6 +66,23 @@ class _NavbarPageState extends State<NavbarPage> {
               fixed: true,
               placeholder: true,
               autoBack: true,
+            ),
+            ExampleDemoBlock(
+              title: 'iOS 大标题模式',
+              // Source links out to its own navbarIos page rather than demoing
+              // the mode inline: ios mode needs page-level scroll to drive it.
+              child: Padding(
+                padding: const EdgeInsets.all(12),
+                child: UPButton(
+                  key: const ValueKey('navbar-page-ios-link'),
+                  type: 'primary',
+                  text: '查看 iOS 模式示例',
+                  onClick: () => pushExampleRoute(
+                    context,
+                    findExampleRoute('componentsC/navbarIos/navbarIos'),
+                  ),
+                ),
+              ),
             ),
             ExampleDemoBlock(
               title: '基础功能',
