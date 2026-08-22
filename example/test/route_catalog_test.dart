@@ -513,4 +513,22 @@ void main() {
     ];
     expect(allPreviewPaths.toSet().length, allPreviewPaths.length);
   });
+
+  test('every preview entry carries an icon whose asset exists', () {
+    // The source demo list shows a PNG per row; a missing icon renders a blank
+    // gap, which is what the list looked like before these were wired up.
+    final withoutIcon = componentPreviewRoutes
+        .followedBy(templatePreviewRoutes)
+        .where((route) => route.icon.isEmpty)
+        .map((route) => route.sourcePath)
+        .toList();
+    expect(withoutIcon, isEmpty);
+
+    // iconAsset must point at a declared asset path.
+    for (final route
+        in componentPreviewRoutes.followedBy(templatePreviewRoutes)) {
+      expect(route.iconAsset, startsWith('assets/uview/demo/icons/'),
+          reason: '${route.sourcePath} has a malformed icon path');
+    }
+  });
 }

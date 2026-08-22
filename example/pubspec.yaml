@@ -24,6 +24,7 @@ flutter:
     - assets/uview/common/
     - assets/uview/album/
     - assets/uview/empty/
+    - assets/uview/demo/icons/
     - assets/uview/demo/cell/
     - assets/uview/demo/empty/
     - assets/uview/demo/transition/
