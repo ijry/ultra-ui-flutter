@@ -689,13 +689,13 @@ const List<ExamplePreviewRoute> templatePreviewRoutes = <ExamplePreviewRoute>[
       icon: 'wxCenter',
       title: 'WxCenter 仿微信个人中心',
       group: ExampleRouteGroup.template,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/template/keyboardPay/index',
       icon: 'keyboardPay',
       title: 'KeyboardPay 自定义键盘支付模板',
       group: ExampleRouteGroup.template,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/template/mallMenu/index1',
       icon: 'mall_menu_1',
@@ -713,7 +713,7 @@ const List<ExamplePreviewRoute> templatePreviewRoutes = <ExamplePreviewRoute>[
       icon: 'submitBar',
       title: 'SubmitBar 提交订单栏',
       group: ExampleRouteGroup.template,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/template/comment/index',
       icon: 'comment',
@@ -731,13 +731,13 @@ const List<ExamplePreviewRoute> templatePreviewRoutes = <ExamplePreviewRoute>[
       icon: 'login',
       title: 'Login 登录界面',
       group: ExampleRouteGroup.template,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/template/address/index',
       icon: 'address',
       title: 'Address 收货地址',
       group: ExampleRouteGroup.template,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/template/citySelect/index',
       icon: 'citySelect',

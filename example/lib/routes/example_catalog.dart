@@ -113,6 +113,13 @@ import '../pages/components_d/color_picker_page.dart';
 import '../pages/components_d/poster_page.dart';
 import '../pages/components_d/goods_sku_page.dart';
 import '../pages/components_d/pdf_reader_page.dart';
+import '../pages/template/submit_bar_page.dart';
+import '../pages/template/wx_center_page.dart';
+import '../pages/template/keyboard_pay_page.dart';
+import '../pages/template/login_page.dart';
+import '../pages/template/login_code_page.dart';
+import '../pages/template/address_page.dart';
+import '../pages/template/add_site_page.dart';
 import '../pages/components_d/virtual_list_page.dart';
 import 'example_route.dart';
 
@@ -941,12 +948,68 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsD,
     builder: _buildPdfReader,
   ),
+  const ExampleRoute(
+    id: 'template/submitBar/index',
+    sourcePath: 'pages/template/submitBar/index',
+    title: '提交订单栏',
+    group: ExampleRouteGroup.template,
+    builder: _buildSubmitBar,
+  ),
+  const ExampleRoute(
+    id: 'template/wxCenter/index',
+    sourcePath: 'pages/template/wxCenter/index',
+    title: '仿微信个人中心',
+    group: ExampleRouteGroup.template,
+    builder: _buildWxCenter,
+  ),
+  const ExampleRoute(
+    id: 'template/keyboardPay/index',
+    sourcePath: 'pages/template/keyboardPay/index',
+    title: '自定义键盘支付',
+    group: ExampleRouteGroup.template,
+    builder: _buildKeyboardPay,
+  ),
+  const ExampleRoute(
+    id: 'template/login/index',
+    sourcePath: 'pages/template/login/index',
+    title: '登录',
+    group: ExampleRouteGroup.template,
+    builder: _buildLogin,
+  ),
+  const ExampleRoute(
+    id: 'template/login/code',
+    sourcePath: 'pages/template/login/code',
+    title: '验证码',
+    group: ExampleRouteGroup.template,
+    builder: _buildLoginCode,
+  ),
+  const ExampleRoute(
+    id: 'template/address/index',
+    sourcePath: 'pages/template/address/index',
+    title: '收货地址',
+    group: ExampleRouteGroup.template,
+    builder: _buildAddress,
+  ),
+  const ExampleRoute(
+    id: 'template/address/addSite',
+    sourcePath: 'pages/template/address/addSite',
+    title: '新建收货地址',
+    group: ExampleRouteGroup.template,
+    builder: _buildAddSite,
+  ),
 ];
 
 Widget _buildTabsPro(BuildContext context) => const TabsProPage();
 Widget _buildRootToastHost(BuildContext context) => const RootToastHostPage();
 Widget _buildNovelReader(BuildContext context) => const NovelReaderPage();
 Widget _buildNavbarIos(BuildContext context) => const NavbarIosPage();
+Widget _buildSubmitBar(BuildContext context) => const SubmitBarPage();
+Widget _buildWxCenter(BuildContext context) => const WxCenterPage();
+Widget _buildKeyboardPay(BuildContext context) => const KeyboardPayPage();
+Widget _buildLogin(BuildContext context) => const LoginPage();
+Widget _buildLoginCode(BuildContext context) => const LoginCodePage();
+Widget _buildAddress(BuildContext context) => const AddressPage();
+Widget _buildAddSite(BuildContext context) => const AddSitePage();
 Widget _buildCascader(BuildContext context) => const CascaderPage();
 Widget _buildChoose(BuildContext context) => const ChoosePage();
 Widget _buildSignature(BuildContext context) => const SignaturePage();
