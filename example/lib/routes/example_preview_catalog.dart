@@ -683,7 +683,7 @@ const List<ExamplePreviewRoute> templatePreviewRoutes = <ExamplePreviewRoute>[
       icon: 'coupon',
       title: 'Coupon 优惠券',
       group: ExampleRouteGroup.template,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/template/wxCenter/index',
       icon: 'wxCenter',
@@ -701,13 +701,13 @@ const List<ExamplePreviewRoute> templatePreviewRoutes = <ExamplePreviewRoute>[
       icon: 'mall_menu_1',
       title: 'MallMenu 垂直分类(左右独立)',
       group: ExampleRouteGroup.template,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/template/mallMenu/index2',
       icon: 'mall_menu_2',
       title: 'MallMenu 垂直分类(左右联动)',
       group: ExampleRouteGroup.template,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/template/submitBar/index',
       icon: 'submitBar',
@@ -719,13 +719,13 @@ const List<ExamplePreviewRoute> templatePreviewRoutes = <ExamplePreviewRoute>[
       icon: 'comment',
       title: 'Comment 评论列表',
       group: ExampleRouteGroup.template,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/template/order/index',
       icon: 'order',
       title: 'Order 订单列表',
       group: ExampleRouteGroup.template,
-      available: false),
+      available: true),
   ExamplePreviewRoute(
       sourcePath: 'pages/template/login/index',
       icon: 'login',
@@ -743,5 +743,5 @@ const List<ExamplePreviewRoute> templatePreviewRoutes = <ExamplePreviewRoute>[
       icon: 'citySelect',
       title: 'CitySelect 城市选择',
       group: ExampleRouteGroup.template,
-      available: false),
+      available: true),
 ];

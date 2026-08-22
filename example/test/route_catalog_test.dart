@@ -118,7 +118,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(121));
+    expect(exampleRoutes, hasLength(128));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -495,7 +495,10 @@ void main() {
       ),
       isTrue,
     );
-    expect(templatePreviewRoutes.every((route) => route.available), isFalse);
+    // Every template page is ported now. This asserted isFalse while some were
+    // still pending; flipped rather than deleted so a regression that drops one
+    // back to unavailable still fails here.
+    expect(templatePreviewRoutes.every((route) => route.available), isTrue);
     expect(
       templatePreviewRoutes.map((route) => route.sourcePath),
       <String>[

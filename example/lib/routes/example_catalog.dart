@@ -120,6 +120,12 @@ import '../pages/template/login_page.dart';
 import '../pages/template/login_code_page.dart';
 import '../pages/template/address_page.dart';
 import '../pages/template/add_site_page.dart';
+import '../pages/template/comment_page.dart';
+import '../pages/template/comment_reply_page.dart';
+import '../pages/template/coupon_template_page.dart';
+import '../pages/template/order_page.dart';
+import '../pages/template/city_select_page.dart';
+import '../pages/template/mall_menu_page.dart';
 import '../pages/components_d/virtual_list_page.dart';
 import 'example_route.dart';
 
@@ -997,6 +1003,55 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.template,
     builder: _buildAddSite,
   ),
+  const ExampleRoute(
+    id: 'template/comment/index',
+    sourcePath: 'pages/template/comment/index',
+    title: '评论列表',
+    group: ExampleRouteGroup.template,
+    builder: _buildComment,
+  ),
+  const ExampleRoute(
+    id: 'template/comment/reply',
+    sourcePath: 'pages/template/comment/reply',
+    title: '全部回复',
+    group: ExampleRouteGroup.template,
+    builder: _buildCommentReply,
+  ),
+  const ExampleRoute(
+    id: 'template/coupon/index',
+    sourcePath: 'pages/template/coupon/index',
+    title: '优惠券',
+    group: ExampleRouteGroup.template,
+    builder: _buildCouponTemplate,
+  ),
+  const ExampleRoute(
+    id: 'template/order/index',
+    sourcePath: 'pages/template/order/index',
+    title: '订单列表',
+    group: ExampleRouteGroup.template,
+    builder: _buildOrder,
+  ),
+  const ExampleRoute(
+    id: 'template/citySelect/index',
+    sourcePath: 'pages/template/citySelect/index',
+    title: '城市选择',
+    group: ExampleRouteGroup.template,
+    builder: _buildCitySelect,
+  ),
+  const ExampleRoute(
+    id: 'template/mallMenu/index1',
+    sourcePath: 'pages/template/mallMenu/index1',
+    title: '垂直分类(左右独立)',
+    group: ExampleRouteGroup.template,
+    builder: _buildMallMenu1,
+  ),
+  const ExampleRoute(
+    id: 'template/mallMenu/index2',
+    sourcePath: 'pages/template/mallMenu/index2',
+    title: '垂直分类(左右联动)',
+    group: ExampleRouteGroup.template,
+    builder: _buildMallMenu2,
+  ),
 ];
 
 Widget _buildTabsPro(BuildContext context) => const TabsProPage();
@@ -1010,6 +1065,22 @@ Widget _buildLogin(BuildContext context) => const LoginPage();
 Widget _buildLoginCode(BuildContext context) => const LoginCodePage();
 Widget _buildAddress(BuildContext context) => const AddressPage();
 Widget _buildAddSite(BuildContext context) => const AddSitePage();
+Widget _buildComment(BuildContext context) => const CommentPage();
+Widget _buildCommentReply(BuildContext context) => const CommentReplyPage();
+Widget _buildCouponTemplate(BuildContext context) => const CouponTemplatePage();
+Widget _buildOrder(BuildContext context) => const OrderPage();
+Widget _buildCitySelect(BuildContext context) => const CitySelectPage();
+
+/// index1 is the source's `tab` mode (right pane shows only the active
+/// category); index2 is `follow` (all sections, menu syncs on scroll).
+Widget _buildMallMenu1(BuildContext context) => const MallMenuPage(
+      mode: 'tab',
+      routeId: 'template/mallMenu/index1',
+    );
+Widget _buildMallMenu2(BuildContext context) => const MallMenuPage(
+      mode: 'follow',
+      routeId: 'template/mallMenu/index2',
+    );
 Widget _buildCascader(BuildContext context) => const CascaderPage();
 Widget _buildChoose(BuildContext context) => const ChoosePage();
 Widget _buildSignature(BuildContext context) => const SignaturePage();
