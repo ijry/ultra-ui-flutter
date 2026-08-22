@@ -114,7 +114,13 @@ class _AlbumPageState extends State<AlbumPage> {
                 flex1: false,
               ),
               descriptionWidget,
-              album,
+              // The album's width is computed from image size x count, which
+              // can exceed a narrow viewport once the avatar and gap are
+              // subtracted. Let it scroll rather than overflow.
+              SingleChildScrollView(
+                scrollDirection: Axis.horizontal,
+                child: album,
+              ),
             ],
           ),
         ),

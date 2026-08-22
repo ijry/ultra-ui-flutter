@@ -90,9 +90,13 @@ class IconPage extends StatelessWidget {
         child: GridView.builder(
           shrinkWrap: true,
           physics: const NeverScrollableScrollPhysics(),
+          // A fixed aspect ratio makes the cell too short on a narrow
+          // viewport, so the icon + label column overflows. A fixed extent
+          // keeps the cell tall enough at any width.
           gridDelegate: const SliverGridDelegateWithFixedCrossAxisCount(
             crossAxisCount: 3,
-            childAspectRatio: 1.05,
+            // 8 + 30 icon + 12 + up to two label lines.
+            mainAxisExtent: 112,
           ),
           itemCount: _iconNames.length,
           itemBuilder: (context, index) {

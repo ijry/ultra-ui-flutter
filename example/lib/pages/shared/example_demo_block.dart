@@ -23,9 +23,16 @@ class ExampleDemoBlock extends StatelessWidget {
             padding: const EdgeInsets.only(left: 4, bottom: 8),
             child: Text(title, style: TextStyle(color: tokens.contentColor)),
           ),
-          DecoratedBox(
-            decoration: BoxDecoration(color: tokens.cardBgColor),
-            child: child,
+          // SizedBox.expand-width: without this the card shrink-wraps its
+          // child, so a demo holding narrow content (an icon, a switch, a short
+          // link) rendered a card only as wide as that content instead of a
+          // full-width panel.
+          SizedBox(
+            width: double.infinity,
+            child: DecoratedBox(
+              decoration: BoxDecoration(color: tokens.cardBgColor),
+              child: child,
+            ),
           ),
         ],
       ),

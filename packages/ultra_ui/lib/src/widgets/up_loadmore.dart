@@ -118,15 +118,18 @@ class UPLoadmore extends StatelessWidget {
             hairline: false,
             length: '140rpx',
           );
+      // The two 140rpx lines plus the label can exceed a narrow viewport. CSS
+      // lets that overflow silently; Flutter throws, so the lines yield space
+      // instead of forcing the row wider than its parent.
       content = Row(
         mainAxisSize: MainAxisSize.min,
         children: [
-          side(),
+          Flexible(child: side()),
           Padding(
             padding: const EdgeInsets.symmetric(horizontal: 15),
             child: content,
           ),
-          side(),
+          Flexible(child: side()),
         ],
       );
     }
