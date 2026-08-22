@@ -264,7 +264,10 @@ class UPBarcode extends StatelessWidget {
       ),
       child: Column(
         mainAxisSize: MainAxisSize.min,
-        crossAxisAlignment: CrossAxisAlignment.stretch,
+        // Not stretch: the source pins an explicit canvasWidth in px, so
+        // stretching would widen the bar to whatever the parent offers and
+        // distort the module spacing.
+        crossAxisAlignment: CrossAxisAlignment.center,
         children: children,
       ),
     );

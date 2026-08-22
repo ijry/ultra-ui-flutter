@@ -30493,4 +30493,62 @@ void main() {
     await tester.pumpAndSettle();
     expect(UPRootToastRegistry.notifyRef!.open, isFalse);
   });
+
+  testWidgets('UPLoadingIcon keeps its size inside a tight-width parent',
+      (tester) async {
+    // A full-width card imposes a *tight* width. A bare SizedBox cannot shrink
+    // below a tight constraint, so the spinner used to stretch to the parent's
+    // width and paint a huge arc across the page.
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: SizedBox(
+            width: 394,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: UPLoadingIcon(size: 24),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final painter = tester.renderObject<RenderBox>(
+      find.descendant(
+        of: find.byType(UPLoadingIcon),
+        matching: find.byType(CustomPaint),
+      ),
+    );
+    expect(painter.size, const Size(24, 24),
+        reason: 'the spinner must stay square at its requested size');
+  });
+
+  testWidgets('UPLoadingIcon honors a custom size in the same layout',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const Scaffold(
+          body: SizedBox(
+            width: 394,
+            child: Align(
+              alignment: Alignment.topLeft,
+              child: UPLoadingIcon(size: 36),
+            ),
+          ),
+        ),
+      ),
+    );
+    await tester.pump(const Duration(milliseconds: 50));
+
+    final painter = tester.renderObject<RenderBox>(
+      find.descendant(
+        of: find.byType(UPLoadingIcon),
+        matching: find.byType(CustomPaint),
+      ),
+    );
+    expect(painter.size, const Size(36, 36));
+  });
 }

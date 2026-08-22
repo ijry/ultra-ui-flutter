@@ -141,19 +141,26 @@ class UPLoadingIconState extends State<UPLoadingIcon>
         UPUtils.parseColor(widget.color, fallback: tokens.tipsColor) ??
             tokens.tipsColor;
 
-    final spinner = SizedBox(
-      width: size,
-      height: size,
-      child: AnimatedBuilder(
-        animation: _controller,
-        builder: (context, child) {
-          return Transform.rotate(
-            angle: _controller.value * 2 * math.pi,
-            child: CustomPaint(
-              painter: _SpinnerPainter(color: color),
-            ),
-          );
-        },
+    // UnconstrainedBox, not a bare SizedBox: a SizedBox cannot shrink below a
+    // *tight* incoming constraint, so inside any full-width parent the spinner
+    // stretched to that width and painted a huge arc. This discards the
+    // incoming constraint first, then applies the requested square.
+    final spinner = UnconstrainedBox(
+      child: SizedBox(
+        width: size,
+        height: size,
+        child: AnimatedBuilder(
+          animation: _controller,
+          builder: (context, child) {
+            return Transform.rotate(
+              angle: _controller.value * 2 * math.pi,
+              child: CustomPaint(
+                size: Size(size, size),
+                painter: _SpinnerPainter(color: color),
+              ),
+            );
+          },
+        ),
       ),
     );
 
