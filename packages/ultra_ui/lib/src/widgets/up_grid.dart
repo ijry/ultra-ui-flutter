@@ -3,8 +3,10 @@ import 'package:flutter/widgets.dart';
 import '../theme/up_theme.dart';
 import '../utils/up_utils.dart';
 
-final Expando<Map<String, dynamic>> _upGridState = Expando<Map<String, dynamic>>('upGridState');
-final Expando<Map<String, dynamic>> _upGridItemState = Expando<Map<String, dynamic>>('upGridItemState');
+final Expando<Map<String, dynamic>> _upGridState =
+    Expando<Map<String, dynamic>>('upGridState');
+final Expando<Map<String, dynamic>> _upGridItemState =
+    Expando<Map<String, dynamic>>('upGridItemState');
 
 /// 1:1 port of u-grid / u-grid-item.
 class UPGrid extends StatelessWidget {
@@ -23,27 +25,35 @@ class UPGrid extends StatelessWidget {
   final bool border;
   final String align;
   final dynamic gap;
+
   /// Source retained options list (host data mode).
   final List options;
   final BoxDecoration? customStyle;
+
   /// Source data.
   int get index => 0;
 
   final List<Widget> children;
+
   /// Source parent helpers (Batch J).
-  Map<String, dynamic> get _state =>
-      _upGridState[this] ??= <String, dynamic>{'initialized': false, 'lastChildClick': null};
+  Map<String, dynamic> get _state => _upGridState[this] ??= <String, dynamic>{
+        'initialized': false,
+        'lastChildClick': null
+      };
   dynamic get lastChildClick => _state['lastChildClick'];
   bool get initialized => _state['initialized'] == true;
   void init([dynamic _]) {
     _state['initialized'] = true;
   }
+
   void childClick([dynamic payload]) {
     _state['lastChildClick'] = payload;
   }
+
   void updateParentData([dynamic _]) {
     _state['initialized'] = true;
   }
+
   /// Source computed: parentData.
   dynamic get parentData => <dynamic>[
         null, // hoverClass host shell
@@ -68,8 +78,6 @@ class UPGrid extends StatelessWidget {
     }
     return <String, dynamic>{'justifyContent': justify};
   }
-
-
 
   @override
   Widget build(BuildContext context) {
@@ -145,17 +153,18 @@ class UPGridItem extends StatelessWidget {
     this.customStyle,
     this.onClick,
     required this.child,
-      this.onUGridItem,
+    this.onUGridItem,
   });
+
   /// Source emit alias: $uGridItem -> onUGridItem.
   final ValueChanged<dynamic>? onUGridItem;
-
 
   final dynamic name;
   final dynamic bgColor;
   final BoxDecoration? customStyle;
   final ValueChanged<dynamic>? onClick;
   final Widget child;
+
   /// Source item helpers (Batch J).
   Map<String, dynamic> get _state =>
       _upGridItemState[this] ??= <String, dynamic>{'initialized': false};
@@ -163,16 +172,20 @@ class UPGridItem extends StatelessWidget {
   void init([dynamic _]) {
     _state['initialized'] = true;
   }
+
   void updateParentData([dynamic _]) {
     _state['initialized'] = true;
   }
+
   void clickHandler([dynamic _]) => onClick?.call(_ ?? name);
   List gridItemClasses([dynamic _]) => const ['up-grid-item'];
+
   /// Source computed: itemStyle.
   dynamic get itemStyle => <String, dynamic>{
         'background': bgColor,
         'width': '100%',
       };
+
   /// Source `getItemWidth` — parentWidth / col (+ optional px string like nvue).
   /// Call as getItemWidth(parentWidth, col). Without args returns 0.
   dynamic getItemWidth([dynamic parentWidth, dynamic col]) {
@@ -206,6 +219,7 @@ class UPGridItem extends StatelessWidget {
     if (v is num) return v.toInt();
     return int.tryParse('$v') ?? fallback;
   }
+
   /// Source data default: classes (border class list; filled during build).
   dynamic get classes {
     final list = <dynamic>['up-grid-item'];
@@ -215,12 +229,6 @@ class UPGridItem extends StatelessWidget {
     }
     return list;
   }
-
-
-
-
-
-
 
   @override
   Widget build(BuildContext context) {

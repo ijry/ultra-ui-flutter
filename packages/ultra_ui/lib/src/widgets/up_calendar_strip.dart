@@ -15,15 +15,15 @@ class UPCalendarStrip extends StatefulWidget {
     this.color = '#3c9cff',
     this.weekText = const ['日', '一', '二', '三', '四', '五', '六'],
     this.fullCalendar = true,
-    this.fullMonthNum = 1,
+    this.fullMonthNum = 24,
     this.readonly = false,
     this.showToday = true,
-    this.monthFormat = 'yyyy年MM月',
-    this.expandHint = '下拉展开',
-    this.collapseHint = '收起',
+    this.monthFormat = '',
+    this.expandHint = '下拉展开月历',
+    this.collapseHint = '上拉收起月历',
     this.fullCalendarProps = const {},
-    this.collapseAfterSelect = false,
-    this.pullDownThreshold = 60,
+    this.collapseAfterSelect = true,
+    this.pullDownThreshold = 40,
     this.onChange,
     this.onConfirm,
     this.onMonthChange,
@@ -161,9 +161,18 @@ class UPCalendarStripState extends State<UPCalendarStrip> {
   String _fmtDate(DateTime d) => '${d.year}-${_pad(d.month)}-${_pad(d.day)}';
 
   String _fmtMonth(DateTime d) {
+    final month = d.month.toString().padLeft(2, '0');
+    // Source: an empty monthFormat means "use the locale default", which is
+    // YYYY年MM月 for Chinese locales and MM/YYYY otherwise — not an empty label.
+    if (widget.monthFormat.isEmpty) {
+      final locale = Localizations.maybeLocaleOf(context)?.languageCode;
+      if (locale == null || locale == 'zh') return '${d.year}年$month月';
+      return '$month/${d.year}';
+    }
     return widget.monthFormat
         .replaceAll('yyyy', '${d.year}')
-        .replaceAll('MM', d.month.toString().padLeft(2, '0'))
+        .replaceAll('YYYY', '${d.year}')
+        .replaceAll('MM', month)
         .replaceAll('M', '${d.month}');
   }
 

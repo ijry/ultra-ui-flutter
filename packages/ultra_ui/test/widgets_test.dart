@@ -432,8 +432,10 @@ void main() {
           (widget) =>
               widget is Container &&
               widget.decoration is BoxDecoration &&
+              // Source resolvedBgColor falls back to --up-card-bg-color; the
+              // old #f2f2f2 was neither that nor theme-aware.
               (widget.decoration! as BoxDecoration).color ==
-                  const Color(0xFFF2F2F2),
+                  UPThemeTokens.light().cardBgColor,
         ),
       ),
       findsOneWidget,
@@ -10456,8 +10458,7 @@ void main() {
     );
   });
 
-  testWidgets(
-      'UPLoadingPage source props default iconSize follows fontSize default',
+  testWidgets('UPLoadingPage uses the source iconSize default of 28',
       (tester) async {
     await tester.pumpWidget(
       MaterialApp(
@@ -10470,7 +10471,9 @@ void main() {
     await tester.pump();
 
     final icon = tester.widget<UPLoadingIcon>(find.byType(UPLoadingIcon));
-    expect(icon.size, 19);
+    // Source loadingPage.js declares fontSize: 19 and iconSize: 28
+    // independently; the icon takes the latter.
+    expect(icon.size, 28);
   });
 
   test('UPLoadingPage source overlayStyle merges custom style', () {
@@ -14920,13 +14923,13 @@ void main() {
     key.currentState!.prevMonth();
     await tester.pump();
     expect(month, '2026-07');
-    await tester.tap(find.text('下拉展开'));
+    await tester.tap(find.text('下拉展开月历'));
     await tester.pump();
     expect(expanded, isTrue);
-    expect(find.text('收起'), findsOneWidget);
+    expect(find.text('上拉收起月历'), findsOneWidget);
     key.currentState!.closeFull();
     await tester.pump();
-    expect(find.text('下拉展开'), findsOneWidget);
+    expect(find.text('下拉展开月历'), findsOneWidget);
   });
 
   testWidgets('UPTree checkbox cascade and public methods', (tester) async {

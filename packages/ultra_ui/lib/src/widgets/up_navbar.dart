@@ -16,7 +16,7 @@ class UPNavbar extends StatelessWidget implements PreferredSizeWidget {
     super.key,
     this.safeAreaInsetTop = true,
     this.placeholder = false,
-    this.fixed = false,
+    this.fixed = true,
     this.border = false,
     this.leftIcon = 'arrow-left',
     this.leftText = '',

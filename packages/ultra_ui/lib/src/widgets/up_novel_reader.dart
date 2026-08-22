@@ -149,15 +149,15 @@ class UPNovelReader extends StatefulWidget {
     this.initialBookmarks = const <UPNovelBookmark>[],
     this.defaultSettings,
     this.settings,
-    this.mode = 'page',
+    this.mode = 'scroll',
     this.showBack = true,
-    this.autoBack = true,
+    this.autoBack = false,
     this.backIcon = 'arrow-left',
     this.safeAreaInsetTop = true,
     this.safeAreaInsetBottom = true,
     this.preloadThreshold = 2,
     this.pageAnimation = true,
-    this.controlsAutoHide = 3000,
+    this.controlsAutoHide = 0,
     this.hooks = const UPNovelReaderHooks(),
     this.onChapterRequest,
     this.onChapterPrefetch,
@@ -208,7 +208,7 @@ class UPNovelReader extends StatefulWidget {
   /// Source prop `settings`.
   final Map<String, dynamic>? settings;
 
-  /// Source prop `mode` ('page' | 'scroll').
+  /// Source prop `mode` ('scroll' | 'page'); source default is 'scroll'.
   final String mode;
 
   /// Source prop `showBack`.
@@ -232,7 +232,8 @@ class UPNovelReader extends StatefulWidget {
   /// Source prop `pageAnimation`.
   final bool pageAnimation;
 
-  /// Source prop `controlsAutoHide` (ms; 0 disables auto-hide).
+  /// Source prop `controlsAutoHide` (ms). The source default is 0, which
+  /// disables auto-hide entirely.
   final int controlsAutoHide;
 
   /// Flutter host hooks (persistence, clock).

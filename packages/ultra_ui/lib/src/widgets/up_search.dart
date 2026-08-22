@@ -9,7 +9,7 @@ class UPSearch extends StatefulWidget {
   const UPSearch({
     super.key,
     this.shape = 'round',
-    this.bgColor = '#f2f2f2',
+    this.bgColor = '',
     this.placeholder = '请输入关键字',
     this.clearabled = true,
     this.clearable,
@@ -22,8 +22,8 @@ class UPSearch extends StatefulWidget {
     this.borderColor = 'transparent',
     this.searchIconColor = '#909399',
     this.searchIconSize = 22,
-    this.color = '#606266',
-    this.placeholderColor = '#909399',
+    this.color = '',
+    this.placeholderColor = '',
     this.searchIcon = 'search',
     this.iconPosition = 'left',
     this.margin = '0',
@@ -49,7 +49,7 @@ class UPSearch extends StatefulWidget {
     this.onUpdateValue,
     this.onUpdateModelValue,
     this.adjustPosition = true,
-    this.autoBlur = false,
+    this.autoBlur = true,
   });
 
   final String shape;
@@ -357,7 +357,9 @@ class UPSearchState extends State<UPSearch> {
   Widget build(BuildContext context) {
     final tokens = UPThemeTokens.of(context);
     final h = UPUtils.getPx(widget.height);
-    final bg = UPUtils.parseColor(widget.bgColor) ?? tokens.bgColor;
+    // Source resolvedBgColor falls back to --up-card-bg-color, not the generic
+    // --up-bg-color; the two differ in both palettes.
+    final bg = UPUtils.parseColor(widget.bgColor) ?? tokens.cardBgColor;
     final radius = widget.shape == 'square' ? 4.0 : 100.0;
     final border =
         widget.borderColor == 'transparent' || widget.borderColor.isEmpty

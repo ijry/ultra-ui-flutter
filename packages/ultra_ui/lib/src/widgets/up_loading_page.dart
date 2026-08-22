@@ -18,7 +18,7 @@ class UPLoadingPage extends StatelessWidget {
     this.color = '#C8C8C8',
     this.fontSize = 19,
     // Source props.js resolves its default from loadingPage.fontSize.
-    this.iconSize = 19,
+    this.iconSize = 28,
     this.loadingColor = '#C8C8C8',
     this.zIndex = 10,
     this.customStyle,

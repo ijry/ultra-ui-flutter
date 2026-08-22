@@ -15,7 +15,7 @@ class UPActionSheet extends StatefulWidget {
     this.description = '',
     this.actions = const [],
     this.nameKey = 'name',
-    this.subnameKey = 'subname',
+    this.subnameKey = 'subnameKey',
     this.cancelText = '',
     this.closeOnClickAction = true,
     this.safeAreaInsetBottom = true,

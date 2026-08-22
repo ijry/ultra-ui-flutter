@@ -21,7 +21,7 @@ class UPParse extends StatelessWidget {
     this.previewImg = true,
     this.scrollTable = false,
     this.selectable = false,
-    this.setTitle = false,
+    this.setTitle = true,
     this.showImgMenu = true,
     this.tagStyle = const {},
     this.useAnchor,

@@ -41,7 +41,10 @@ Future<void> _revealControls(WidgetTester tester) async {
 void main() {
   testWidgets('renders the first chapter and hides controls initially',
       (tester) async {
-    await tester.pumpWidget(_host(const UPNovelReader(chapters: _chapters)));
+    // The source default mode is 'scroll'; page mode must be asked for.
+    await tester.pumpWidget(_host(
+      const UPNovelReader(chapters: _chapters, mode: 'page'),
+    ));
     await tester.pumpAndSettle();
 
     expect(find.textContaining('风起于青萍'), findsWidgets);
@@ -308,6 +311,7 @@ void main() {
     await tester.pumpWidget(_host(UPNovelReader(
       chapters: _chapters,
       controlsAutoHide: 0,
+      autoBack: true,
       onBack: () => backs++,
     )));
     await tester.pumpAndSettle();
@@ -336,8 +340,10 @@ void main() {
   testWidgets('a mode prop change reports the source normalized mode',
       (tester) async {
     String? mode;
+    // Start from page mode, since 'scroll' is now the default.
     await tester.pumpWidget(_host(UPNovelReader(
       chapters: _chapters,
+      mode: 'page',
       onModeChange: (m) => mode = m,
     )));
     await tester.pumpAndSettle();

@@ -21,7 +21,7 @@ class UPLoadingIcon extends StatefulWidget {
     this.show = true,
     this.inactiveColor,
     this.textColor,
-    this.timingFunction = 'linear',
+    this.timingFunction = 'ease-in-out',
     this.styles,
     this.customStyle,
   });
@@ -36,9 +36,11 @@ class UPLoadingIcon extends StatefulWidget {
   final dynamic inactiveColor;
   final dynamic textColor;
   final String timingFunction;
+
   /// Source retained styles map.
   final dynamic styles;
   final BoxDecoration? customStyle;
+
   /// Source computed: otherBorderColor.
   dynamic get otherBorderColor {
     if (mode == 'circle') {
@@ -51,6 +53,7 @@ class UPLoadingIcon extends StatefulWidget {
     }
     return 'transparent';
   }
+
   /// Source data defaults.
   dynamic get aniAngel => 360;
   Map<String, dynamic> get _state =>
@@ -68,7 +71,10 @@ class UPLoadingIcon extends StatefulWidget {
 class UPLoadingIconState extends State<UPLoadingIcon>
     with SingleTickerProviderStateMixin {
   /// Source host helper.
-  Future<void> setTimeout([dynamic cb, int ms = 0]) async { await Future<void>.delayed(Duration(milliseconds: ms)); if (cb is Function) cb(); }
+  Future<void> setTimeout([dynamic cb, int ms = 0]) async {
+    await Future<void>.delayed(Duration(milliseconds: ms));
+    if (cb is Function) cb();
+  }
 
   /// Source data.
   List get array12 => List.generate(12, (i) => i);
@@ -105,6 +111,7 @@ class UPLoadingIconState extends State<UPLoadingIcon>
     listenerAttached = true;
     widget._state['webviewHide'] = true;
   }
+
   void nvueAnimate() => start();
 
   @override

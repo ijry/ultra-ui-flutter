@@ -24,7 +24,7 @@ class UPIcon extends StatelessWidget {
     this.top = 0,
     this.stop = false,
     this.hoverClass = '',
-    this.imgMode = 'aspectFill',
+    this.imgMode = '',
     this.onClick,
     this.customStyle,
   });
