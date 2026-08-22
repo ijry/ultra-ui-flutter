@@ -85,6 +85,7 @@ import '../pages/components_c/picker_page.dart';
 import '../pages/components_c/subsection_page.dart';
 import '../pages/components_d/barcode_page.dart';
 import '../pages/components_d/box_page.dart';
+import '../pages/components_d/novel_reader_page.dart';
 import '../pages/components_d/cate_tab_page.dart';
 import '../pages/components_d/city_locate_page.dart';
 import '../pages/components_d/copy_page.dart';
@@ -97,6 +98,8 @@ import '../pages/components_d/qrcode_page.dart';
 import '../pages/components_d/select_page.dart';
 import '../pages/components_d/title_page.dart';
 import '../pages/components_d/tree_page.dart';
+import '../pages/components_d/root_toast_host_page.dart';
+import '../pages/components_d/tabs_pro_page.dart';
 import '../pages/components_d/virtual_list_page.dart';
 import 'example_route.dart';
 
@@ -813,8 +816,32 @@ final List<ExampleRoute> exampleRoutes = <ExampleRoute>[
     group: ExampleRouteGroup.componentsD,
     builder: _buildBarcode,
   ),
+  const ExampleRoute(
+    id: 'componentsD/tabsPro/tabsPro',
+    sourcePath: 'pages/componentsD/tabsPro/tabsPro',
+    title: '增强标签',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildTabsPro,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/rootToastHost/rootToastHost',
+    sourcePath: 'pages/componentsD/rootToastHost/rootToastHost',
+    title: '全局提示宿主',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildRootToastHost,
+  ),
+  const ExampleRoute(
+    id: 'componentsD/novelReader/novelReader',
+    sourcePath: 'pages/componentsD/novelReader/novelReader',
+    title: '小说阅读器',
+    group: ExampleRouteGroup.componentsD,
+    builder: _buildNovelReader,
+  ),
 ];
 
+Widget _buildTabsPro(BuildContext context) => const TabsProPage();
+Widget _buildRootToastHost(BuildContext context) => const RootToastHostPage();
+Widget _buildNovelReader(BuildContext context) => const NovelReaderPage();
 Widget _buildComponentsHome(BuildContext context) => const ComponentsHomePage();
 Widget _buildTemplatesHome(BuildContext context) => const TemplatesHomePage();
 Widget _buildMine(BuildContext context) => const MinePage();

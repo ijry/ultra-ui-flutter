@@ -10,6 +10,9 @@ import '../lib/pages/components_d/cate_tab_page.dart';
 import '../lib/pages/components_d/city_locate_page.dart';
 import '../lib/pages/components_d/dragsort_page.dart';
 import '../lib/pages/components_d/float_button_page.dart';
+import '../lib/pages/components_d/novel_reader_page.dart';
+import '../lib/pages/components_d/root_toast_host_page.dart';
+import '../lib/pages/components_d/tabs_pro_page.dart';
 import '../lib/pages/components_d/navbar_mini_page.dart';
 import '../lib/pages/components_d/pagination_page.dart';
 import '../lib/pages/components_d/pull_refresh_page.dart';
@@ -416,5 +419,83 @@ void main() {
     expect(find.byKey(const ValueKey('barcode-page-custom')), findsOneWidget);
     expect(find.text('自定义样式条形码'), findsOneWidget);
     expect(find.text('CUSTOM123'), findsOneWidget);
+  });
+
+  testWidgets('tabs-pro page switches its content pane', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const TabsProPage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey('example-page-componentsD/tabsPro/tabsPro')),
+      findsOneWidget,
+    );
+    expect(find.byType(UPTabsPro), findsNWidgets(2));
+    expect(find.byKey(const ValueKey('tabs-pro-page-basic')), findsOneWidget);
+    expect(find.text('第 1 个面板'), findsOneWidget);
+    expect(find.text('当前索引：0'), findsOneWidget);
+
+    // Selecting another tab moves both the pane and the reported index.
+    await tester.tap(find.text('热榜').first);
+    await tester.pumpAndSettle();
+    expect(find.text('第 3 个面板'), findsOneWidget);
+    expect(find.text('当前索引：2'), findsOneWidget);
+  });
+
+  testWidgets('root-toast-host page drives toast without a local widget',
+      (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const RootToastHostPage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(const ValueKey(
+          'example-page-componentsD/rootToastHost/rootToastHost')),
+      findsOneWidget,
+    );
+    // The page mounts no UPToast of its own; the host supplies it.
+    expect(find.text('最近调用：未调用'), findsOneWidget);
+
+    await tester.tap(find.byKey(const ValueKey('root-toast-host-page-toast')));
+    await tester.pump();
+    expect(find.text('最近调用：toast -> 已处理'), findsOneWidget);
+    expect(find.text('来自全局宿主'), findsOneWidget);
+
+    // Let the toast's own dismiss timer expire, or the test ends with it
+    // pending.
+    await tester.pump(const Duration(seconds: 3));
+    await tester.pumpAndSettle();
+  });
+
+  testWidgets('novel-reader page renders both reading modes', (tester) async {
+    await tester.pumpWidget(
+      MaterialApp(
+        theme: UP.themeData(),
+        home: const NovelReaderPage(),
+      ),
+    );
+    await tester.pumpAndSettle();
+
+    expect(
+      find.byKey(
+          const ValueKey('example-page-componentsD/novelReader/novelReader')),
+      findsOneWidget,
+    );
+    expect(find.byType(UPNovelReader), findsNWidgets(2));
+    expect(
+        find.byKey(const ValueKey('novel-reader-page-scroll')), findsOneWidget);
+    expect(
+        find.byKey(const ValueKey('novel-reader-page-paged')), findsOneWidget);
+    expect(find.text('当前章节：第一章 风起'), findsOneWidget);
+    // Toolbars start hidden, per the source.
+    expect(find.text('最近事件：未触发'), findsOneWidget);
   });
 }

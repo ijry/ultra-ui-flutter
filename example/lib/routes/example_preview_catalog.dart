@@ -494,6 +494,21 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       group: ExampleRouteGroup.componentsD,
       available: true),
   ExamplePreviewRoute(
+      sourcePath: 'pages/componentsD/tabsPro/tabsPro',
+      title: 'TabsPro 增强标签',
+      group: ExampleRouteGroup.componentsD,
+      available: true),
+  ExamplePreviewRoute(
+      sourcePath: 'pages/componentsD/rootToastHost/rootToastHost',
+      title: 'RootToastHost 全局提示宿主',
+      group: ExampleRouteGroup.componentsD,
+      available: true),
+  ExamplePreviewRoute(
+      sourcePath: 'pages/componentsD/novelReader/novelReader',
+      title: 'NovelReader 小说阅读器',
+      group: ExampleRouteGroup.componentsD,
+      available: true),
+  ExamplePreviewRoute(
       sourcePath: 'pages/componentsD/colorPicker/colorPicker',
       title: 'ColorPicker 颜色选择器',
       group: ExampleRouteGroup.componentsD,
@@ -520,7 +535,7 @@ const List<ExamplePreviewRoute> componentPreviewRoutes = <ExamplePreviewRoute>[
       available: false),
 ];
 
-const List<int> componentGroupLengths = <int>[11, 20, 7, 17, 15, 12, 20];
+const List<int> componentGroupLengths = <int>[11, 20, 7, 17, 15, 12, 23];
 
 const List<String> componentPreviewGroupTitles = <String>[
   '基础组件',

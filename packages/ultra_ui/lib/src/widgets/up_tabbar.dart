@@ -576,45 +576,54 @@ class UPTabbarItem extends StatelessWidget {
             midButtonBorderCircleStyle['borderColor'],
       );
       const diameter = 50.0;
+      // The raised circle plus its label is taller than the 50px bar. The
+      // source lets it overflow the bar via CSS; on Flutter the subtree needs
+      // its own unbounded vertical constraint, or the Column overflows.
       content = Transform.translate(
         // Negative offset raises the button out of the bar.
         offset: Offset(0, resolvedMidButtonOffsetY),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          mainAxisAlignment: MainAxisAlignment.center,
-          children: <Widget>[
-            Container(
-              width: diameter,
-              height: diameter,
-              decoration: BoxDecoration(
-                color: midBg,
-                shape: BoxShape.circle,
-                border: ringColor == null ? null : Border.all(color: ringColor),
-                boxShadow: UPUtils.parseColor(midButtonBoxShadow) == null
-                    ? null
-                    : <BoxShadow>[
-                        BoxShadow(
-                          color: UPUtils.parseColor(midButtonBoxShadow)!,
-                          blurRadius: 4,
+        child: OverflowBox(
+          alignment: Alignment.center,
+          maxHeight: double.infinity,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: <Widget>[
+              Container(
+                width: diameter,
+                height: diameter,
+                decoration: BoxDecoration(
+                  color: midBg,
+                  shape: BoxShape.circle,
+                  border:
+                      ringColor == null ? null : Border.all(color: ringColor),
+                  boxShadow: UPUtils.parseColor(midButtonBoxShadow) == null
+                      ? null
+                      : <BoxShadow>[
+                          BoxShadow(
+                            color: UPUtils.parseColor(midButtonBoxShadow)!,
+                            blurRadius: 4,
+                          ),
+                        ],
+                ),
+                child: Center(
+                  child: iconName.isEmpty
+                      ? const SizedBox.shrink()
+                      : UPIcon(
+                          name: iconName,
+                          size: UPUtils.getPx(midButtonIconSize),
+                          color:
+                              UPUtils.parseColor(resolvedMidButtonIconColor) ??
+                                  color,
                         ),
-                      ],
+                ),
               ),
-              child: Center(
-                child: iconName.isEmpty
-                    ? const SizedBox.shrink()
-                    : UPIcon(
-                        name: iconName,
-                        size: UPUtils.getPx(midButtonIconSize),
-                        color: UPUtils.parseColor(resolvedMidButtonIconColor) ??
-                            color,
-                      ),
-              ),
-            ),
-            if (hasMidButtonText && showText) ...[
-              const SizedBox(height: 2),
-              Text(text, style: TextStyle(color: color, fontSize: 11)),
+              if (hasMidButtonText && showText) ...[
+                const SizedBox(height: 2),
+                Text(text, style: TextStyle(color: color, fontSize: 11)),
+              ],
             ],
-          ],
+          ),
         ),
       );
     }

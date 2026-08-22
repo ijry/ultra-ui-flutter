@@ -23,6 +23,11 @@ const List<String> componentDRouteIds = <String>[
   'componentsD/pullRefresh/pullRefresh',
   'componentsD/virtualList/virtualList',
   'componentsD/barcode/barcode',
+  // Not in the upstream demo manifest: these three components exist in
+  // uview-plus but have no source demo page, so the pages are ours.
+  'componentsD/tabsPro/tabsPro',
+  'componentsD/rootToastHost/rootToastHost',
+  'componentsD/novelReader/novelReader',
 ];
 
 void main() {
@@ -100,7 +105,7 @@ void main() {
         .where((route) => route.group == ExampleRouteGroup.componentsA)
         .toList();
 
-    expect(exampleRoutes, hasLength(98));
+    expect(exampleRoutes, hasLength(101));
     expect(componentARoutes.map((route) => route.id), componentARouteIds);
     expect(
       componentARoutes.map((route) => route.sourcePath),
@@ -255,6 +260,9 @@ void main() {
         'pages/componentsD/pullRefresh/pullRefresh',
         'pages/componentsD/virtualList/virtualList',
         'pages/componentsD/barcode/barcode',
+        'pages/componentsD/tabsPro/tabsPro',
+        'pages/componentsD/rootToastHost/rootToastHost',
+        'pages/componentsD/novelReader/novelReader',
       }),
     );
   });
@@ -395,6 +403,9 @@ void main() {
           'pages/componentsD/qrcode/qrcode',
           'pages/componentsD/coupon/coupon',
           'pages/componentsD/barcode/barcode',
+          'pages/componentsD/tabsPro/tabsPro',
+          'pages/componentsD/rootToastHost/rootToastHost',
+          'pages/componentsD/novelReader/novelReader',
           'pages/componentsD/colorPicker/colorPicker',
           'pages/componentsD/poster/poster',
           'pages/componentsD/goodsSku/goodsSku',
@@ -442,6 +453,9 @@ void main() {
               'pages/componentsD/pullRefresh/pullRefresh',
               'pages/componentsD/virtualList/virtualList',
               'pages/componentsD/barcode/barcode',
+              'pages/componentsD/tabsPro/tabsPro',
+              'pages/componentsD/rootToastHost/rootToastHost',
+              'pages/componentsD/novelReader/novelReader',
             }.contains(route.sourcePath),
           )
           .every((route) => route.available),
