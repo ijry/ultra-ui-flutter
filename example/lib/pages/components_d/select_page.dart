@@ -4,10 +4,11 @@ import 'package:ultra_ui/ultra_ui.dart';
 import '../shared/example_demo_block.dart';
 import '../shared/example_page_scaffold.dart';
 
-const List<Map<String, String>> _options = <Map<String, String>>[
-  <String, String>{'id': '1', 'name': '选项一'},
-  <String, String>{'id': '2', 'name': '选项二'},
-  <String, String>{'id': '3', 'name': '选项三'},
+const List<Map<String, String>> _scenesList = <Map<String, String>>[
+  <String, String>{'id': '1', 'name': '分类1'},
+  <String, String>{'id': '2', 'name': '分类2'},
+  // Source data really does label id 3 as "分类4".
+  <String, String>{'id': '3', 'name': '分类4'},
 ];
 
 class SelectPage extends StatefulWidget {
@@ -18,32 +19,12 @@ class SelectPage extends StatefulWidget {
 }
 
 class _SelectPageState extends State<SelectPage> {
-  String _current = '1';
-  int _selectCount = 0;
-
-  String _labelFor(String value) {
-    for (final option in _options) {
-      if (option['id'] == value) return option['name']!;
-    }
-    return '';
-  }
+  String _cateId = '';
+  String _pcSelectId = '';
 
   @override
   Widget build(BuildContext context) {
-    final select = UPSelect(
-      key: const ValueKey('select-page-basic'),
-      label: '请选择',
-      current: _current,
-      options: _options,
-      border: true,
-      showOptionsLabel: true,
-      onSelect: (item) => setState(() {
-        _current = '${item['id']}';
-        _selectCount += 1;
-      }),
-      onUpdateCurrent: (value) => setState(() => _current = '$value'),
-    );
-
+    final tokens = UPThemeTokens.of(context);
     return ExamplePageScaffold(
       title: '经典下拉框',
       child: Container(
@@ -52,23 +33,55 @@ class _SelectPageState extends State<SelectPage> {
           crossAxisAlignment: CrossAxisAlignment.stretch,
           children: <Widget>[
             ExampleDemoBlock(
-              title: '基础功能',
+              title: '默认',
               child: Padding(
                 padding: const EdgeInsets.all(16),
-                child: KeyedSubtree(
-                  key: const ValueKey('select-page-trigger'),
-                  child: select,
+                child: UPSelect(
+                  key: const ValueKey('select-page-basic'),
+                  label: '分类',
+                  showOptionsLabel: true,
+                  options: _scenesList,
+                  current: _cateId,
+                  onUpdateCurrent: (value) =>
+                      setState(() => _cateId = '$value'),
                 ),
               ),
             ),
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 12, 16, 0),
-              child: Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Text('当前选择：${_labelFor(_current)}'),
-                  Text('选择次数：$_selectCount'),
-                ],
+            ExampleDemoBlock(
+              title: '插槽',
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: UPSelect(
+                  key: const ValueKey('select-page-slot'),
+                  label: '分类',
+                  showOptionsLabel: true,
+                  options: _scenesList,
+                  current: _cateId,
+                  onUpdateCurrent: (value) =>
+                      setState(() => _cateId = '$value'),
+                  // Source `optionItem` slot renders just the name as text.
+                  optionItemBuilder: (item) => Text(
+                    '${item['name'] ?? ''}',
+                    style: TextStyle(color: tokens.mainColor, fontSize: 14),
+                  ),
+                ),
+              ),
+            ),
+            ExampleDemoBlock(
+              title: '边框与下拉宽度',
+              child: Padding(
+                padding: const EdgeInsets.all(16),
+                child: UPSelect(
+                  key: const ValueKey('select-page-border'),
+                  label: '请选择分类',
+                  showOptionsLabel: true,
+                  options: _scenesList,
+                  border: true,
+                  optionsWidth: '100%',
+                  current: _pcSelectId,
+                  onUpdateCurrent: (value) =>
+                      setState(() => _pcSelectId = '$value'),
+                ),
               ),
             ),
           ],

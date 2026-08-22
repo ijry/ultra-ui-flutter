@@ -56,6 +56,22 @@ class _FloatButtonPageState extends State<FloatButtonPage> {
                 child: Stack(
                   children: [
                     UPFloatButton(
+                      key: const ValueKey('float-button-page-basic'),
+                      // Source's 基础功能 is the plain button: isMenu false.
+                      isMenu: false,
+                      onClick: () => setState(() => _menuMessage = '按钮点击'),
+                    ),
+                  ],
+                ),
+              ),
+            ),
+            ExampleDemoBlock(
+              title: '带子菜单模式',
+              child: SizedBox(
+                height: 180,
+                child: Stack(
+                  children: [
+                    UPFloatButton(
                       key: const ValueKey('float-button-page-menu'),
                       isMenu: true,
                       list: _menuItems,

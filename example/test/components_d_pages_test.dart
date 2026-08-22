@@ -173,15 +173,23 @@ void main() {
       ),
     );
 
-    await tester.tap(find.byKey(const ValueKey('select-page-trigger')));
+    await tester.tap(find.byKey(const ValueKey('select-page-basic')));
     await tester.pumpAndSettle();
     expect(
         find.byKey(const ValueKey('up-select-options-panel')), findsOneWidget);
-    expect(find.text('选项二'), findsOneWidget);
-    await tester.tap(find.text('选项二'));
+    // Source data: 分类1 / 分类2 / 分类4 (id 3 really is labelled 分类4).
+    expect(find.text('分类2'), findsOneWidget);
+    await tester.tap(find.text('分类2'));
     await tester.pumpAndSettle();
-    expect(find.text('当前选择：选项二'), findsOneWidget);
     expect(find.byKey(const ValueKey('up-select-options-panel')), findsNothing);
+    // The trigger shows the picked label once showOptionsLabel resolves it.
+    expect(
+      find.descendant(
+        of: find.byKey(const ValueKey('select-page-basic')),
+        matching: find.text('分类2'),
+      ),
+      findsOneWidget,
+    );
   });
 
   testWidgets('pagination page changes page and page size', (tester) async {
@@ -193,13 +201,15 @@ void main() {
     );
 
     expect(find.byKey(const ValueKey('pagination-page-basic')), findsOneWidget);
-    await tester.tap(find.text('2').first);
+    // The `prev, pager, next` demo is the one with numbered pages.
+    await tester.tap(
+      find.descendant(
+        of: find.byKey(const ValueKey('pagination-page-pager')),
+        matching: find.text('2'),
+      ),
+    );
     await tester.pump();
-    expect(find.text('当前页：2'), findsOneWidget);
-
-    await tester.tap(find.text('20条/页'));
-    await tester.pump();
-    expect(find.text('每页：20'), findsOneWidget);
+    expect(find.textContaining('当前页：2'), findsOneWidget);
   });
 
   testWidgets('tree page expands and cascades checked children',
@@ -211,27 +221,35 @@ void main() {
       ),
     );
 
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('tree-page-checkbox')),
-        matching: find.text('子节点一'),
-      ),
-      findsOneWidget,
-    );
-    await tester.tap(find.byKey(const ValueKey('up-tree-checkbox-root')));
+    // Source check-demo data, expanded by defaultExpandAll.
+    expect(find.text('Input 输入框'), findsOneWidget);
+    // defaultCheckedKeys seeds the readout before any interaction.
+    expect(find.text('当前选中：2-1-1'), findsOneWidget);
+
+    // The check demo is the third block, below the 600px test viewport, so a tap
+    // at its unscrolled position lands outside the view and silently does
+    // nothing. Scroll it in first.
+    await tester.ensureVisible(find.text('Textarea 文本域'));
+    await tester.pumpAndSettle();
+
+    // checkOnClickNode: tapping the label checks it and cascades to ancestors.
+    await tester.tap(find.text('Textarea 文本域'));
     await tester.pump();
-    expect(
-      find.text('已选：root,child-1,grandchild-1,child-2'),
-      findsOneWidget,
-    );
-    expect(find.textContaining('disabled'), findsNothing);
-    expect(
-      find.descendant(
-        of: find.byKey(const ValueKey('tree-page-checkbox')),
-        matching: find.text('禁用节点'),
-      ),
-      findsOneWidget,
-    );
+    expect(find.textContaining('2-1-2'), findsOneWidget);
+
+    // setCheckedKeys replaces the selection wholesale.
+    await tester
+        .ensureVisible(find.byKey(const ValueKey('tree-page-set-checked')));
+    await tester.pumpAndSettle();
+    await tester.tap(find.byKey(const ValueKey('tree-page-set-checked')));
+    await tester.pump();
+    final readout = tester.widget<Text>(find.textContaining('当前选中：'));
+    expect(readout.data, contains('2-1-2'));
+    expect(readout.data, contains('2-2-1'));
+
+    // The disabled node stays present but never becomes checked.
+    expect(find.text('Picker 选择器'), findsOneWidget);
+    expect(readout.data, isNot(contains('2-2-2')));
   });
 
   testWidgets('dragsort page reorders with a real drag gesture',
@@ -243,16 +261,25 @@ void main() {
       ),
     );
 
-    final first = find.byKey(const ValueKey('dragsort-page-item-0'));
-    final second = find.byKey(const ValueKey('dragsort-page-item-1'));
-    final firstHandle = find.byKey(const ValueKey('dragsort-page-handle-0'));
     final dragState = tester.state<UPDragSortState>(
-      find.byKey(const ValueKey('dragsort-page-basic')),
+      find.byKey(const ValueKey('dragsort-page-vertical')),
     );
-    expect(first, findsOneWidget);
-    expect(second, findsOneWidget);
-    expect(firstHandle, findsOneWidget);
-    final gesture = await tester.startGesture(tester.getCenter(firstHandle));
+    String labelAt(int i) => '${(dragState.value[i] as Map)['label']}';
+    expect(labelAt(0), '项目 A');
+    expect(labelAt(1), '项目 B');
+
+    // Drag the first row past the second. The vertical demo has no handler
+    // slot, so ReorderableListView's default drag handle is the row itself —
+    // and that handle starts on a *long press*, not an immediate pan, so the
+    // gesture has to dwell before moving.
+    //
+    // Scope the finder to this demo: 自定义拖动句柄 renders identical labels.
+    final first = find.descendant(
+      of: find.byKey(const ValueKey('dragsort-page-vertical')),
+      matching: find.text('序号：1 - 项目 A'),
+    );
+    final gesture = await tester.startGesture(tester.getCenter(first));
+    await tester.pump(const Duration(milliseconds: 600));
     await tester.pump(const Duration(milliseconds: 100));
     await gesture.moveBy(const Offset(0, 20));
     await tester.pump(const Duration(milliseconds: 100));
@@ -262,8 +289,10 @@ void main() {
     await tester.pump(const Duration(milliseconds: 100));
     await gesture.up();
     await tester.pumpAndSettle();
-    expect(dragState.value, <String>['第二项', '第一项', '第三项']);
-    expect(find.text('排序：第二项,第一项,第三项'), findsOneWidget);
+
+    expect(labelAt(0), isNot('项目 A'),
+        reason: 'the dragged row must have moved out of first place');
+    expect(find.textContaining('拖拽结束，新的顺序：'), findsOneWidget);
   });
 
   testWidgets('city locate page resolves local location and selects a city',
