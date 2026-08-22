@@ -66,7 +66,8 @@ void main() {
 
     expect(visibility, <bool>[true]);
     expect(find.text('第一章 起'), findsOneWidget);
-    expect(find.text('第 1 章 / 3 章'), findsOneWidget);
+    // Source progressLabel: "<current>/<total> · <percent>%".
+    expect(find.text('1/3 · 0%'), findsOneWidget);
   });
 
   testWidgets('the close control hides the toolbars again', (tester) async {
@@ -624,4 +625,68 @@ void main() {
     await tester.pumpAndSettle();
     expect(find.text('第一章 起'), findsNothing);
   });
+
+  group('sub-panel computeds are public', () {
+    test('progressPercent prefers chapterProgress', () {
+      const toolbar = UPNovelReaderBottomToolbar(
+        theme: UPNovelReaderTheme(
+          name: 'day',
+          background: Color(0xFFF7F8FA),
+          text: Color(0xFF303133),
+          muted: Color(0xFF909399),
+          toolbar: Color(0xFFFFFFFF),
+          border: Color(0x1F303133),
+          active: Color(0xFF2979FF),
+          disabled: Color(0xFFC8C9CC),
+        ),
+        progress: <String, dynamic>{'chapterProgress': 0.42},
+        pageCount: 0,
+        currentChapterIndex: 0,
+        chapterCount: 3,
+        hasPrevious: false,
+        hasNext: true,
+        onPrevious: _noop,
+        onNext: _noop,
+        onToggleSettings: _noop,
+        onToggleControls: _noop,
+      );
+      expect(toolbar.progressPercent, closeTo(42, 1e-9));
+      expect(toolbar.progressLabel, '1/3 · 42%');
+      // Source previousDisabled/nextDisabled invert the has* flags.
+      expect(toolbar.previousDisabled, isTrue);
+      expect(toolbar.nextDisabled, isFalse);
+    });
+
+    test('progressPercent falls back to page position', () {
+      const toolbar = UPNovelReaderBottomToolbar(
+        theme: UPNovelReaderTheme(
+          name: 'day',
+          background: Color(0xFFF7F8FA),
+          text: Color(0xFF303133),
+          muted: Color(0xFF909399),
+          toolbar: Color(0xFFFFFFFF),
+          border: Color(0x1F303133),
+          active: Color(0xFF2979FF),
+          disabled: Color(0xFFC8C9CC),
+        ),
+        // No chapterProgress: the source uses (pageIndex + 1) / pageCount.
+        progress: <String, dynamic>{'pageIndex': 1},
+        pageCount: 4,
+        currentChapterIndex: -1,
+        chapterCount: 0,
+        hasPrevious: true,
+        hasNext: false,
+        onPrevious: _noop,
+        onNext: _noop,
+        onToggleSettings: _noop,
+        onToggleControls: _noop,
+      );
+      expect(toolbar.progressPercent, 50);
+      // A missing chapter count falls back to the source's literal label, and a
+      // -1 index reports 0 rather than 0-based.
+      expect(toolbar.progressLabel, '阅读进度 · 50%');
+    });
+  });
 }
+
+void _noop() {}

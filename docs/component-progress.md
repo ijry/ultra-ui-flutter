@@ -40,9 +40,9 @@
 | ✅ 已复刻 | 131 |
 | 🟡 部分 | 10 |
 | ⛔ 未复刻 | 0 |
-| props 覆盖 | 1580/1581 |
+| props 覆盖 | 1581/1581 |
 | emits 覆盖 | 329/332 |
-| methods + computed 覆盖 | 1270/1341 |
+| methods + computed 覆盖 | 1316/1341 |
 
 ### 状态含义
 
@@ -58,11 +58,13 @@
   公开 API 暴露以保持调用兼容。
 - 比对基于符号名（含 `snake_case`、`onXxx` 事件前缀等价形式），因此**只能证明缺失，
   不能证明行为正确**。行为与样式一致性由 `packages/ultra_ui/test` 的用例保证。
-- `UPNovelReader` 的 4 个子面板（toolbar/catalog/settings/content）在本移植中是私有
-  Flutter widget，其内部 handler 与 style computed 未作为公开 API 暴露，因此计入缺失。
-  这与其它组件“computed 也公开”的取向不同，是有意的取舍：这些成员属于子组件实现细节，
-  而非 `u-novel-reader` 的对外接口。核心算法（分页/测量/持久化）已在
-  `test/novel_reader_core_test.dart` 中对齐真实源码 JS 输出。
+- `UPNovelReader` 的 4 个子面板已改为公开类（`UPNovelReaderTopToolbar` /
+  `BottomToolbar` / `Catalog` / `Settings`），其 handler 与 computed 亦已暴露；
+  核心算法（分页/测量/持久化）在 `test/novel_reader_core_test.dart` 中对齐真实源码
+  JS 输出。仍计入缺失的 12 项是 **CSS 样式映射**（`readerStyle`、`toolbarStyle`、
+  `articleStyle` 等）：源码用它们把主题色注入 CSS 自定义属性（`--up-novel-reader-*`），
+  Flutter 没有 CSS 变量机制，同样的取值已由 `themeTokens` 直接传给各子组件，
+  再补一层返回 Map 的方法只会增加无人读取的死代码。
 - 其余少量缺失是**源码为绕开 Vue / 小程序限制而存在的胶水代码**，在 Flutter 无对应
   语义，刻意不实现：
   - `u-swipe-action.parentData` / `u-list-item.resize`：源码注释说明其用于「子组件
@@ -236,7 +238,7 @@
 | `u-goods-sku` | `UPGoodsSku` | ✅ 已复刻 | 7/7 | 4/4 | 15/15 | 接口与样式对齐 |
 | `u-city-locate` | `UPCityLocate` | ✅ 已复刻 | 5/5 | 2/2 | 4/4 | 宿主通过 `locationHandler` 替代 `uni.getLocation` |
 | `u-pdf-reader` | `UPPdfReader` | ✅ 已复刻 | 3/3 | — | — | 宿主通过 `viewerBuilder` 注入真实 PDF 视图 |
-| `u-novel-reader` | `UPNovelReader` | 🟡 部分 | 34/35 | 21/24 | 22/80 | 分页测量用源码 measure-adapter 启发式宽度；持久化经宿主钩子；缺 props: `themeTokens`；缺 emits: `content-scroll`, `page-change`, `tap-zone`；缺 methods: `articleStyle`, `catalogPopupStyle`, `catalogStyle`, `clearControlsHideTimer` 等 58 |
+| `u-novel-reader` | `UPNovelReader` | 🟡 部分 | 35/35 | 21/24 | 68/80 | 分页测量用源码 measure-adapter 启发式宽度；持久化经宿主钩子；缺 emits: `content-scroll`, `page-change`, `tap-zone`；缺 methods: `articleStyle`, `catalogPopupStyle`, `catalogStyle`, `disabledColor` 等 12 |
 
 ## 未在演示分组中出现的组件
 

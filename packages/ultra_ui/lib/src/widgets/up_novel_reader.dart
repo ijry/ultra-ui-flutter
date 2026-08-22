@@ -547,6 +547,185 @@ class UPNovelReaderState extends State<UPNovelReader> {
     widget.onProgressChange?.call(Map<String, dynamic>.from(progress));
   }
 
+  // -------------------------------------------------------------------------
+  // Source computed/method surface
+  //
+  // These mirror the source component's own names so callers ported from Vue
+  // can reach the same values. Each delegates to the existing implementation
+  // rather than duplicating it.
+  // -------------------------------------------------------------------------
+
+  /// Source computed `resolvedMode`.
+  String get resolvedMode => _resolvedMode;
+
+  /// Source computed `resolvedBookmarks`.
+  List<Map<String, dynamic>> get resolvedBookmarks => getBookmarks();
+
+  /// Source computed `themeTokens`.
+  UPNovelReaderTheme get themeTokens =>
+      resolveNovelReaderTheme(_resolvedSettings['theme']);
+
+  /// Source computed `isDark` — whether the active theme is a dark one.
+  bool get isDark => themeTokens.name == 'night' || themeTokens.name == 'dark';
+
+  /// Source computed `hasContent`.
+  bool get hasContent =>
+      _normalizedContent.paragraphs.isNotEmpty || _layout.pages.isNotEmpty;
+
+  /// Source computed `isCurrentBookmarked`.
+  bool get isCurrentBookmarked => _isCurrentBookmarked;
+
+  /// Source computed `hasPreviousChapter` / `hasNextChapter`.
+  ///
+  /// Source looks for any unlocked chapter before/after the current one, not
+  /// merely an adjacent index.
+  bool get hasPreviousChapter => (_effectiveChapterIndex ?? 0) > 0;
+  bool get hasNextChapter =>
+      (_effectiveChapterIndex ?? 0) < widget.chapters.length - 1;
+
+  /// Source computed `contentWidthPercent`.
+  double get contentWidthPercent {
+    final value = _resolvedSettings['contentWidth'];
+    if (value is num) return value.toDouble();
+    final parsed = jsParseFloat('$value'.replaceAll('%', ''));
+    return (parsed ?? 92).toDouble();
+  }
+
+  /// Source computed `getLineHeight` — resolved line height in px.
+  double get getLineHeight => novelLineHeight(_resolvedSettings).toDouble();
+
+  /// Source computed `displayIndex` — 1-based chapter number for display.
+  int get displayIndex => (_effectiveChapterIndex ?? -1) + 1;
+
+  /// Source `resolveScrollProgress`.
+  double resolveScrollProgress() {
+    if (_viewportHeight <= 0) return 0;
+    final max = _scrollController.hasClients
+        ? _scrollController.position.maxScrollExtent
+        : 0.0;
+    if (max <= 0) return 0;
+    return (_scrollTop / max).clamp(0.0, 1.0);
+  }
+
+  /// Source `getBookmarkExcerpt` — the source takes -12/+28 chars around the
+  /// current offset.
+  String getBookmarkExcerpt() {
+    final text = _normalizedContent.text;
+    if (text.isEmpty) return '';
+    final offset = _pageIndex.clamp(0, text.length);
+    final start = (offset - 12).clamp(0, text.length);
+    final end = (offset + 28).clamp(0, text.length);
+    return text.substring(start, end).trim();
+  }
+
+  /// Source `movePage(±1)`.
+  void movePage(int offset) {
+    if (_resolvedMode != 'page') return;
+    final next = _pageIndex + offset;
+    if (next >= 0 && next < _layout.pages.length) {
+      setState(() => _pageIndex = next);
+      _onProgress();
+      return;
+    }
+    // Out of range: the source asks the host for the neighbouring chapter.
+    requestChapter(offset < 0 ? 'previous' : 'next');
+  }
+
+  /// Source `toggleControls`.
+  void toggleControls([String reason = 'manual']) =>
+      _controlsVisible ? hideControls() : showControls();
+
+  /// Source `scheduleControlsHide` / `clearControlsHideTimer`.
+  void scheduleControlsHide() => _scheduleHide();
+  void clearControlsHideTimer() => _hideTimer?.cancel();
+
+  /// Source `queuePersist` / `flushPersistence`.
+  void queuePersist() => _persist();
+  bool flushPersistence() {
+    _persist();
+    return true;
+  }
+
+  /// Source `emitProgress`.
+  void emitProgress() => _onProgress();
+
+  /// Source `emitSettings`.
+  void emitSettings() => widget.onSettingsChange
+      ?.call(Map<String, dynamic>.from(_resolvedSettings));
+
+  /// Source `emitContentWidth`.
+  void emitContentWidth(dynamic percent) =>
+      setSettings(<String, dynamic>{'contentWidth': '$percent%'});
+
+  /// Source `setTheme`.
+  void setTheme(dynamic theme) =>
+      setSettings(<String, dynamic>{'theme': '$theme'});
+
+  /// Source `toggleWeight` — flips between the source's two weights.
+  void toggleWeight() => setSettings(<String, dynamic>{
+        'fontWeight': _resolvedSettings['fontWeight'] == 600 ? 400 : 600,
+      });
+
+  /// Source `toggleAnimation`.
+  void toggleAnimation() => setSettings(<String, dynamic>{
+        'animation': _resolvedSettings['animation'] == false,
+      });
+
+  /// Source `initializeReaderState`.
+  void initializeReaderState() => _loadPersisted();
+
+  /// Source `syncProgress`.
+  void syncProgress() => _syncPage();
+
+  /// Source `handleWindowResize` — re-measure and repaginate.
+  void handleWindowResize() => _applyLayout();
+
+  /// Source `handleScroll` / `handleContentScroll`.
+  void handleScroll([dynamic event]) => handleContentScroll(event);
+  void handleContentScroll([dynamic event]) {
+    if (event is Map && event['scrollTop'] is num) {
+      _scrollTop = (event['scrollTop'] as num).toDouble();
+    } else if (_scrollController.hasClients) {
+      _scrollTop = _scrollController.offset;
+    }
+    _onProgress();
+  }
+
+  /// Source `handlePageChange`.
+  void handlePageChange(dynamic payload) {
+    final index = payload is Map ? payload['pageIndex'] : payload;
+    if (index is! num) return;
+    setState(() => _pageIndex = index.toInt());
+    _onProgress();
+  }
+
+  /// Source `handleTap` / `handleTapZone`.
+  void handleTap([dynamic event]) => handleTapZone('center');
+  void handleTapZone([String zone = 'center']) {
+    if (zone == 'center') {
+      toggleControls('tap-center');
+      return;
+    }
+    // Left/right only page in page mode, per the source.
+    if (_resolvedMode == 'page') movePage(zone == 'left' ? -1 : 1);
+  }
+
+  /// Source toolbar handler aliases.
+  void handlePrevious() => requestChapter('previous');
+  void handleNext() => requestChapter('next');
+  void handleToggleCatalog() => openCatalog();
+  void handleToggleSettings() => openSettings();
+  void handleToggleControls() => hideControls();
+  void handleToggleBookmark() => toggleBookmark();
+  void selectChapter(dynamic chapter) => handleChapterSelect(chapter);
+  void selectBookmark(dynamic bookmark) => handleBookmarkSelect(bookmark);
+
+  /// Source host helper `set` — records a payload for host inspection.
+  dynamic lastSet;
+  void set([dynamic payload]) {
+    lastSet = payload;
+  }
+
   /// Source `emitPrefetchIfNeeded` — asks the host to preload the next chapter
   /// once the reader is within `preloadThreshold` pages of the end.
   void _emitPrefetchIfNeeded() {
@@ -969,7 +1148,7 @@ class UPNovelReaderState extends State<UPNovelReader> {
                     color: theme.toolbar,
                     child: SafeArea(
                       bottom: false,
-                      child: _TopToolbar(
+                      child: UPNovelReaderTopToolbar(
                         theme: theme,
                         title: _currentChapter?.title ?? '',
                         showBack: widget.showBack,
@@ -992,7 +1171,7 @@ class UPNovelReaderState extends State<UPNovelReader> {
                     color: theme.toolbar,
                     child: SafeArea(
                       top: false,
-                      child: _BottomToolbar(
+                      child: UPNovelReaderBottomToolbar(
                         theme: theme,
                         progress: _currentProgress,
                         pageCount: _layout.pageCount,
@@ -1024,7 +1203,7 @@ class UPNovelReaderState extends State<UPNovelReader> {
                     onUpdateShow: (show) {
                       if (!show) setState(() => _catalogVisible = false);
                     },
-                    child: _CatalogPanel(
+                    child: UPNovelReaderCatalog(
                       theme: theme,
                       chapters: chapters,
                       currentChapterIndex: _effectiveChapterIndex ?? 0,
@@ -1048,7 +1227,7 @@ class UPNovelReaderState extends State<UPNovelReader> {
                     onUpdateShow: (show) {
                       if (!show) setState(() => _settingsVisible = false);
                     },
-                    child: _SettingsPanel(
+                    child: UPNovelReaderSettings(
                       theme: theme,
                       settings: _resolvedSettings,
                       onUpdateSettings: handleSettingsUpdate,
@@ -1065,8 +1244,8 @@ class UPNovelReaderState extends State<UPNovelReader> {
 }
 
 /// Source `reader-toolbar.vue` (top position).
-class _TopToolbar extends StatelessWidget {
-  const _TopToolbar({
+class UPNovelReaderTopToolbar extends StatelessWidget {
+  const UPNovelReaderTopToolbar({
     required this.theme,
     required this.title,
     required this.showBack,
@@ -1126,8 +1305,8 @@ class _TopToolbar extends StatelessWidget {
 }
 
 /// Source `reader-toolbar.vue` (bottom position).
-class _BottomToolbar extends StatelessWidget {
-  const _BottomToolbar({
+class UPNovelReaderBottomToolbar extends StatelessWidget {
+  const UPNovelReaderBottomToolbar({
     required this.theme,
     required this.progress,
     required this.pageCount,
@@ -1153,11 +1332,37 @@ class _BottomToolbar extends StatelessWidget {
   final VoidCallback onToggleSettings;
   final VoidCallback onToggleControls;
 
+  /// Source computed `progressPercent`.
+  ///
+  /// Prefers the reported chapterProgress and falls back to page position, so a
+  /// scroll-mode reader (which has no pages) still shows real progress.
+  double get progressPercent {
+    final chapterProgress = progress['chapterProgress'];
+    if (chapterProgress is num) {
+      return (chapterProgress * 100).clamp(0.0, 100.0).toDouble();
+    }
+    if (pageCount > 0) {
+      final index = progress['pageIndex'];
+      final pageIndex = index is num ? index.toInt() : 0;
+      return ((pageIndex + 1) / pageCount * 100).clamp(0.0, 100.0).toDouble();
+    }
+    return 0;
+  }
+
+  /// Source computed `progressLabel`, e.g. `1/3 · 45%`.
+  String get progressLabel {
+    final current = currentChapterIndex >= 0 ? currentChapterIndex + 1 : 0;
+    final chapterText = chapterCount > 0 ? '$current/$chapterCount' : '阅读进度';
+    return '$chapterText · ${progressPercent.round()}%';
+  }
+
+  /// Source computed `previousDisabled` / `nextDisabled`.
+  bool get previousDisabled => !hasPrevious;
+  bool get nextDisabled => !hasNext;
+
   @override
   Widget build(BuildContext context) {
-    final percent = (progress['chapterProgress'] is num)
-        ? ((progress['chapterProgress'] as num) * 100).clamp(0, 100)
-        : 0;
+    final percent = progressPercent;
     return SizedBox(
       height: 56,
       child: Row(
@@ -1171,7 +1376,8 @@ class _BottomToolbar extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  '第 ${currentChapterIndex + 1} 章 / $chapterCount 章',
+                  // Source progressLabel format, not a bespoke one.
+                  progressLabel,
                   style: TextStyle(color: theme.muted, fontSize: 12),
                 ),
                 const SizedBox(height: 4),
@@ -1202,8 +1408,8 @@ class _BottomToolbar extends StatelessWidget {
 }
 
 /// Source `reader-catalog.vue`.
-class _CatalogPanel extends StatelessWidget {
-  const _CatalogPanel({
+class UPNovelReaderCatalog extends StatelessWidget {
+  const UPNovelReaderCatalog({
     required this.theme,
     required this.chapters,
     required this.currentChapterIndex,
@@ -1290,8 +1496,8 @@ class _CatalogPanel extends StatelessWidget {
 }
 
 /// Source `reader-settings.vue`.
-class _SettingsPanel extends StatelessWidget {
-  const _SettingsPanel({
+class UPNovelReaderSettings extends StatelessWidget {
+  const UPNovelReaderSettings({
     required this.theme,
     required this.settings,
     required this.onUpdateSettings,
