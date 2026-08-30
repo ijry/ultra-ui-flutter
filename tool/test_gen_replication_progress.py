@@ -209,10 +209,15 @@ class RepositoryInventoryTest(unittest.TestCase):
         flutter = gen_replication_progress.parse_flutter_catalog(
             self.repo / "example/lib/routes/example_catalog.dart"
         )
+        manifest = gen_replication_progress.parse_source_manifest(
+            self.repo / "example/lib/routes/example_source_manifest.dart"
+        )
         source_paths = {route["path"] for route in source}
         flutter_paths = {route["source_path"] for route in flutter}
+        manifest_paths = {route["source_path"] for route in manifest}
         self.assertEqual(len(source), 126)
         self.assertEqual(len(flutter), 128)
+        self.assertEqual(manifest_paths, source_paths)
         self.assertEqual(
             flutter_paths - source_paths,
             {

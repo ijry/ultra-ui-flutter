@@ -377,18 +377,12 @@ def main() -> None:
 - `UPNovelReader` 的 4 个子面板已改为公开类（`UPNovelReaderTopToolbar` /
   `BottomToolbar` / `Catalog` / `Settings`），其 handler 与 computed 亦已暴露；
   核心算法（分页/测量/持久化）在 `test/novel_reader_core_test.dart` 中对齐真实源码
-  JS 输出。仍计入缺失的 12 项是 **CSS 样式映射**（`readerStyle`、`toolbarStyle`、
-  `articleStyle` 等）：源码用它们把主题色注入 CSS 自定义属性（`--up-novel-reader-*`），
-  Flutter 没有 CSS 变量机制，同样的取值已由 `themeTokens` 直接传给各子组件，
-  再补一层返回 Map 的方法只会增加无人读取的死代码。
-- 其余少量缺失是**源码为绕开 Vue / 小程序限制而存在的胶水代码**，在 Flutter 无对应
-  语义，刻意不实现：
-  - `u-swipe-action.parentData` / `u-list-item.resize`：源码注释说明其用于「子组件
-    无法实时监听父组件参数变化」，Flutter 的 InheritedWidget 与 build 机制天然解决。
-  - `u-popup.emitClose`：源码用一次性标记抑制 watcher 重复补发 `close`；本移植的
-    close 路径本就只发一次。
-  - `_set` / `_hook` / `_onMessage` / `_empty` / `_queueMakeCode` 等下划线前缀成员：
-    源码内部实现细节，非对外接口。
+  JS 输出。12 个 **CSS 样式映射** computed（`readerStyle`、`toolbarStyle`、
+  `articleStyle` 等）按精确符号列入 `excluded_methods`，不计为缺失；源码用它们把
+  主题色注入 CSS 自定义属性，Flutter 则由 `themeTokens` 直接传给各子组件。
+- 当前平台内部排除仅包括 `UPParse` 的 NVUE web-view/JSBridge 方法、`UPQrcode` 的
+  命令式 canvas watcher 队列，以及上述 NovelReader CSS style-map computed。排除项
+  按组件和符号逐条维护；扫描器回归测试确保无关的宿主可见方法仍会报告为真实缺口。
 - 分组与排序镜像源码 `src/pages/example/components.config.js`，
   子组件缩进显示在父组件下方。
 """

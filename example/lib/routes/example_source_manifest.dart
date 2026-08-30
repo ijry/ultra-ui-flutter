@@ -389,6 +389,12 @@ const List<ExampleSourceRoute> sourceExampleRoutes = <ExampleSourceRoute>[
     group: ExampleRouteGroup.componentsC,
   ),
   ExampleSourceRoute(
+    id: 'componentsC/navbarIos/navbarIos',
+    sourcePath: 'pages/componentsC/navbarIos/navbarIos',
+    title: '导航栏 iOS 模式',
+    group: ExampleRouteGroup.componentsC,
+  ),
+  ExampleSourceRoute(
     id: 'componentsC/skeleton/skeleton',
     sourcePath: 'pages/componentsC/skeleton/skeleton',
     title: '骨架屏',
@@ -644,6 +650,12 @@ const List<ExampleSourceRoute> sourceExampleRoutes = <ExampleSourceRoute>[
     id: 'componentsD/pdfReader/pdfReader',
     sourcePath: 'pages/componentsD/pdfReader/pdfReader',
     title: 'PDF阅读器',
+    group: ExampleRouteGroup.componentsD,
+  ),
+  ExampleSourceRoute(
+    id: 'componentsD/novelReader/novelReader',
+    sourcePath: 'pages/componentsD/novelReader/novelReader',
+    title: '小说阅读器',
     group: ExampleRouteGroup.componentsD,
   ),
   ExampleSourceRoute(

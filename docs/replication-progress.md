@@ -18,7 +18,7 @@
 | ⛔ 未复刻组件 | 0 |
 | 上游 pages.json 注册路由 | 126 |
 | Flutter catalog 路由 | 128 |
-| Flutter source manifest 路由 | 124 |
+| Flutter source manifest 路由 | 126 |
 | 源路由待实现 | 0 |
 | Flutter 扩展路由 | 2 |
 | props 接口覆盖 | 1581/1581 |
@@ -251,7 +251,7 @@
 | componentsC | `pages/componentsC/text/text` | `src/pages/componentsC/text/text.nvue` | 基础组件 | Text 文本 | `componentsC/text/text` | `example/lib/pages/components_c/text_page.dart` | ✅ 已复刻 | 同名路由 | `u-text` | `example/test/components_c_pages_test.dart`, `example/test/route_catalog_test.dart` |  |
 | componentsC | `pages/componentsC/steps/steps` | `src/pages/componentsC/steps/steps.vue` | 导航组件 | Steps 步骤条 | `componentsC/steps/steps` | `example/lib/pages/components_c/steps_page.dart` | ✅ 已复刻 | 同名路由 | `u-steps` | `example/test/components_c_pages_test.dart`, `example/test/route_catalog_test.dart` |  |
 | componentsC | `pages/componentsC/navbar/navbar` | `src/pages/componentsC/navbar/navbar.nvue` | 导航组件 | Navbar 导航栏 | `componentsC/navbar/navbar` | `example/lib/pages/components_c/navbar_page.dart` | ✅ 已复刻 | 同名路由 | `u-navbar` | `example/test/components_c_pages_test.dart`, `example/test/route_catalog_test.dart` |  |
-| componentsC | `pages/componentsC/navbarIos/navbarIos` | `src/pages/componentsC/navbarIos/navbarIos.vue` | — | — | `componentsC/navbarIos/navbarIos` | `example/lib/pages/components_c/navbar_ios_page.dart` | ✅ 已复刻 | 同名路由 | — | `example/test/route_catalog_test.dart` | 已注册但未列入可见演示目录；未进入 Flutter source manifest |
+| componentsC | `pages/componentsC/navbarIos/navbarIos` | `src/pages/componentsC/navbarIos/navbarIos.vue` | — | — | `componentsC/navbarIos/navbarIos` | `example/lib/pages/components_c/navbar_ios_page.dart` | ✅ 已复刻 | 同名路由 | — | `example/test/route_catalog_test.dart` | 已注册但未列入可见演示目录 |
 | componentsC | `pages/componentsC/skeleton/skeleton` | `src/pages/componentsC/skeleton/skeleton.nvue` | 布局组件 | Skeleton 骨架屏 | `componentsC/skeleton/skeleton` | `example/lib/pages/components_c/skeleton_page.dart` | ✅ 已复刻 | 同名路由 | `u-skeleton` | `example/test/components_c_pages_test.dart`, `example/test/route_catalog_test.dart` |  |
 | componentsC | `pages/componentsC/input/input` | `src/pages/componentsC/input/input.nvue` | 表单组件 | Input 输入框 | `componentsC/input/input` | `example/lib/pages/components_c/input_page.dart` | ✅ 已复刻 | 同名路由 | `u-input` | `example/test/components_c_pages_test.dart`, `example/test/route_catalog_test.dart` |  |
 | componentsC | `pages/componentsC/album/album` | `src/pages/componentsC/album/album.nvue` | 表单组件 | Album 相册 | `componentsC/album/album` | `example/lib/pages/components_c/album_page.dart` | ✅ 已复刻 | 同名路由 | `u-album` | `example/test/components_c_pages_test.dart`, `example/test/route_catalog_test.dart` |  |
@@ -295,7 +295,7 @@
 | componentsD | `pages/componentsD/poster/poster` | `src/pages/componentsD/poster/poster.nvue` | 其他组件 | Poster 海报生成 | `componentsD/poster/poster` | `example/lib/pages/components_d/poster_page.dart` | ✅ 已复刻 | 同名路由 | `u-poster` | `example/test/route_catalog_test.dart` |  |
 | componentsD | `pages/componentsD/shortVideo/shortVideo` | `src/pages/componentsD/shortVideo/shortVideo.nvue` | 布局组件 | ShortVideo 短视频切换 | `componentsD/shortVideo/shortVideo` | `example/lib/pages/components_d/short_video_page.dart` | ✅ 已复刻 | 同名路由 | `u-short-video` | `example/test/route_catalog_test.dart` |  |
 | componentsD | `pages/componentsD/pdfReader/pdfReader` | `src/pages/componentsD/pdfReader/pdfReader.nvue` | 其他组件 | PdfReader PDF阅读器 | `componentsD/pdfReader/pdfReader` | `example/lib/pages/components_d/pdf_reader_page.dart` | ✅ 已复刻 | 同名路由 | `u-pdf-reader` | `example/test/route_catalog_test.dart` |  |
-| componentsD | `pages/componentsD/novelReader/novelReader` | `src/pages/componentsD/novelReader/novelReader.nvue` | 其他组件 | NovelReader 小说阅读器 | `componentsD/novelReader/novelReader` | `example/lib/pages/components_d/novel_reader_page.dart` | ✅ 已复刻 | 同名路由 | `u-novel-reader` | `example/test/components_d_pages_test.dart`, `example/test/route_catalog_test.dart` | 未进入 Flutter source manifest |
+| componentsD | `pages/componentsD/novelReader/novelReader` | `src/pages/componentsD/novelReader/novelReader.nvue` | 其他组件 | NovelReader 小说阅读器 | `componentsD/novelReader/novelReader` | `example/lib/pages/components_d/novel_reader_page.dart` | ✅ 已复刻 | 同名路由 | `u-novel-reader` | `example/test/components_d_pages_test.dart`, `example/test/route_catalog_test.dart` |  |
 | componentsD | `pages/componentsD/colorPicker/colorPicker` | `src/pages/componentsD/colorPicker/colorPicker.nvue` | 其他组件 | ColorPicker 颜色选择器 | `componentsD/colorPicker/colorPicker` | `example/lib/pages/components_d/color_picker_page.dart` | ✅ 已复刻 | 同名路由 | `u-color-picker` | `example/test/route_catalog_test.dart` |  |
 | componentsD | `pages/componentsD/coupon/coupon` | `src/pages/componentsD/coupon/coupon.nvue` | 其他组件 | Coupon 优惠券 | `componentsD/coupon/coupon` | `example/lib/pages/components_d/coupon_page.dart` | ✅ 已复刻 | 同名路由 | `u-coupon` | `example/test/route_catalog_test.dart` |  |
 | componentsD | `pages/componentsD/goodsSku/goodsSku` | `src/pages/componentsD/goodsSku/goodsSku.nvue` | 其他组件 | GoodsSku 商品SKU | `componentsD/goodsSku/goodsSku` | `example/lib/pages/components_d/goods_sku_page.dart` | ✅ 已复刻 | 同名路由 | `u-goods-sku` | `example/test/route_catalog_test.dart` |  |

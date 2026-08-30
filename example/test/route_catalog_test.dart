@@ -45,7 +45,7 @@ const List<String> componentDRouteIds = <String>[
 
 void main() {
   test('source route manifest preserves all registered pages.json routes', () {
-    expect(sourceExampleRoutes, hasLength(124));
+    expect(sourceExampleRoutes, hasLength(126));
     expect(
       sourceExampleRoutes.take(5).map((route) => route.id),
       <String>[
@@ -66,7 +66,7 @@ void main() {
       ],
     );
     expect(
-      sourceExampleRoutes.skip(120).map((route) => route.id),
+      sourceExampleRoutes.skip(122).map((route) => route.id),
       <String>[
         'template/order/index',
         'template/login/code',
