@@ -415,23 +415,50 @@ class UPListItem extends StatelessWidget {
 
   /// Source list-item helpers (Batch J).
   Map<String, dynamic> get _state =>
-      _upListItemState[this] ??= <String, dynamic>{'initialized': false};
+      _upListItemState[this] ??= <String, dynamic>{
+        'initialized': false,
+        'show': true,
+        'rect': <String, dynamic>{
+          'width': 0.0,
+          'height': 0.0,
+          'left': 0.0,
+          'top': 0.0,
+        },
+      };
   bool get initialized => _state['initialized'] == true;
-  void init([dynamic _]) {
+  bool get show => _state['show'] != false;
+  Map<String, dynamic> get rect => Map<String, dynamic>.from(
+        (_state['rect'] as Map?) ?? const <String, dynamic>{},
+      );
+
+  void init([dynamic measured]) {
     _state['initialized'] = true;
+    if (measured is Map) {
+      // resize is synchronous up to its completed Future, so this also makes
+      // imperative host calls immediately observable.
+      resize(measured);
+    }
   }
 
-  void updateParentData([dynamic _]) {
+  void updateParentData([dynamic measured]) {
     // Inherited parent props are read live; mark initialized for parity.
     _state['initialized'] = true;
+    if (measured is Map) resize(measured);
   }
 
-  Map queryRect([dynamic _]) => const {
-        'width': 0.0,
-        'height': 0.0,
-        'left': 0.0,
-        'top': 0.0,
-      };
+  Map queryRect([dynamic _]) => rect;
+
+  /// Stores a selector-query rectangle and returns the normalized snapshot.
+  /// A real Flutter render-object query is platform-specific for this
+  /// stateless shell, so hosts can pass the measured map explicitly.
+  Future<Map<String, dynamic>> resize([dynamic measured]) async {
+    final next = measured is Map
+        ? Map<String, dynamic>.from(measured)
+        : Map<String, dynamic>.from(queryRect());
+    _state['rect'] = next;
+    _state['show'] = next['show'] != false;
+    return Map<String, dynamic>.from(next);
+  }
 
   @override
   Widget build(BuildContext context) => child;

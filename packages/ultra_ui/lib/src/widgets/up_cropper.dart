@@ -158,6 +158,16 @@ class UPCropperState extends State<UPCropper> {
   final boundaryKey = GlobalKey();
   ui.Image? _loadedImage;
 
+  /// Path and image metadata populated by [loadImage]. These mirror the
+  /// source component's transient `imgPath`/`path` fields while keeping the
+  /// original widget prop available through [avatarSrc].
+  String imagePath = '';
+  String imgPath = '';
+  String path = '';
+  int imgWidth = 0;
+  int imgHeight = 0;
+  dynamic lastImageError;
+
   /// Source data used by canvas/oper layout.
   String cvsStyleHeight = '0px';
   String styleDisplay = 'none';
@@ -192,6 +202,13 @@ class UPCropperState extends State<UPCropper> {
     if (areaW <= 0) areaW = 200;
     if (areaH <= 0) areaH = 200;
     _loadedImage = widget.imageProvider;
+    imagePath = _src;
+    imgPath = _src;
+    path = _src;
+    if (_loadedImage != null) {
+      imgWidth = _loadedImage!.width;
+      imgHeight = _loadedImage!.height;
+    }
     WidgetsBinding.instance.addPostFrameCallback((_) {
       widget.onAvtinit?.call();
       _ensureImage();
@@ -210,8 +227,15 @@ class UPCropperState extends State<UPCropper> {
     }
     if (oldWidget.imageProvider != widget.imageProvider) {
       _loadedImage = widget.imageProvider;
+      if (_loadedImage != null) {
+        imgWidth = _loadedImage!.width;
+        imgHeight = _loadedImage!.height;
+      }
     }
     if (oldWidget.effectiveImageSrc != widget.effectiveImageSrc) {
+      imagePath = _src;
+      imgPath = _src;
+      path = _src;
       _ensureImage();
     }
   }
@@ -219,12 +243,79 @@ class UPCropperState extends State<UPCropper> {
   Future<void> _ensureImage() async {
     if (widget.imageProvider != null) {
       _loadedImage = widget.imageProvider;
+      imgWidth = _loadedImage!.width;
+      imgHeight = _loadedImage!.height;
       return;
     }
     if (widget.imageLoader != null && _src.isNotEmpty) {
-      final img = await widget.imageLoader!(_src);
-      if (!mounted) return;
-      setState(() => _loadedImage = img);
+      try {
+        final img = await widget.imageLoader!(_src);
+        _setLoadedImage(img, source: _src);
+      } catch (error) {
+        lastImageError = error;
+      }
+    }
+  }
+
+  void _setLoadedImage(ui.Image? image, {required String source}) {
+    imagePath = source;
+    imgPath = source;
+    path = source;
+    lastImageError = null;
+    if (!mounted) {
+      _loadedImage = image;
+      imgWidth = image?.width ?? 0;
+      imgHeight = image?.height ?? 0;
+      return;
+    }
+    setState(() {
+      _loadedImage = image;
+      imgWidth = image?.width ?? 0;
+      imgHeight = image?.height ?? 0;
+      if (image != null) {
+        styleDisplay = 'flex';
+        styleTop = '0';
+        showOper = true;
+        cvsStyleHeight = '${areaH.round()}px';
+      }
+    });
+  }
+
+  /// Loads an image selected by the host and refreshes the cropper canvas.
+  ///
+  /// Native image pickers are platform-specific in Flutter, so the optional
+  /// [imageLoader] supplied to the widget is the decoding boundary here.
+  /// The requested path is still recorded when no loader is configured, which
+  /// keeps the imperative source API useful for host integrations.
+  Future<void> loadImage(String source) async {
+    final requested = source;
+    imagePath = requested;
+    imgPath = requested;
+    path = requested;
+    lastImageError = null;
+
+    if (requested.isEmpty) {
+      _setLoadedImage(null, source: requested);
+      return;
+    }
+
+    if (widget.imageLoader != null) {
+      try {
+        final image = await widget.imageLoader!(requested);
+        _setLoadedImage(image, source: requested);
+      } catch (error) {
+        lastImageError = error;
+        if (mounted) setState(() {});
+        return;
+      }
+    } else if (widget.imageProvider != null) {
+      _setLoadedImage(widget.imageProvider, source: requested);
+    }
+
+    if (mounted) {
+      drawInit(true);
+    } else {
+      canvasReady = true;
     }
   }
 

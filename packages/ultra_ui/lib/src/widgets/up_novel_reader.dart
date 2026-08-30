@@ -170,6 +170,25 @@ class UPNovelReader extends StatefulWidget {
     this.onToolbarChange,
     this.onLayoutReady,
     this.onRetry,
+    this.onContentScroll,
+    this.onPageChange,
+    this.onTapZone,
+    this.loadingBuilder,
+    this.loadingSlot,
+    this.errorBuilder,
+    this.errorSlot,
+    this.emptyBuilder,
+    this.emptySlot,
+    this.topBuilder,
+    this.topSlot,
+    this.toolbarExtraBuilder,
+    this.toolbarExtraSlot,
+    this.bottomBuilder,
+    this.bottomSlot,
+    this.catalogBuilder,
+    this.catalogSlot,
+    this.settingsBuilder,
+    this.settingsSlot,
   });
 
   /// Source prop `chapters`.
@@ -251,6 +270,29 @@ class UPNovelReader extends StatefulWidget {
   final void Function(bool visible)? onToolbarChange;
   final VoidCallback? onLayoutReady;
   final VoidCallback? onRetry;
+  final void Function(Map<String, dynamic> event)? onContentScroll;
+  final void Function(Map<String, dynamic> event)? onPageChange;
+  final void Function(String zone)? onTapZone;
+
+  // Source slots.  `dynamic` builders intentionally accept both the compact
+  // `(context, ...)` form and named-scope adapters used by existing Flutter
+  // hosts; static `*Slot` widgets cover the common no-scope case.
+  final dynamic loadingBuilder;
+  final Widget? loadingSlot;
+  final dynamic errorBuilder;
+  final Widget? errorSlot;
+  final dynamic emptyBuilder;
+  final Widget? emptySlot;
+  final dynamic topBuilder;
+  final Widget? topSlot;
+  final dynamic toolbarExtraBuilder;
+  final Widget? toolbarExtraSlot;
+  final dynamic bottomBuilder;
+  final Widget? bottomSlot;
+  final dynamic catalogBuilder;
+  final Widget? catalogSlot;
+  final dynamic settingsBuilder;
+  final Widget? settingsSlot;
 
   @override
   UPNovelReaderState createState() => UPNovelReaderState();
@@ -683,11 +725,28 @@ class UPNovelReaderState extends State<UPNovelReader> {
   /// Source `handleScroll` / `handleContentScroll`.
   void handleScroll([dynamic event]) => handleContentScroll(event);
   void handleContentScroll([dynamic event]) {
-    if (event is Map && event['scrollTop'] is num) {
-      _scrollTop = (event['scrollTop'] as num).toDouble();
+    final raw = event is Map && event['detail'] is Map
+        ? event['detail'] as Map
+        : event is Map
+            ? event
+            : const <dynamic, dynamic>{};
+    if (raw['scrollTop'] is num) {
+      _scrollTop = (raw['scrollTop'] as num).toDouble();
     } else if (_scrollController.hasClients) {
       _scrollTop = _scrollController.offset;
     }
+    final scrollHeight = raw['scrollHeight'] is num
+        ? raw['scrollHeight'] as num
+        : _scrollController.hasClients
+            ? _scrollController.position.maxScrollExtent +
+                _scrollController.position.viewportDimension
+            : 0;
+    final payload = <String, dynamic>{
+      'scrollTop': _scrollTop,
+      'scrollHeight': scrollHeight,
+    };
+    activateReading();
+    widget.onContentScroll?.call(payload);
     _onProgress();
   }
 
@@ -695,13 +754,19 @@ class UPNovelReaderState extends State<UPNovelReader> {
   void handlePageChange(dynamic payload) {
     final index = payload is Map ? payload['pageIndex'] : payload;
     if (index is! num) return;
-    setState(() => _pageIndex = index.toInt());
+    final next = index.toInt().clamp(0, 0x7fffffff);
+    setState(() => _pageIndex = next);
+    activateReading();
+    widget.onPageChange?.call(<String, dynamic>{'pageIndex': next});
     _onProgress();
+    _emitPrefetchIfNeeded();
   }
 
   /// Source `handleTap` / `handleTapZone`.
   void handleTap([dynamic event]) => handleTapZone('center');
   void handleTapZone([String zone = 'center']) {
+    activateReading();
+    widget.onTapZone?.call(zone);
     if (zone == 'center') {
       toggleControls('tap-center');
       return;
@@ -981,34 +1046,104 @@ class UPNovelReaderState extends State<UPNovelReader> {
   // Rendered structure (mirrors the source template)
   // -------------------------------------------------------------------------
 
+  Widget? _invokeReaderSlot(
+    dynamic candidate,
+    BuildContext context,
+    List<dynamic> positional,
+    Map<String, dynamic> scope,
+  ) {
+    if (candidate is Widget) return candidate;
+    if (candidate is! Function) return null;
+    final attempts = <List<dynamic>>[
+      positional,
+      if (positional.length > 1) positional.sublist(1),
+      [scope],
+      [context],
+      const <dynamic>[],
+    ];
+    for (final args in attempts) {
+      try {
+        final value = Function.apply(candidate, args);
+        if (value is Widget) return value;
+      } catch (_) {}
+    }
+    try {
+      final named = <Symbol, dynamic>{
+        for (final entry in scope.entries) Symbol(entry.key): entry.value,
+      };
+      final value = Function.apply(candidate, const <dynamic>[], named);
+      if (value is Widget) return value;
+    } catch (_) {}
+    return null;
+  }
+
+  Widget? _readerSlot({
+    required dynamic builder,
+    required Widget? slot,
+    required BuildContext context,
+    List<dynamic> positional = const <dynamic>[],
+    Map<String, dynamic> scope = const <String, dynamic>{},
+  }) {
+    final value = _invokeReaderSlot(builder, context, positional, scope);
+    return value ?? _invokeReaderSlot(slot, context, positional, scope);
+  }
+
   Widget _buildContent(BuildContext context, Size size) {
     final theme = resolveNovelReaderTheme(_resolvedSettings['theme']);
     final settings = _resolvedSettings;
 
     if (widget.loading) {
+      final loading = _readerSlot(
+        builder: widget.loadingBuilder,
+        slot: widget.loadingSlot,
+        context: context,
+        positional: [context],
+        scope: const {},
+      );
       return Center(
-        child: SizedBox(
-          width: 44,
-          height: 44,
-          child: CircularProgressIndicator(
-            strokeWidth: 3,
-            valueColor: AlwaysStoppedAnimation<Color>(theme.active),
-          ),
-        ),
+        child: loading ??
+            SizedBox(
+              width: 44,
+              height: 44,
+              child: CircularProgressIndicator(
+                strokeWidth: 3,
+                valueColor: AlwaysStoppedAnimation<Color>(theme.active),
+              ),
+            ),
       );
     }
     if (widget.error != null) {
+      final error = _readerSlot(
+        builder: widget.errorBuilder,
+        slot: widget.errorSlot,
+        context: context,
+        positional: [context, widget.error, handleRetry],
+        scope: {
+          'error': widget.error,
+          'retry': handleRetry,
+          'context': context,
+        },
+      );
       return Center(
-        child: GestureDetector(
-          onTap: handleRetry,
-          child: Text('加载失败，点击重试',
-              style: TextStyle(color: theme.muted, fontSize: 14)),
-        ),
+        child: error ??
+            GestureDetector(
+              onTap: handleRetry,
+              child: Text('加载失败，点击重试',
+                  style: TextStyle(color: theme.muted, fontSize: 14)),
+            ),
       );
     }
     if (widget.chapters.isEmpty) {
+      final empty = _readerSlot(
+        builder: widget.emptyBuilder,
+        slot: widget.emptySlot,
+        context: context,
+        positional: [context],
+        scope: const {},
+      );
       return Center(
-        child: Text('暂无章节', style: TextStyle(color: theme.muted, fontSize: 14)),
+        child: empty ??
+            Text('暂无章节', style: TextStyle(color: theme.muted, fontSize: 14)),
       );
     }
 
@@ -1025,10 +1160,33 @@ class UPNovelReaderState extends State<UPNovelReader> {
     );
     final horizontalPadding = 16.0;
 
+    // Source `reader-content.vue` gates the empty state on `!hasContent`
+    // regardless of mode, so scroll mode must honour it too.
+    if (!hasContent) {
+      final empty = _readerSlot(
+        builder: widget.emptyBuilder,
+        slot: widget.emptySlot,
+        context: context,
+        positional: [context],
+        scope: const {},
+      );
+      return Center(
+        child: empty ??
+            Text('暂无正文', style: TextStyle(color: theme.muted, fontSize: 14)),
+      );
+    }
+
     if (_resolvedMode == 'page') {
       if (_layout.pages.isEmpty) {
+        final empty = _readerSlot(
+          builder: widget.emptyBuilder,
+          slot: widget.emptySlot,
+          context: context,
+          positional: [context],
+          scope: const {},
+        );
         return Center(
-          child:
+          child: empty ??
               Text('暂无正文', style: TextStyle(color: theme.muted, fontSize: 14)),
         );
       }
@@ -1040,10 +1198,9 @@ class UPNovelReaderState extends State<UPNovelReader> {
       return PageView.builder(
         controller: controller,
         onPageChanged: (index) {
-          if (index == _pageIndex) return;
-          setState(() => _pageIndex = index);
-          _onProgress();
-          _emitPrefetchIfNeeded();
+          if (index != _pageIndex) {
+            handlePageChange(<String, dynamic>{'pageIndex': index});
+          }
         },
         itemBuilder: (context, index) {
           final p = _layout.pages[index];
@@ -1069,8 +1226,11 @@ class UPNovelReaderState extends State<UPNovelReader> {
     return NotificationListener<ScrollNotification>(
       onNotification: (notification) {
         if (notification is ScrollUpdateNotification) {
-          _scrollTop = _scrollController.offset;
-          _onProgress();
+          handleContentScroll(<String, dynamic>{
+            'scrollTop': _scrollController.offset,
+            'scrollHeight': notification.metrics.maxScrollExtent +
+                notification.metrics.viewportDimension,
+          });
         }
         return false;
       },
@@ -1099,6 +1259,46 @@ class UPNovelReaderState extends State<UPNovelReader> {
   Widget build(BuildContext context) {
     final theme = resolveNovelReaderTheme(_resolvedSettings['theme']);
     final layoutSize = MediaQuery.sizeOf(context);
+    final topSlot = _readerSlot(
+      builder: widget.topBuilder,
+      slot: widget.topSlot,
+      context: context,
+      positional: [context],
+      scope: {'context': context},
+    );
+    final toolbarExtraSlot = _readerSlot(
+      builder: widget.toolbarExtraBuilder,
+      slot: widget.toolbarExtraSlot,
+      context: context,
+      positional: [context],
+      scope: {'context': context},
+    );
+    final bottomSlot = _readerSlot(
+      builder: widget.bottomBuilder,
+      slot: widget.bottomSlot,
+      context: context,
+      positional: [context],
+      scope: {'context': context},
+    );
+    final catalogSlot = _readerSlot(
+      builder: widget.catalogBuilder,
+      slot: widget.catalogSlot,
+      context: context,
+      positional: [context, chapters, _currentProgress],
+      scope: {
+        'chapters': chapters,
+        'bookmarks': _bookmarks,
+        'progress': _currentProgress,
+        'context': context,
+      },
+    );
+    final settingsSlot = _readerSlot(
+      builder: widget.settingsBuilder,
+      slot: widget.settingsSlot,
+      context: context,
+      positional: [context, _resolvedSettings],
+      scope: {'settings': _resolvedSettings, 'context': context},
+    );
 
     return ColoredBox(
       color: theme.background,
@@ -1135,7 +1335,15 @@ class UPNovelReaderState extends State<UPNovelReader> {
               Positioned.fill(
                 child: GestureDetector(
                   behavior: HitTestBehavior.translucent,
-                  onTap: _controlsVisible ? hideControls : showControls,
+                  onTapUp: (details) {
+                    final x = details.localPosition.dx;
+                    final zone = x < width / 3
+                        ? 'left'
+                        : x > width * 2 / 3
+                            ? 'right'
+                            : 'center';
+                    handleTapZone(zone);
+                  },
                   child: _buildContent(context, layoutSize),
                 ),
               ),
@@ -1158,6 +1366,8 @@ class UPNovelReaderState extends State<UPNovelReader> {
                         onToggleCatalog: openCatalog,
                         onToggleBookmark: toggleBookmark,
                         onToggleControls: hideControls,
+                        topSlot: topSlot,
+                        toolbarExtraSlot: toolbarExtraSlot,
                       ),
                     ),
                   ),
@@ -1184,6 +1394,7 @@ class UPNovelReaderState extends State<UPNovelReader> {
                         onNext: () => requestChapter('next'),
                         onToggleSettings: openSettings,
                         onToggleControls: hideControls,
+                        bottomSlot: bottomSlot,
                       ),
                     ),
                   ),
@@ -1211,6 +1422,7 @@ class UPNovelReaderState extends State<UPNovelReader> {
                       progress: _currentProgress,
                       onChapterSelect: handleChapterSelect,
                       onBookmarkSelect: handleBookmarkSelect,
+                      child: catalogSlot,
                     ),
                   ),
                 ),
@@ -1232,6 +1444,7 @@ class UPNovelReaderState extends State<UPNovelReader> {
                       settings: _resolvedSettings,
                       onUpdateSettings: handleSettingsUpdate,
                       onClose: closeSettings,
+                      child: settingsSlot,
                     ),
                   ),
                 ),
@@ -1255,6 +1468,8 @@ class UPNovelReaderTopToolbar extends StatelessWidget {
     required this.onToggleCatalog,
     required this.onToggleBookmark,
     required this.onToggleControls,
+    this.topSlot,
+    this.toolbarExtraSlot,
   });
 
   final UPNovelReaderTheme theme;
@@ -1266,6 +1481,8 @@ class UPNovelReaderTopToolbar extends StatelessWidget {
   final VoidCallback onToggleCatalog;
   final VoidCallback onToggleBookmark;
   final VoidCallback onToggleControls;
+  final Widget? topSlot;
+  final Widget? toolbarExtraSlot;
 
   @override
   Widget build(BuildContext context) {
@@ -1288,6 +1505,7 @@ class UPNovelReaderTopToolbar extends StatelessWidget {
               ),
             ),
           ),
+          if (topSlot != null) topSlot!,
           _IconButton(
             // Source swaps to the filled bookmark glyph when the current
             // position is bookmarked.
@@ -1295,6 +1513,7 @@ class UPNovelReaderTopToolbar extends StatelessWidget {
             color: isBookmarked ? theme.active : theme.muted,
             onTap: onToggleBookmark,
           ),
+          if (toolbarExtraSlot != null) toolbarExtraSlot!,
           _IconButton(icon: 'list', color: theme.text, onTap: onToggleCatalog),
           _IconButton(
               icon: 'close', color: theme.muted, onTap: onToggleControls),
@@ -1318,6 +1537,7 @@ class UPNovelReaderBottomToolbar extends StatelessWidget {
     required this.onNext,
     required this.onToggleSettings,
     required this.onToggleControls,
+    this.bottomSlot,
   });
 
   final UPNovelReaderTheme theme;
@@ -1331,6 +1551,7 @@ class UPNovelReaderBottomToolbar extends StatelessWidget {
   final VoidCallback onNext;
   final VoidCallback onToggleSettings;
   final VoidCallback onToggleControls;
+  final Widget? bottomSlot;
 
   /// Source computed `progressPercent`.
   ///
@@ -1367,6 +1588,7 @@ class UPNovelReaderBottomToolbar extends StatelessWidget {
       height: 56,
       child: Row(
         children: [
+          if (bottomSlot != null) bottomSlot!,
           _IconButton(
               icon: 'arrow-left',
               color: hasPrevious ? theme.text : theme.disabled,
@@ -1417,6 +1639,7 @@ class UPNovelReaderCatalog extends StatelessWidget {
     required this.progress,
     required this.onChapterSelect,
     required this.onBookmarkSelect,
+    this.child,
   });
 
   final UPNovelReaderTheme theme;
@@ -1426,6 +1649,10 @@ class UPNovelReaderCatalog extends StatelessWidget {
   final Map<String, dynamic> progress;
   final ValueChanged<dynamic> onChapterSelect;
   final ValueChanged<dynamic> onBookmarkSelect;
+
+  /// Source default slot. Replaces the catalog list body while retaining the
+  /// panel header and surrounding frame.
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -1447,39 +1674,41 @@ class UPNovelReaderCatalog extends StatelessWidget {
           ),
           const Divider(height: 1, color: Color(0x14000000)),
           Expanded(
-            child: ListView.builder(
-              itemCount: chapters.length,
-              itemBuilder: (context, index) {
-                final isCurrent = index == currentChapterIndex;
-                final chapter = chapters[index];
-                return InkWell(
-                  onTap: () => onChapterSelect(chapter),
-                  child: Container(
-                    color: isCurrent ? kNovelReaderCurrentTint : null,
-                    padding: const EdgeInsets.symmetric(
-                        horizontal: 16, vertical: 12),
-                    child: Row(
-                      children: [
-                        Expanded(
-                          child: Text(
-                            chapter['title'] ?? '第 ${index + 1} 章',
-                            style: TextStyle(
-                              color: isCurrent ? theme.active : theme.text,
-                              fontSize: 14,
-                              fontWeight:
-                                  isCurrent ? FontWeight.w600 : FontWeight.w400,
+            child: child ??
+                ListView.builder(
+                  itemCount: chapters.length,
+                  itemBuilder: (context, index) {
+                    final isCurrent = index == currentChapterIndex;
+                    final chapter = chapters[index];
+                    return InkWell(
+                      onTap: () => onChapterSelect(chapter),
+                      child: Container(
+                        color: isCurrent ? kNovelReaderCurrentTint : null,
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 16, vertical: 12),
+                        child: Row(
+                          children: [
+                            Expanded(
+                              child: Text(
+                                chapter['title'] ?? '第 ${index + 1} 章',
+                                style: TextStyle(
+                                  color: isCurrent ? theme.active : theme.text,
+                                  fontSize: 14,
+                                  fontWeight: isCurrent
+                                      ? FontWeight.w600
+                                      : FontWeight.w400,
+                                ),
+                              ),
                             ),
-                          ),
+                            if (isCurrent)
+                              // Source marks the active chapter with a checkmark.
+                              Icon(Icons.check, size: 16, color: theme.active),
+                          ],
                         ),
-                        if (isCurrent)
-                          // Source marks the active chapter with a checkmark.
-                          Icon(Icons.check, size: 16, color: theme.active),
-                      ],
-                    ),
-                  ),
-                );
-              },
-            ),
+                      ),
+                    );
+                  },
+                ),
           ),
           const Divider(height: 1, color: Color(0x14000000)),
           Padding(
@@ -1502,12 +1731,17 @@ class UPNovelReaderSettings extends StatelessWidget {
     required this.settings,
     required this.onUpdateSettings,
     required this.onClose,
+    this.child,
   });
 
   final UPNovelReaderTheme theme;
   final Map<String, dynamic> settings;
   final ValueChanged<Map<String, dynamic>> onUpdateSettings;
   final VoidCallback onClose;
+
+  /// Source default slot. Replaces the built-in settings controls below the
+  /// header while retaining the close affordance.
+  final Widget? child;
 
   @override
   Widget build(BuildContext context) {
@@ -1533,96 +1767,100 @@ class UPNovelReaderSettings extends StatelessWidget {
                 _IconButton(icon: 'close', color: theme.muted, onTap: onClose),
               ],
             ),
-            const SizedBox(height: 20),
-            _SettingRow(
-              label: '字号',
-              theme: theme,
-              child: Row(
-                children: [
-                  _IconButton(
-                    icon: 'minus',
-                    color: theme.text,
-                    onTap: () => _adjustFontSize(-1),
-                  ),
-                  Text(
-                    '${settings['fontSize']}',
-                    style: TextStyle(color: theme.text, fontSize: 14),
-                  ),
-                  _IconButton(
-                    icon: 'plus',
-                    color: theme.text,
-                    onTap: () => _adjustFontSize(1),
-                  ),
-                ],
-              ),
-            ),
-            _SettingRow(
-              label: '行距',
-              theme: theme,
-              child: SizedBox(
-                width: 120,
-                child: UPSlider(
-                  value: settings['lineHeight'],
-                  min: 1,
-                  max: 3,
-                  step: 0.1,
-                  activeColor: kNovelReaderPanelAccent,
-                  inactiveColor: theme.border,
-                  onChange: (value) => onUpdateSettings(<String, dynamic>{
-                    'lineHeight': value,
-                  }),
+            if (child != null)
+              child!
+            else ...[
+              const SizedBox(height: 20),
+              _SettingRow(
+                label: '字号',
+                theme: theme,
+                child: Row(
+                  children: [
+                    _IconButton(
+                      icon: 'minus',
+                      color: theme.text,
+                      onTap: () => _adjustFontSize(-1),
+                    ),
+                    Text(
+                      '${settings['fontSize']}',
+                      style: TextStyle(color: theme.text, fontSize: 14),
+                    ),
+                    _IconButton(
+                      icon: 'plus',
+                      color: theme.text,
+                      onTap: () => _adjustFontSize(1),
+                    ),
+                  ],
                 ),
               ),
-            ),
-            _SettingRow(
-              label: '段距',
-              theme: theme,
-              child: SizedBox(
-                width: 120,
-                child: UPSlider(
-                  value: settings['paragraphSpacing'],
-                  min: 0,
-                  max: 40,
-                  step: 2,
-                  activeColor: kNovelReaderPanelAccent,
-                  inactiveColor: theme.border,
-                  onChange: (value) => onUpdateSettings(<String, dynamic>{
-                    'paragraphSpacing': value,
-                  }),
-                ),
-              ),
-            ),
-            _SettingRow(
-              label: '夜间模式',
-              theme: theme,
-              child: UPSwitch(
-                value:
-                    settings['theme'] == 'night' || settings['theme'] == 'dark',
-                activeColor: kNovelReaderPanelAccent,
-                onChange: (value) => onUpdateSettings(<String, dynamic>{
-                  'theme': value ? 'night' : 'day',
-                }),
-              ),
-            ),
-            const SizedBox(height: 16),
-            Text(
-              '主题',
-              style: TextStyle(color: theme.muted, fontSize: 13),
-            ),
-            const SizedBox(height: 10),
-            Row(
-              children: [
-                for (final option in kNovelReaderThemeOptions)
-                  _ThemeSwatch(
-                    theme: theme,
-                    option: option,
-                    isActive: settings['theme'] == option['value'],
-                    onTap: () => onUpdateSettings(<String, dynamic>{
-                      'theme': option['value'],
+              _SettingRow(
+                label: '行距',
+                theme: theme,
+                child: SizedBox(
+                  width: 120,
+                  child: UPSlider(
+                    value: settings['lineHeight'],
+                    min: 1,
+                    max: 3,
+                    step: 0.1,
+                    activeColor: kNovelReaderPanelAccent,
+                    inactiveColor: theme.border,
+                    onChange: (value) => onUpdateSettings(<String, dynamic>{
+                      'lineHeight': value,
                     }),
                   ),
-              ],
-            ),
+                ),
+              ),
+              _SettingRow(
+                label: '段距',
+                theme: theme,
+                child: SizedBox(
+                  width: 120,
+                  child: UPSlider(
+                    value: settings['paragraphSpacing'],
+                    min: 0,
+                    max: 40,
+                    step: 2,
+                    activeColor: kNovelReaderPanelAccent,
+                    inactiveColor: theme.border,
+                    onChange: (value) => onUpdateSettings(<String, dynamic>{
+                      'paragraphSpacing': value,
+                    }),
+                  ),
+                ),
+              ),
+              _SettingRow(
+                label: '夜间模式',
+                theme: theme,
+                child: UPSwitch(
+                  value: settings['theme'] == 'night' ||
+                      settings['theme'] == 'dark',
+                  activeColor: kNovelReaderPanelAccent,
+                  onChange: (value) => onUpdateSettings(<String, dynamic>{
+                    'theme': value ? 'night' : 'day',
+                  }),
+                ),
+              ),
+              const SizedBox(height: 16),
+              Text(
+                '主题',
+                style: TextStyle(color: theme.muted, fontSize: 13),
+              ),
+              const SizedBox(height: 10),
+              Row(
+                children: [
+                  for (final option in kNovelReaderThemeOptions)
+                    _ThemeSwatch(
+                      theme: theme,
+                      option: option,
+                      isActive: settings['theme'] == option['value'],
+                      onTap: () => onUpdateSettings(<String, dynamic>{
+                        'theme': option['value'],
+                      }),
+                    ),
+                ],
+              ),
+            ],
           ],
         ),
       ),

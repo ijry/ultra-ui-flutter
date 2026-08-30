@@ -27,10 +27,14 @@ class UPAlert extends StatefulWidget {
     this.onUpdateModelValue,
     this.customStyle,
     this.alert,
+    this.closeSlot,
   });
 
   /// Source prop retained: alert (host/content alias).
   final dynamic alert;
+
+  /// Source named slot `close`; replaces the default close icon.
+  final Widget? closeSlot;
 
   final String title;
   final String type;
@@ -273,11 +277,12 @@ class UPAlertState extends State<UPAlert> {
               GestureDetector(
                 onTap: closeHandler,
                 behavior: HitTestBehavior.opaque,
-                child: UPIcon(
-                  name: 'close',
-                  size: 15,
-                  color: widget.effect == 'dark' ? '#ffffff' : widget.type,
-                ),
+                child: widget.closeSlot ??
+                    UPIcon(
+                      name: 'close',
+                      size: 15,
+                      color: widget.effect == 'dark' ? '#ffffff' : widget.type,
+                    ),
               ),
           ],
         ),

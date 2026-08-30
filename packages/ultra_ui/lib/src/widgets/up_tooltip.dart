@@ -35,6 +35,7 @@ class UPTooltip extends StatefulWidget {
     this.child,
     this.content,
     this.customStyle,
+    this.triggerSlot,
   });
 
   final dynamic text;
@@ -72,6 +73,9 @@ class UPTooltip extends StatefulWidget {
 
   /// Slot: content. When set, replaces default text/copy body.
   final Widget? content;
+
+  /// Source named slot `trigger`; replaces [child] and the text fallback.
+  final Widget? triggerSlot;
   final BoxDecoration? customStyle;
 
   /// Source computed `propsChange` — text/buttons deps for remeasure.
@@ -299,7 +303,8 @@ class UPTooltipState extends State<UPTooltip> {
       behavior: HitTestBehavior.opaque,
       child: Container(
         color: bg,
-        child: widget.child ??
+        child: widget.triggerSlot ??
+            widget.child ??
             Text(
               '${widget.text}',
               style: TextStyle(color: textColor, fontSize: fs),

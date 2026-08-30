@@ -36,6 +36,7 @@ class UPParse extends StatelessWidget {
     this.onPlay,
     this.imageSourceResolver,
     this.customStyle,
+    this.child,
   });
 
   /// Source host helper.
@@ -119,6 +120,9 @@ class UPParse extends StatelessWidget {
   /// Source emit alias: linktap.
   ValueChanged<String>? get onLinktap => onLinkTap;
   final BoxDecoration? customStyle;
+
+  /// Source default slot; used when the HTML content has no parsed nodes.
+  final Widget? child;
 
   /// Source `setContent` — returns normalized/parsed content for host reuse.
   String setContent([String? html, bool append = false]) {
@@ -296,11 +300,12 @@ class UPParse extends StatelessWidget {
       onLoad?.call();
       onReady?.call();
     });
-    final child = Column(
+    final parsed = Column(
       crossAxisAlignment: CrossAxisAlignment.stretch,
       children: [for (final b in blocks) _blockWidget(tokens, b)],
     );
-    Widget root = selectable ? SelectionArea(child: child) : child;
+    final body = blocks.isEmpty ? (child ?? parsed) : parsed;
+    Widget root = selectable ? SelectionArea(child: body) : body;
     return root;
   }
 

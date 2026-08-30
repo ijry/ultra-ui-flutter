@@ -4,7 +4,8 @@
 Emits JSON on stdout:
   { component: {props: [...], emits: [...], methods: [...],
                 dart_file: str|None, missing_props: [...],
-                missing_emits: [...], missing_methods: [...]} }
+                missing_emits: [...], missing_methods: [...],
+                excluded_methods: [...]} }
 """
 from __future__ import annotations
 
@@ -21,6 +22,27 @@ HOST_ONLY_PROPS = {
     "customClass", "customStyle", "hoverClass", "openType", "sendMessageTitle",
     "sendMessagePath", "sendMessageImg", "appParameter", "showMessageCard",
     "sessionFrom", "lang", "groupId", "dataName", "scope",
+}
+
+# Component-scoped source methods/computed values that are implementation
+# details of the Vue/uni-app host rather than callable Flutter behavior.  Keep
+# this list exact: a blanket leading-underscore exclusion would hide genuine
+# public gaps in components that expose command-style methods with that shape.
+INTENTIONAL_METHOD_EXCLUSIONS = {
+    # APP-PLUS-NVUE plugin/web-view bridge. Flutter renders the parsed widget
+    # tree directly and delivers callbacks without evalJs or JSBridge messages.
+    "u-parse": {"_hook", "_onMessage", "_set"},
+    # Imperative canvas watcher scheduling. CustomPainter repaints
+    # declaratively when the widget configuration changes.
+    "u-qrcode": {"_empty", "_queueMakeCode"},
+    # CSS-variable/style-object computed values represented by Flutter theme,
+    # TextStyle, BoxDecoration, and layout objects at their consumption sites.
+    "u-novel-reader": {
+        "articleStyle", "catalogPopupStyle", "catalogStyle",
+        "disabledColor", "mutedColor", "paragraphStyle", "readerStyle",
+        "settingsPopupStyle", "settingsStyle", "textColor",
+        "themeOptionStyle", "toolbarStyle",
+    },
 }
 
 
@@ -182,6 +204,9 @@ def main() -> int:
         props = collect_props(comp_dir)
         emits = collect_emits(comp_dir)
         methods = collect_methods(comp_dir)
+        excluded_methods = sorted(
+            set(methods) & INTENTIONAL_METHOD_EXCLUSIONS.get(name, set())
+        )
 
         def present(member: str, kind: str) -> bool:
             if not text:
@@ -206,7 +231,11 @@ def main() -> int:
             "methods_total": len(methods),
             "missing_props": [p for p in props if not present(p, "prop")],
             "missing_emits": [e for e in emits if not present(e, "emit")],
-            "missing_methods": [m for m in methods if not present(m, "method")],
+            "missing_methods": [
+                m for m in methods
+                if m not in excluded_methods and not present(m, "method")
+            ],
+            "excluded_methods": excluded_methods,
         }
 
     json.dump(report, sys.stdout, ensure_ascii=False, indent=1)

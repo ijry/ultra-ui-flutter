@@ -428,6 +428,7 @@ class UPFormItem extends StatefulWidget {
     this.labelSlot,
     this.onClick,
     this.child,
+    this.errorSlot,
   });
 
   final String label;
@@ -446,6 +447,9 @@ class UPFormItem extends StatefulWidget {
   final Widget? labelSlot;
   final VoidCallback? onClick;
   final Widget? child;
+
+  /// Source named slot `error`; replaces the default validation message.
+  final Widget? errorSlot;
 
   /// Source computed: labelDynamicStyle.
   dynamic get labelDynamicStyle => <String, dynamic>{
@@ -750,7 +754,12 @@ class UPFormItemState extends State<UPFormItem> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         styledBody,
-        if (message.isNotEmpty && errorType == 'message')
+        if (widget.errorSlot != null)
+          Padding(
+            padding: EdgeInsets.only(left: pos == 'top' ? 0 : lw, top: 5),
+            child: widget.errorSlot!,
+          )
+        else if (message.isNotEmpty && errorType == 'message')
           Padding(
             padding: EdgeInsets.only(left: pos == 'top' ? 0 : lw, top: 5),
             child: Text(

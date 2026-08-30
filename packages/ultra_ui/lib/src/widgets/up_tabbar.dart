@@ -45,6 +45,9 @@ class UPTabbar extends StatelessWidget {
 
   /// Source data `placeholderHeight` — default measured height when fixed+placeholder.
   double get placeholderHeight => (fixed && placeholder) ? 50 : 0;
+
+  /// Source computed: the tabbar's half-pixel top border alignment offset.
+  double get midButtonBorderTopOffset => border ? 0.25 : 0;
   final dynamic value;
 
   /// Source v-model / modelValue alias.
@@ -316,6 +319,8 @@ class UPTabbarItem extends StatelessWidget {
         'activeBackgroundColor': '',
         'inactiveBackgroundColor': '',
         'textMode': 'always',
+        'border': true,
+        'midButtonBorderTopOffset': 0.25,
       };
 
   /// Source computed: isMidButton.
@@ -396,10 +401,19 @@ class UPTabbarItem extends StatelessWidget {
   /// button (a more negative offset) exposes more of the ring, and the result is
   /// clamped to 0..64.
   String get midButtonBorderClipHeight {
+    final measured = _state['midButtonBorderClipHeightValue'];
+    if (measured is num && measured.isFinite) {
+      return '${measured.toDouble()}px';
+    }
     final clipBaseHeight = hasMidButtonText ? 15.5 : 7.0;
     final clipHeight = clipBaseHeight - resolvedMidButtonOffsetY;
     return '${clipHeight.clamp(0.0, 64.0)}px';
   }
+
+  /// Source computed: style applied to the clipped mid-button border ring.
+  Map<String, dynamic> get midButtonBorderStyle => <String, dynamic>{
+        'height': midButtonBorderClipHeight,
+      };
 
   /// Source computed: midButtonBorderCircleStyle — the ring only takes the
   /// parent's border color, so it stays flush with the bar's own border.
@@ -435,6 +449,56 @@ class UPTabbarItem extends StatelessWidget {
         'u-tabbar-item__icon--anim-$resolvedAnimationType',
     ];
     return list.where((e) => e.isNotEmpty).join(' ');
+  }
+
+  /// Source computed: classes for the icon layer inside a mid button.
+  dynamic get iconContentClassNames {
+    final list = <String>[
+      if (isMidButton) 'u-tabbar-item__icon-content--mid-button',
+      if (isMidButton && isActive == true && resolvedAnimationType != 'none')
+        'u-tabbar-item__icon-content--anim-$resolvedAnimationType',
+    ];
+    return list.where((e) => e.isNotEmpty).join(' ');
+  }
+
+  /// Source `scheduleMidButtonBorderMeasure`.
+  ///
+  /// Flutter callers may provide the already measured tabbar-content and
+  /// circle rectangles. Without host rectangles the existing layout-derived
+  /// fallback remains active.
+  Future<void> scheduleMidButtonBorderMeasure([
+    Map? contentRect,
+    Map? circleRect,
+  ]) async {
+    if (!isMidButton) return;
+    await Future<void>.value();
+    if (contentRect == null || circleRect == null) return;
+
+    double? number(dynamic value) {
+      if (value is num) return value.toDouble();
+      return double.tryParse('$value');
+    }
+
+    final contentTop = number(contentRect['top']);
+    final circleTop = number(circleRect['top']);
+    final contentHeight = number(contentRect['height']);
+    final circleHeight = number(circleRect['height']);
+    if (contentTop == null ||
+        circleTop == null ||
+        contentHeight == null ||
+        circleHeight == null ||
+        !contentTop.isFinite ||
+        !circleTop.isFinite ||
+        contentHeight <= 0 ||
+        circleHeight <= 0) {
+      return;
+    }
+
+    final hasBorder = parentData is Map && parentData['border'] == true;
+    final offset =
+        hasBorder ? number(parentData['midButtonBorderTopOffset']) ?? 0 : 0;
+    _state['midButtonBorderClipHeightValue'] =
+        (contentTop + offset - circleTop).clamp(0.0, 64.0).toDouble();
   }
 
   /// Source computed: contentClassNames.
@@ -502,6 +566,8 @@ class UPTabbarItem extends StatelessWidget {
       // Source midButtonBorderCircleStyle reads the parent's border color so
       // the mid-button ring stays flush with the bar's own border.
       'borderColor': parent?.borderColor ?? '',
+      'border': parent?.border ?? true,
+      'midButtonBorderTopOffset': parent?.midButtonBorderTopOffset ?? 0.25,
     };
     final color = active
         ? (scope?.activeColor ?? const Color(0xFF1989FA))

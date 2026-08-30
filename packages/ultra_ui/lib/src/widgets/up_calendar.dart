@@ -74,6 +74,8 @@ class UPCalendar extends StatefulWidget {
     this.prevYearDisabled = false,
     this.nextYearDisabled = false,
     this.customStyle,
+    this.footerBuilder,
+    this.footerSlot,
   });
 
   final String title;
@@ -167,6 +169,12 @@ class UPCalendar extends StatefulWidget {
   final bool nextYearDisabled;
 
   final BoxDecoration? customStyle;
+
+  /// Source named slot `footer`; receives whether a date can be confirmed.
+  final Widget Function(BuildContext context, bool enabled)? footerBuilder;
+
+  /// Source named slot `footer` as a static widget.
+  final Widget? footerSlot;
   @override
   State<UPCalendar> createState() => UPCalendarState();
 }
@@ -1233,29 +1241,31 @@ class UPCalendarState extends State<UPCalendar> {
             ),
           ),
           if (widget.showConfirm)
-            Padding(
-              padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
-              child: UPButton(
-                text: _confirmEnabled
-                    ? widget.confirmText
-                    : widget.confirmDisabledText,
-                type: 'primary',
-                disabled: !_confirmEnabled,
-                color: '${widget.color}',
-                onClick: !_confirmEnabled
-                    ? null
-                    : () {
-                        final out = List<DateTime>.from(selected);
-                        if (widget.mode == 'range' &&
-                            out.length == 1 &&
-                            widget.allowSameDay) {
-                          out.add(out.first);
-                        }
-                        widget.onConfirm
-                            ?.call(widget.mode == 'range' ? confirmDates : out);
-                      },
-              ),
-            ),
+            widget.footerBuilder?.call(context, _confirmEnabled) ??
+                widget.footerSlot ??
+                Padding(
+                  padding: const EdgeInsets.fromLTRB(16, 8, 16, 12),
+                  child: UPButton(
+                    text: _confirmEnabled
+                        ? widget.confirmText
+                        : widget.confirmDisabledText,
+                    type: 'primary',
+                    disabled: !_confirmEnabled,
+                    color: '${widget.color}',
+                    onClick: !_confirmEnabled
+                        ? null
+                        : () {
+                            final out = List<DateTime>.from(selected);
+                            if (widget.mode == 'range' &&
+                                out.length == 1 &&
+                                widget.allowSameDay) {
+                              out.add(out.first);
+                            }
+                            widget.onConfirm?.call(
+                                widget.mode == 'range' ? confirmDates : out);
+                          },
+                  ),
+                ),
         ],
       ),
     );

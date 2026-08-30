@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
@@ -84,6 +85,57 @@ class UPPosterState extends State<UPPoster> {
   Future<void> drawItem([dynamic item]) async {
     lastDrawItem = item;
     lastDrawOps.add({'op': 'drawItem', 'item': item});
+  }
+
+  /// Waits for a host canvas' asynchronous `draw(false, callback)` call.
+  ///
+  /// Flutter's built-in painter has no equivalent flush step, so omitting a
+  /// host canvas is intentionally a completed no-op. Host adapters may return
+  /// a Future, invoke the callback synchronously, or invoke it later; all
+  /// forms are settled exactly once here.
+  Future<void> flushPosterCanvas([dynamic posterCanvas]) async {
+    if (posterCanvas == null) return;
+
+    final completer = Completer<void>();
+    var settled = false;
+    void finish([Object? error, StackTrace? stack]) {
+      if (settled) return;
+      settled = true;
+      if (error == null) {
+        completer.complete();
+      } else {
+        completer.completeError(error, stack ?? StackTrace.current);
+      }
+    }
+
+    dynamic result;
+    try {
+      final dynamic draw = posterCanvas.draw;
+      final callback = () => finish();
+      try {
+        result = Function.apply(draw, [false, callback]);
+      } on NoSuchMethodError {
+        // A few host wrappers expose draw(callback) instead of the uni
+        // two-argument form; accept that shape without weakening the primary
+        // contract.
+        result = Function.apply(draw, [callback]);
+      }
+    } on NoSuchMethodError {
+      // An absent host canvas method has no work to flush.
+      return;
+    } catch (error, stack) {
+      finish(error, stack);
+    }
+
+    if (result is Future) {
+      try {
+        await result;
+        finish();
+      } catch (error, stack) {
+        finish(error, stack);
+      }
+    }
+    await completer.future;
   }
 
   Future<ui.Image?> capture({double pixelRatio = 1}) async {

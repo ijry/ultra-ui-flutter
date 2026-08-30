@@ -190,6 +190,7 @@ class UPCheckbox extends StatelessWidget {
     this.onChange,
     this.onUpdateValue,
     this.onUpdateChecked,
+    this.iconSlot,
   });
 
   final dynamic name;
@@ -221,6 +222,9 @@ class UPCheckbox extends StatelessWidget {
 
   /// Source update:checked alias.
   final ValueChanged<bool>? onUpdateChecked;
+
+  /// Source named slot `icon`; replaces the built-in checkbox mark.
+  final Widget? iconSlot;
 
   bool get isDisabled {
     if (disabled is bool) return disabled as bool;
@@ -426,13 +430,14 @@ class UPCheckbox extends StatelessWidget {
           borderRadius: BorderRadius.circular(radius),
           border: Border.all(color: borderColor, width: 1),
         ),
-        child: isChecked
-            ? UPIcon(
-                name: 'checkbox-mark',
-                size: elIconSize,
-                color: markColor,
-              )
-            : null,
+        child: iconSlot ??
+            (isChecked
+                ? UPIcon(
+                    name: 'checkbox-mark',
+                    size: elIconSize,
+                    color: markColor,
+                  )
+                : null),
       ),
     );
 

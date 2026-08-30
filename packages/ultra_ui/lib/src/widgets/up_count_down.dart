@@ -31,6 +31,8 @@ class UPCountDown extends StatefulWidget {
     this.onStart,
     this.onFinish,
     this.customStyle,
+    this.child,
+    this.contentBuilder,
   });
 
   final dynamic time;
@@ -42,6 +44,13 @@ class UPCountDown extends StatefulWidget {
   final VoidCallback? onFinish;
 
   final BoxDecoration? customStyle;
+
+  /// Source default slot as a static widget.
+  final Widget? child;
+
+  /// Source default slot with the current countdown data.
+  final Widget Function(BuildContext context, UPCountDownTimeData data)?
+      contentBuilder;
   @override
   State<UPCountDown> createState() => UPCountDownState();
 }
@@ -220,13 +229,15 @@ class UPCountDownState extends State<UPCountDown> {
     final tokens = UPThemeTokens.of(context);
     final data = parseTimeData(_remain);
     final text = parseFormat(widget.format, data);
-    Widget root = Text(
-      text,
-      style: TextStyle(
-        color: tokens.contentColor,
-        fontSize: 15,
-      ),
-    );
+    final custom = widget.contentBuilder?.call(context, data) ?? widget.child;
+    Widget root = custom ??
+        Text(
+          text,
+          style: TextStyle(
+            color: tokens.contentColor,
+            fontSize: 15,
+          ),
+        );
     return root;
   }
 }

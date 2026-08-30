@@ -338,6 +338,57 @@ void main() {
     expect(mode, isNull);
   });
 
+  testWidgets('content events are exposed with source-shaped payloads',
+      (tester) async {
+    final scrollEvents = <Map<String, dynamic>>[];
+    final pageEvents = <Map<String, dynamic>>[];
+    final tapZones = <String>[];
+    final key = GlobalKey<UPNovelReaderState>();
+
+    await tester.pumpWidget(_host(UPNovelReader(
+      key: key,
+      chapters: _chapters,
+      mode: 'page',
+      onContentScroll: scrollEvents.add,
+      onPageChange: pageEvents.add,
+      onTapZone: tapZones.add,
+    )));
+    await tester.pumpAndSettle();
+
+    key.currentState!
+        .handleContentScroll({'scrollTop': 12, 'scrollHeight': 240});
+    key.currentState!.handlePageChange({'pageIndex': 1});
+    key.currentState!.handleTapZone('left');
+
+    expect(scrollEvents, <Map<String, dynamic>>[
+      {'scrollTop': 12, 'scrollHeight': 240},
+    ]);
+    expect(pageEvents, <Map<String, dynamic>>[
+      {'pageIndex': 1},
+    ]);
+    expect(tapZones, <String>['left']);
+  });
+
+  testWidgets('content taps resolve left, center, and right zones',
+      (tester) async {
+    final tapZones = <String>[];
+    await tester.pumpWidget(_host(UPNovelReader(
+      chapters: _chapters,
+      onTapZone: tapZones.add,
+    )));
+    await tester.pumpAndSettle();
+
+    final rect = tester.getRect(find.byType(UPNovelReader));
+    await tester.tapAt(Offset(rect.left + 20, rect.center.dy));
+    await tester.pump();
+    await tester.tapAt(rect.center);
+    await tester.pump();
+    await tester.tapAt(Offset(rect.right - 20, rect.center.dy));
+    await tester.pump();
+
+    expect(tapZones, <String>['left', 'center', 'right']);
+  });
+
   testWidgets('a mode prop change reports the source normalized mode',
       (tester) async {
     String? mode;

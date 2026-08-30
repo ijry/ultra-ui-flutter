@@ -690,6 +690,7 @@ class UPPickerState extends State<UPPicker> {
       overlayOpacity: widget.overlayOpacity,
       pageInline: widget.pageInline,
       closeOnClickOverlay: widget.closeOnClickOverlay,
+      emitCloseOnExternalShowChange: false,
       onClose: _close,
       onClosed: widget.onClosed,
       child: pickerBody,

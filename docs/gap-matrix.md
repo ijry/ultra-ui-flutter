@@ -1738,3 +1738,19 @@ Last update: 2026-07-26 (Batch LN datetime-picker input-event-timing re-audit; f
 Last update: 2026-07-26 (Batch LO datetime-picker boundary/input-display re-audit; flutter test 803 green)
 
 | behavior parity | UPDatetimePicker now exposes source-shaped `getBoundary(type, innerValue)` results with `minYear` through `minSecond` or `maxYear` through `maxSecond`, including the source nested boundary rules for the supplied date. Its built-in `hasInput` display is now a distinct confirmed value: initialization and controlled-value changes populate it, wheel changes retain it while updating internal selection and columns, and toolbar or command confirmation refreshes it. Existing Flutter-specific `setValue()` behavior is intentionally outside this source-method conclusion. |
+
+Last update: 2026-08-30 (Batch LP novel-reader content events/empty-state parity; flutter test 1038 green)
+
+| behavior parity | UPNovelReader now applies the source `!hasContent` empty-state guard in both scroll and page modes, so `emptyBuilder` / `emptySlot` replace an empty chapter body consistently. Content interactions expose `onContentScroll`, `onPageChange`, and `onTapZone`; real scroll/page callbacks flow through the same public handlers, and taps are resolved into the source left/center/right thirds before paging or toggling controls. The coverage scan now reports all 24 novel-reader emits present; the remaining 12 method gaps are CSS style maps already represented by Flutter theme/layout values. |
+
+Last update: 2026-08-30 (Batch LQ internal-method classification/qrcode empty parity; flutter test 1039 green)
+
+| behavior parity | Coverage scanning now records exact component-scoped `excluded_methods` for platform-only implementation details instead of reporting them as public Flutter gaps: UPParse's NVUE plugin/web-view bridge, UPQrcode's imperative canvas watcher queue, and UPNovelReader's CSS style-map computed values. A controlled scanner test proves these exclusions do not hide an unrelated host-visible method. UPQrcode also preserves the source `_empty` boundary for `''`, `'undefined'`, `'null'`, `'{}'`, and `'[]'`, leaving those values ungenerated and keeping the previous result state untouched. API coverage is now 141/141 components and 1345/1345 methods + computed. |
+
+Last update: 2026-08-31 (Batch LR qrcode gesture-event parity; flutter test 1041 green)
+
+| behavior parity | UPQrcode now binds the rendered content's tap and long-press gestures to the source event paths. A tap always emits source-shaped `preview` data as `{ url: result }`, including when `allowPreview` is false; that prop controls only native image preview upstream and no longer suppresses the event. A long press exports through the existing host adapter and emits only `longpressCallback` with its temporary path instead of incorrectly routing through `preview`. Real gesture tests cover both branches and their separation. |
+
+Last update: 2026-08-31 (Batch LS qrcode inactive-show parity; flutter test 1042 green)
+
+| render parity | UPQrcode now leaves the source-declared but source-unconsumed `show` prop inert. Passing `show: false` no longer collapses the Flutter widget to zero size; the QR content retains its configured dimensions exactly as the upstream template does. The prop remains accepted for source API compatibility, while value encoding, gestures, colors, quiet zone, and icon rendering remain independent. |

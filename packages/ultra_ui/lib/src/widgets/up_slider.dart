@@ -3,6 +3,43 @@ import 'package:flutter/material.dart';
 import '../theme/up_theme.dart';
 import '../utils/up_utils.dart';
 
+/// A thumb shape that leaves the hit-test/track behavior of Material's slider
+/// intact while allowing a real Flutter widget to be painted at the thumb
+/// position.  Vue's slot replaces the visual thumb, not the slider gesture
+/// surface, which is exactly what this shape provides.
+class _UPInvisibleRangeThumbShape extends RangeSliderThumbShape {
+  const _UPInvisibleRangeThumbShape();
+
+  @override
+  // RangeSlider's track shape derives its corner radius from this size and
+  // asserts that it is positive.  Keep a sub-pixel visual footprint while the
+  // paint method itself remains empty.
+  Size getPreferredSize(bool isEnabled, bool isDiscrete) =>
+      const Size.square(2);
+
+  @override
+  void paint(
+    PaintingContext context,
+    Offset center, {
+    required Animation<double> activationAnimation,
+    required Animation<double> enableAnimation,
+    bool isDiscrete = false,
+    bool isEnabled = false,
+    bool? isOnTop,
+    required SliderThemeData sliderTheme,
+    TextDirection? textDirection,
+    Thumb? thumb,
+    bool? isPressed,
+  }) {}
+}
+
+class _UPSliderHandle {
+  const _UPSliderHandle(this.value, this.child);
+
+  final double value;
+  final Widget child;
+}
+
 /// 1:1 port of u-slider defaults and events.
 class UPSlider extends StatefulWidget {
   const UPSlider({
@@ -39,6 +76,13 @@ class UPSlider extends StatefulWidget {
     this.onDragStart,
     this.onDragEnd,
     this.onDrag,
+    this.child,
+    this.defaultSlot,
+    this.defaultBuilder,
+    this.minSlot,
+    this.minBuilder,
+    this.maxSlot,
+    this.maxBuilder,
   });
 
   final dynamic value;
@@ -91,6 +135,18 @@ class UPSlider extends StatefulWidget {
   final VoidCallback? onDragStart;
   final VoidCallback? onDragEnd;
   final ValueChanged<dynamic>? onDrag;
+
+  /// Source default slot, replacing the primary (maximum) thumb.
+  final Widget? child;
+  final Widget? defaultSlot;
+  final dynamic defaultBuilder;
+
+  /// Source range thumb slots. `min` controls the lower thumb and `max` the
+  /// upper thumb. Static widgets and callbacks are both accepted.
+  final Widget? minSlot;
+  final dynamic minBuilder;
+  final Widget? maxSlot;
+  final dynamic maxBuilder;
 
   /// Source method: initButtonStyle.
   dynamic initButtonStyle([dynamic _]) {
@@ -217,6 +273,100 @@ class UPSliderState extends State<UPSlider> {
         .toStringAsFixed(precision)
         .replaceFirst(RegExp(r'0+$'), '')
         .replaceFirst(RegExp(r'\.$'), '');
+  }
+
+  Widget? _resolveHandleSlot(
+    BuildContext context, {
+    required dynamic builder,
+    required Widget? slot,
+    required String name,
+    required double value,
+  }) {
+    if (builder is Widget) return builder;
+    if (slot != null) return slot;
+    if (builder is Function) {
+      final scope = <String, dynamic>{
+        'context': context,
+        'value': value,
+        'name': name,
+        'index': name == 'min' ? 0 : 1,
+      };
+      final attempts = <List<dynamic>>[
+        [context, value],
+        [context],
+        [value],
+        [scope],
+        const <dynamic>[],
+      ];
+      for (final args in attempts) {
+        try {
+          final result = Function.apply(builder, args);
+          if (result is Widget) return result;
+        } catch (_) {}
+      }
+      try {
+        final result = Function.apply(
+          builder,
+          const <dynamic>[],
+          <Symbol, dynamic>{
+            #context: context,
+            #value: value,
+            #name: name,
+            #index: name == 'min' ? 0 : 1,
+          },
+        );
+        if (result is Widget) return result;
+      } catch (_) {}
+    }
+    return null;
+  }
+
+  Widget _fallbackThumb(Color color) => Container(
+        width: UPUtils.getPx(widget.blockSize),
+        height: UPUtils.getPx(widget.blockSize),
+        decoration: BoxDecoration(
+          color: color,
+          shape: BoxShape.circle,
+          border: widget.blockStyle?.border,
+          boxShadow: widget.blockStyle?.boxShadow,
+        ),
+      );
+
+  /// Places widget handles over a Material slider while retaining the slider's
+  /// gesture recognizers underneath.  Alignment is deliberately based on the
+  /// normalized value, so it remains correct when `min`/`max` or `step` are
+  /// changed by the host.
+  Widget _overlayHandles(
+    Widget slider,
+    List<_UPSliderHandle> handles,
+  ) {
+    if (handles.isEmpty) return slider;
+    return LayoutBuilder(
+      builder: (context, constraints) {
+        return Stack(
+          clipBehavior: Clip.none,
+          children: [
+            slider,
+            for (final handle in handles)
+              Positioned.fill(
+                child: IgnorePointer(
+                  child: Align(
+                    alignment: Alignment(
+                      ((handle.value - minN) /
+                                      (maxN - minN == 0 ? 1 : maxN - minN))
+                                  .clamp(0.0, 1.0) *
+                              2 -
+                          1,
+                      0,
+                    ),
+                    child: handle.child,
+                  ),
+                ),
+              ),
+          ],
+        );
+      },
+    );
   }
 
   double get currentValue {
@@ -489,17 +639,49 @@ class UPSliderState extends State<UPSlider> {
         ? UPUtils.getPx(widget.height)
         : UPUtils.getPx(widget.size);
     final thumb = UPUtils.getPx(widget.blockSize);
+    final customSingleHandle = !widget.isRange && !widget.useNative
+        ? _resolveHandleSlot(
+            context,
+            builder: widget.defaultBuilder,
+            slot: widget.child ?? widget.defaultSlot,
+            name: 'default',
+            value: currentValue,
+          )
+        : null;
+    final customMinHandle = widget.isRange
+        ? _resolveHandleSlot(
+            context,
+            builder: widget.minBuilder,
+            slot: widget.minSlot,
+            name: 'min',
+            value: lowValue,
+          )
+        : null;
+    final customMaxHandle = widget.isRange
+        ? _resolveHandleSlot(
+            context,
+            builder: widget.maxBuilder,
+            slot: widget.maxSlot,
+            name: 'max',
+            value: highValue,
+          )
+        : null;
+    final hasRangeHandleSlots =
+        customMinHandle != null || customMaxHandle != null;
     final theme = SliderTheme.of(context).copyWith(
       trackHeight: trackH > 0 ? trackH : 2,
       activeTrackColor: active,
       inactiveTrackColor: inactive,
       thumbColor: block,
-      rangeThumbShape:
-          RoundRangeSliderThumbShape(enabledThumbRadius: thumb / 2),
+      rangeThumbShape: hasRangeHandleSlots
+          ? const _UPInvisibleRangeThumbShape()
+          : RoundRangeSliderThumbShape(enabledThumbRadius: thumb / 2),
       disabledActiveTrackColor: active.withValues(alpha: 0.5),
       disabledInactiveTrackColor: inactive.withValues(alpha: 0.5),
       overlayShape: SliderComponentShape.noOverlay,
-      thumbShape: RoundSliderThumbShape(enabledThumbRadius: thumb / 2),
+      thumbShape: customSingleHandle != null
+          ? SliderComponentShape.noThumb
+          : RoundSliderThumbShape(enabledThumbRadius: thumb / 2),
     );
 
     var started = false;
@@ -549,6 +731,21 @@ class UPSliderState extends State<UPSlider> {
                 },
         ),
       );
+      if (hasRangeHandleSlots) {
+        slider = _overlayHandles(
+          slider,
+          [
+            _UPSliderHandle(
+              low,
+              customMinHandle ?? _fallbackThumb(block),
+            ),
+            _UPSliderHandle(
+              high,
+              customMaxHandle ?? _fallbackThumb(block),
+            ),
+          ],
+        );
+      }
       if (widget.showValue) {
         slider = Column(
           mainAxisSize: MainAxisSize.min,
@@ -607,6 +804,14 @@ class UPSliderState extends State<UPSlider> {
                 },
         ),
       );
+      if (customSingleHandle != null) {
+        slider = _overlayHandles(
+          slider,
+          [
+            _UPSliderHandle(val, customSingleHandle),
+          ],
+        );
+      }
       if (widget.disabled) {
         // The single-value label is a source sibling of .u-slider-inner.
         slider = Opacity(opacity: 0.5, child: slider);

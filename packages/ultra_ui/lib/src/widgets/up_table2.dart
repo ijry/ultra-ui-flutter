@@ -63,6 +63,16 @@ class UPTable2 extends StatefulWidget {
     this.onToggleSelect,
     this.onFilterChange,
     this.customStyle,
+    this.headerBuilder,
+    this.headerSlot,
+    this.headerSortBuilder,
+    this.headerSortSlot,
+    this.cellBuilder,
+    this.cellSlot,
+    this.cellChildBuilder,
+    this.cellChildSlot,
+    this.emptyBuilder,
+    this.emptySlot,
   });
 
   final List columns;
@@ -140,6 +150,39 @@ class UPTable2 extends StatefulWidget {
   /// Source emit: filter-change.
   final ValueChanged<dynamic>? onFilterChange;
   final BoxDecoration? customStyle;
+
+  // -----------------------------------------------------------------------
+  // Source slots
+  //
+  // The Vue component exposes these slots from both the top-level table and
+  // its recursive `tableRow` child.  They are intentionally `dynamic` here:
+  // host applications commonly use either positional callbacks or a static
+  // widget, and accepting both keeps the bridge source-compatible without
+  // forcing one particular Dart typedef on callers.
+  // -----------------------------------------------------------------------
+
+  /// Source `header` slot. Scope: column, columnIndex, level, context.
+  final dynamic headerBuilder;
+  final Widget? headerSlot;
+
+  /// Source `headerSort` slot. Scope: sortStatus, column, columnIndex, level,
+  /// context.
+  final dynamic headerSortBuilder;
+  final Widget? headerSortSlot;
+
+  /// Source `cell` slot. Scope: row, column, prow, rowIndex, columnIndex,
+  /// level, context.
+  final dynamic cellBuilder;
+  final Widget? cellSlot;
+
+  /// Internal recursive-child bridge (`cellChild` in tableRow.vue).  It is
+  /// kept public because some hosts render the recursive component directly.
+  final dynamic cellChildBuilder;
+  final Widget? cellChildSlot;
+
+  /// Source `empty` slot shown when there are no rows.
+  final dynamic emptyBuilder;
+  final Widget? emptySlot;
 
   /// Source `getComponentWidth` — returns provided measure or 0.
   dynamic getComponentWidth([dynamic v]) {
@@ -941,6 +984,70 @@ class UPTable2State extends State<UPTable2> {
     return style.map((key, value) => MapEntry('$key', value));
   }
 
+  /// Invoke a slot callback while accepting the two shapes used by ports in
+  /// the wild: positional arguments (`(context, row, column, ...)`) and a
+  /// single named scope (`({row, column, ...})`).  The source Vue slots are
+  /// runtime values, so being permissive here is more useful than exposing a
+  /// narrowly typed callback that rejects an otherwise valid host adapter.
+  Widget? _invokeSlot(
+    dynamic candidate,
+    BuildContext context,
+    List<dynamic> positional,
+    Map<String, dynamic> scope,
+  ) {
+    if (candidate is Widget) return candidate;
+    if (candidate is! Function) return null;
+
+    final attempts = <List<dynamic>>[
+      positional,
+      if (positional.length > 1) positional.sublist(1),
+      [scope],
+      [context, scope],
+      const <dynamic>[],
+    ];
+    for (final args in attempts) {
+      try {
+        final value = Function.apply(candidate, args);
+        if (value is Widget) return value;
+      } catch (_) {
+        // Try the next compatible arity/shape.
+      }
+    }
+
+    try {
+      final named = <Symbol, dynamic>{
+        for (final entry in scope.entries) Symbol(entry.key): entry.value,
+      };
+      final value = Function.apply(candidate, const <dynamic>[], named);
+      if (value is Widget) return value;
+    } catch (_) {
+      // An incompatible callback simply means the default slot is used.
+    }
+    return null;
+  }
+
+  Widget? _slotWidget({
+    required dynamic builder,
+    required Widget? slot,
+    required BuildContext context,
+    required List<dynamic> positional,
+    required Map<String, dynamic> scope,
+  }) {
+    final built = _invokeSlot(builder, context, positional, scope);
+    if (built != null) return built;
+    return _invokeSlot(slot, context, positional, scope);
+  }
+
+  dynamic _sortStatus(dynamic field) {
+    for (final condition in sortConditions) {
+      if (condition['field'] == field) {
+        final order = '${condition['order']}';
+        return order == 'ascending' || order == 'asc';
+      }
+    }
+    return '';
+  }
+
   double _stylePx(dynamic value, double fallback) {
     if (value == null || '$value'.trim().isEmpty || '$value' == 'auto') {
       return fallback;
@@ -1062,6 +1169,7 @@ class UPTable2State extends State<UPTable2> {
       double? height,
       Key? cellKey,
       Widget? child,
+      Widget? contentChild,
     }) {
       final style = _styleMap(effectiveStyle);
       final inherited = _styleMap(rowStyle);
@@ -1139,17 +1247,18 @@ class UPTable2State extends State<UPTable2> {
                     '${col['key']}' == mainColKey)
                   SizedBox(width: expandW > 0 ? expandW : 25),
                 Expanded(
-                  child: Text(
-                    text,
-                    maxLines: 1,
-                    overflow: TextOverflow.ellipsis,
-                    textAlign: textAlign,
-                    style: TextStyle(
-                      color: color,
-                      fontSize: fontSize,
-                      fontWeight: fontWeight,
-                    ),
-                  ),
+                  child: contentChild ??
+                      Text(
+                        text,
+                        maxLines: 1,
+                        overflow: TextOverflow.ellipsis,
+                        textAlign: textAlign,
+                        style: TextStyle(
+                          color: color,
+                          fontSize: fontSize,
+                          fontWeight: fontWeight,
+                        ),
+                      ),
                 ),
               ],
             ),
@@ -1165,6 +1274,24 @@ class UPTable2State extends State<UPTable2> {
                     final col = cols[ci];
                     final type = '${col['type'] ?? 'default'}';
                     if (type == 'selection') {
+                      final headerWidget = _slotWidget(
+                        builder: widget.headerBuilder,
+                        slot: widget.headerSlot,
+                        context: context,
+                        positional: [
+                          context,
+                          col,
+                          ci,
+                          1,
+                          widget.tableContext,
+                        ],
+                        scope: {
+                          'column': col,
+                          'columnIndex': ci,
+                          'level': 1,
+                          'context': widget.tableContext,
+                        },
+                      );
                       return GestureDetector(
                         behavior: HitTestBehavior.opaque,
                         onTap: toggleSelectAll,
@@ -1184,25 +1311,86 @@ class UPTable2State extends State<UPTable2> {
                                   )
                                 : null,
                           ),
-                          child: Text(
-                            allVisibleSelected ? '☑' : '☐',
-                            style: TextStyle(
-                              color: tokens.primary,
-                              fontSize: 16,
-                            ),
-                          ),
+                          child: headerWidget ??
+                              Text(
+                                allVisibleSelected ? '☑' : '☐',
+                                style: TextStyle(
+                                  color: tokens.primary,
+                                  fontSize: 16,
+                                ),
+                              ),
                         ),
                       );
                     }
-                    final title =
-                        '${col['title'] ?? ''}${isColumnSortable(col) ? (_sortIcon(col['key']).isEmpty ? ' ↕' : _sortIcon(col['key'])) : ''}';
+                    final sortable = isColumnSortable(col);
+                    final headerWidget = _slotWidget(
+                      builder: widget.headerBuilder,
+                      slot: widget.headerSlot,
+                      context: context,
+                      positional: [
+                        context,
+                        col,
+                        ci,
+                        1,
+                        widget.tableContext,
+                      ],
+                      scope: {
+                        'column': col,
+                        'columnIndex': ci,
+                        'level': 1,
+                        'context': widget.tableContext,
+                      },
+                    );
+                    final sortWidget = sortable
+                        ? _slotWidget(
+                            builder: widget.headerSortBuilder,
+                            slot: widget.headerSortSlot,
+                            context: context,
+                            positional: [
+                              context,
+                              _sortStatus(col['key']),
+                              col,
+                              ci,
+                              1,
+                              widget.tableContext,
+                            ],
+                            scope: {
+                              'sortStatus': _sortStatus(col['key']),
+                              'column': col,
+                              'columnIndex': ci,
+                              'level': 1,
+                              'context': widget.tableContext,
+                            },
+                          )
+                        : null;
+                    final headerChild = Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: headerWidget ??
+                              Text(
+                                '${col['title'] ?? ''}',
+                                maxLines: 1,
+                                overflow: TextOverflow.ellipsis,
+                              ),
+                        ),
+                        if (sortable)
+                          sortWidget ??
+                              Text(
+                                _sortIcon(col['key']).trim().isEmpty
+                                    ? '↕'
+                                    : _sortIcon(col['key']).trim(),
+                              ),
+                      ],
+                    );
                     return GestureDetector(
                       behavior: HitTestBehavior.opaque,
                       onTap: () => handleHeaderClick(col),
                       child: cellContent(
                         col: col,
-                        text: title,
+                        text: '${col['title'] ?? ''}',
                         header: true,
+                        contentChild: headerChild,
                       ),
                     );
                   },
@@ -1215,10 +1403,17 @@ class UPTable2State extends State<UPTable2> {
         ? Container(
             height: 80,
             alignment: Alignment.center,
-            child: Text(
-              widget.emptyText,
-              style: TextStyle(color: tokens.tipsColor, fontSize: 13),
-            ),
+            child: _slotWidget(
+                  builder: widget.emptyBuilder,
+                  slot: widget.emptySlot,
+                  context: context,
+                  positional: [context],
+                  scope: {'context': widget.tableContext},
+                ) ??
+                Text(
+                  widget.emptyText,
+                  style: TextStyle(color: tokens.tipsColor, fontSize: 13),
+                ),
           )
         : Builder(
             builder: (context) {
@@ -1336,6 +1531,57 @@ class UPTable2State extends State<UPTable2> {
                                           final expandable = treeEnabled &&
                                               isMain &&
                                               _hasExpandableChildren(row);
+                                          Widget? customCell;
+                                          if (!selection) {
+                                            customCell = _slotWidget(
+                                              builder: widget.cellBuilder,
+                                              slot: widget.cellSlot,
+                                              context: context,
+                                              positional: [
+                                                context,
+                                                row,
+                                                col,
+                                                item.parent,
+                                                item.rowIndex,
+                                                ci,
+                                                item.level,
+                                                widget.tableContext,
+                                              ],
+                                              scope: {
+                                                'row': row,
+                                                'column': col,
+                                                'prow': item.parent,
+                                                'rowIndex': item.rowIndex,
+                                                'columnIndex': ci,
+                                                'level': item.level,
+                                                'context': widget.tableContext,
+                                              },
+                                            );
+                                            customCell ??= _slotWidget(
+                                              builder: widget.cellChildBuilder,
+                                              slot: widget.cellChildSlot,
+                                              context: context,
+                                              positional: [
+                                                context,
+                                                row,
+                                                col,
+                                                item.parent,
+                                                item.rowIndex,
+                                                ci,
+                                                item.level,
+                                                widget.tableContext,
+                                              ],
+                                              scope: {
+                                                'row': row,
+                                                'column': col,
+                                                'prow': item.parent,
+                                                'rowIndex': item.rowIndex,
+                                                'columnIndex': ci,
+                                                'level': item.level,
+                                                'context': widget.tableContext,
+                                              },
+                                            );
+                                          }
                                           return Positioned(
                                             top: 0,
                                             left: _columnOffset(cols, ci),
@@ -1398,6 +1644,7 @@ class UPTable2State extends State<UPTable2> {
                                                         ),
                                                       )
                                                     : null,
+                                                contentChild: customCell,
                                               ),
                                             ),
                                           );

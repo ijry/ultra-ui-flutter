@@ -28,6 +28,7 @@ class UPAvatar extends StatelessWidget {
     this.name = '',
     this.customStyle,
     this.onClick,
+    this.child,
   });
 
   final String src;
@@ -45,6 +46,9 @@ class UPAvatar extends StatelessWidget {
   final dynamic colorIndex;
   final String name;
   final BoxDecoration? customStyle;
+
+  /// Source default slot; replaces generated image/text/icon content.
+  final Widget? child;
 
   /// Source data.
   bool get allowMp => false;
@@ -145,18 +149,20 @@ class UPAvatar extends StatelessWidget {
     final imageSrc =
         src.isNotEmpty ? src : (defaultUrl.isNotEmpty ? defaultUrl : '');
 
-    Widget child;
-    if (icon.isNotEmpty) {
-      child = UPIcon(name: icon, size: fs > 0 ? fs : 18, color: fg);
+    Widget avatarContent;
+    if (child != null) {
+      avatarContent = child!;
+    } else if (icon.isNotEmpty) {
+      avatarContent = UPIcon(name: icon, size: fs > 0 ? fs : 18, color: fg);
     } else if (text.isNotEmpty) {
-      child = UPText(
+      avatarContent = UPText(
         text: text,
         size: fs > 0 ? fs : 18,
         color: fg,
         align: 'center',
       );
     } else {
-      child = UPImage(
+      avatarContent = UPImage(
         src: imageSrc,
         width: s,
         height: s,
@@ -200,7 +206,7 @@ class UPAvatar extends StatelessWidget {
         alignment: Alignment.center,
         decoration: decoration,
         clipBehavior: Clip.hardEdge,
-        child: child,
+        child: avatarContent,
       ),
     );
   }

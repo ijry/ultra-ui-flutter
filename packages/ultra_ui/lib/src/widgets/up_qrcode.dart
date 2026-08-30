@@ -140,13 +140,19 @@ class UPQrcode extends StatelessWidget {
 
   /// Encode QR matrix modules for host inspection / tests.
   static List<List<int>> encodeMatrix(String text, [int lv = 3]) {
+    if (_isSourceEmptyValue(text)) return const <List<int>>[];
     return _QrEncoder.encode(text, _QrPainter._ecLevel(lv));
   }
 
+  /// Source `_empty` string cases that can reach the typed Dart `val` prop.
+  static bool _isSourceEmptyValue(String value) =>
+      const <String>{'', 'undefined', 'null', '{}', '[]'}.contains(value);
+
   /// Source `_makeCode` / generate.
   List<List<int>> makeCode([String? value]) {
-    _state['loading'] = true;
     final data = value ?? val;
+    if (_isSourceEmptyValue(data)) return const <List<int>>[];
+    _state['loading'] = true;
     final matrix = encodeMatrix(data, lv);
     _state['resultData'] = data;
     _state['loading'] = false;
@@ -170,9 +176,9 @@ class UPQrcode extends StatelessWidget {
   String _saveCode() => saveCode();
 
   /// Source `preview`.
-  void preview([dynamic e]) {
+  void preview([dynamic _]) {
     _state['popupShow'] = true;
-    onPreview?.call(e ?? {'val': val});
+    onPreview?.call(<String, dynamic>{'url': resultData});
   }
 
   void setPopupShow([bool show = true]) {
@@ -241,7 +247,10 @@ class UPQrcode extends StatelessWidget {
   }
 
   /// Source `longpress`.
-  Future<void> longpress() async => preview();
+  Future<void> longpress() async {
+    final exported = await toTempFilePath();
+    onLongpressCallback?.call(exported['tempFilePath']);
+  }
 
   /// Source `setNewSize` — re-emit complete with current size.
   Future<void> setNewSize([dynamic next]) async {
@@ -272,7 +281,6 @@ class UPQrcode extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    if (!show) return const SizedBox.shrink();
     final s = UPUtils.getPx(size);
     final bg = UPUtils.parseColor(background) ?? const Color(0xFFFFFFFF);
     final fg = UPUtils.parseColor(foreground) ?? const Color(0xFF000000);
@@ -284,7 +292,8 @@ class UPQrcode extends StatelessWidget {
       onComplete?.call(val);
     });
     Widget root = GestureDetector(
-      onTap: allowPreview ? () {} : null,
+      onTap: preview,
+      onLongPress: longpress,
       child: Container(
         width: s,
         height: s,

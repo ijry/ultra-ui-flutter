@@ -293,6 +293,7 @@ class UPActionSheetState extends State<UPActionSheet> {
       safeAreaInsetBottom: widget.safeAreaInsetBottom,
       closeOnClickOverlay: widget.closeOnClickOverlay,
       maxHeight: widget.wrapMaxHeight,
+      emitCloseOnExternalShowChange: false,
       onClose: closeHandler,
       onClosed: widget.onClosed,
       child: Material(

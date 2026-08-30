@@ -133,7 +133,6 @@ class UPDatetimePicker extends StatefulWidget {
 
   /// Source computed `propsChange` — deps that force column re-init.
   dynamic propsChange([dynamic _]) => [
-        mode,
         maxDate,
         minDate,
         minHour,
@@ -143,7 +142,6 @@ class UPDatetimePicker extends StatefulWidget {
         minSecond,
         maxSecond,
         filter,
-        modelValue,
       ];
 
   /// Source computed: resolvedMaskStyle.
@@ -186,20 +184,28 @@ class UPDatetimePickerState extends State<UPDatetimePicker> {
   late List columns;
   late List indexes;
 
+  // The source keeps the last value sent by a user change so rebuilding the
+  // columns after a bounds update cannot emit the same change twice.
+  dynamic _lastEmitValue;
+
+  dynamic _emitValue() =>
+      _isDateMode ? current.millisecondsSinceEpoch : getInputValue();
+
   @override
   void initState() {
     super.initState();
     current = _sourceControlledValue(widget.effectiveValue);
     _rebuild();
     inputValue = getInputValue();
+    _lastEmitValue = _emitValue();
   }
 
   @override
   void didUpdateWidget(covariant UPDatetimePicker oldWidget) {
     super.didUpdateWidget(oldWidget);
-    if (oldWidget.effectiveValue != widget.effectiveValue ||
-        oldWidget.mode != widget.mode ||
-        oldWidget.minDate != widget.minDate ||
+    final valueChanged = oldWidget.effectiveValue != widget.effectiveValue;
+    final modeChanged = oldWidget.mode != widget.mode;
+    final boundsChanged = oldWidget.minDate != widget.minDate ||
         oldWidget.maxDate != widget.maxDate ||
         oldWidget.minHour != widget.minHour ||
         oldWidget.maxHour != widget.maxHour ||
@@ -207,17 +213,50 @@ class UPDatetimePickerState extends State<UPDatetimePicker> {
         oldWidget.maxMinute != widget.maxMinute ||
         oldWidget.minSecond != widget.minSecond ||
         oldWidget.maxSecond != widget.maxSecond ||
-        oldWidget.filter != widget.filter) {
+        oldWidget.filter != widget.filter;
+
+    // Opening, changing the controlled value, or changing the mode resets
+    // from the external value. Boundary/filter changes retain the pending
+    // wheel selection and are handled by reInitColumns below.
+    if ((!oldWidget.show && widget.show) || valueChanged || modeChanged) {
       current = _sourceControlledValue(widget.effectiveValue);
       _rebuild();
       inputValue = getInputValue();
-    }
-    if (!oldWidget.show && widget.show) {
-      current = _sourceControlledValue(widget.effectiveValue);
-      _rebuild();
+      _lastEmitValue = _emitValue();
+    } else if (boundsChanged) {
+      // didUpdateWidget already schedules a rebuild; avoid calling setState
+      // while the framework is traversing the dirty element tree.
+      _reInitColumns(notify: false);
     }
     if (oldWidget.show && !widget.show && widget.hasInput) {
       showByClickInput = false;
+    }
+  }
+
+  /// Rebuilds the picker after min/max/filter changes while preserving the
+  /// value currently selected in the wheels. A synthetic change is emitted
+  /// only when the new bounds actually clamp that value.
+  void reInitColumns() => _reInitColumns(notify: true);
+
+  void _reInitColumns({required bool notify}) {
+    final before = _emitValue();
+    final correctedRaw = correctValue(
+      _isDateMode ? current.millisecondsSinceEpoch : getInputValue(),
+    );
+    final parsed = _parseValue(correctedRaw);
+    if (parsed != null) {
+      current = _isDateMode ? _clampDate(parsed) : parsed;
+    }
+    _rebuild();
+    inputValue = getInputValue();
+    final corrected = _emitValue();
+    if (notify && mounted) setState(() {});
+    if (before != corrected && _lastEmitValue != corrected) {
+      _lastEmitValue = corrected;
+      widget.onChange?.call({
+        'value': corrected,
+        'mode': widget.mode,
+      });
     }
   }
 
@@ -563,6 +602,7 @@ class UPDatetimePickerState extends State<UPDatetimePicker> {
       current = _isDateMode ? _clampDate(parsed) : parsed;
       _rebuild();
     });
+    _lastEmitValue = _emitValue();
     widget.onUpdateValue?.call(current.millisecondsSinceEpoch);
     widget.onUpdateModelValue?.call(current.millisecondsSinceEpoch);
     widget.onChange?.call(current.millisecondsSinceEpoch);
@@ -672,6 +712,7 @@ class UPDatetimePickerState extends State<UPDatetimePicker> {
       _rebuild();
       inputValue = getInputValue();
     });
+    _lastEmitValue = _emitValue();
   }
 
   /// Source `cancel` / `confirm`.
@@ -817,6 +858,7 @@ class UPDatetimePickerState extends State<UPDatetimePicker> {
             _rebuild();
           });
         }
+        _lastEmitValue = _emitValue();
         widget.onChange?.call({
           'value': composed,
           'mode': widget.mode,

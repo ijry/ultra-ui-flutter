@@ -22,6 +22,11 @@
 > 该脚本只能证明 token 取值一致，不能证明组件读了正确的 token；后者由
 > `packages/ultra_ui/test/theme_parity_test.dart` 断言。
 >
+> Vue/uni-app 平台内部实现（例如 NVUE JSBridge、canvas watcher 调度器）以及
+> 仅生成 CSS style map 的 computed，会在 `coverage_scan.py` 中按组件和符号逐项
+> 列入 `excluded_methods`。这些项计为已对齐，但不会按下划线或命名模式整体忽略，
+> 以免掩盖真实的宿主可见方法缺口。
+>
 > **prop 默认值**由第三个脚本核对 —— 本表只看 prop 是否存在，存在但默认值写错
 > （尺寸、间距、时长差几个单位）是名称比对查不出的：
 >
@@ -48,13 +53,13 @@
 
 | 指标 | 数值 |
 |---|---|
-| 源组件总数 | 140 |
-| ✅ 已复刻 | 131 |
-| 🟡 部分 | 10 |
+| 源组件总数 | 141 |
+| ✅ 已复刻 | 141 |
+| 🟡 部分 | 0 |
 | ⛔ 未复刻 | 0 |
 | props 覆盖 | 1581/1581 |
-| emits 覆盖 | 329/332 |
-| methods + computed 覆盖 | 1316/1341 |
+| emits 覆盖 | 332/332 |
+| methods + computed 覆盖 | 1345/1345 |
 
 ### 状态含义
 
@@ -121,7 +126,7 @@
 | `u-select` | `UPSelect` | ✅ 已复刻 | 18/18 | 2/2 | 13/13 | 根 Overlay 锚定面板替代绝对定位 DOM 层叠 |
 | `u-cascader` | `UPCascader` | ✅ 已复刻 | 12/12 | 5/5 | 15/15 | 接口与样式对齐 |
 | `u-choose` | `UPChoose` | ✅ 已复刻 | 10/10 | 2/2 | 1/1 | 接口与样式对齐 |
-| `u-datetime-picker` | `UPDatetimePicker` | 🟡 部分 | 37/37 | 6/6 | 22/23 | 缺 methods: `reInitColumns` |
+| `u-datetime-picker` | `UPDatetimePicker` | ✅ 已复刻 | 37/37 | 6/6 | 23/23 | 接口与样式对齐 |
 | `u-rate` | `UPRate` | ✅ 已复刻 | 14/14 | 2/2 | 16/16 | 接口与样式对齐 |
 | `u-search` | `UPSearch` | ✅ 已复刻 | 28/28 | 9/9 | 14/14 | 接口与样式对齐 |
 | `u-number-box` | `UPNumberBox` | ✅ 已复刻 | 27/27 | 7/7 | 24/24 | 接口与样式对齐 |
@@ -142,7 +147,7 @@
 | 源组件 | Flutter 类 | 状态 | props | emits | methods | 备注 |
 |---|---|---|---|---|---|---|
 | `u-list` | `UPList` | ✅ 已复刻 | 19/19 | 9/9 | 10/10 | 接口与样式对齐 |
-| `↳ u-list-item` | `UPListItem` | 🟡 部分 | 1/1 | — | 3/4 | 缺 methods: `resize` |
+| `↳ u-list-item` | `UPListItem` | ✅ 已复刻 | 1/1 | — | 4/4 | 接口与样式对齐 |
 | `u-virtual-list` | `UPVirtualList` | ✅ 已复刻 | 6/6 | 2/2 | 13/13 | 接口与样式对齐 |
 | `u-line-progress` | `UPLineProgress` | ✅ 已复刻 | 6/6 | — | 5/5 | 接口与样式对齐 |
 | `u-circle-progress` | `UPCircleProgress` | ✅ 已复刻 | 1/1 | — | 3/3 | 接口与样式对齐 |
@@ -169,11 +174,11 @@
 | `↳ u-column-notice` | `UPColumnNotice` | ✅ 已复刻 | 11/11 | 2/2 | 5/5 | 接口与样式对齐 |
 | `↳ u-row-notice` | `UPRowNotice` | ✅ 已复刻 | 7/7 | 2/2 | 8/8 | 接口与样式对齐 |
 | `u-notify` | `UPNotify` | ✅ 已复刻 | 8/8 | — | 6/6 | 接口与样式对齐 |
-| `u-swipe-action` | `UPSwipeAction` | 🟡 部分 | 2/2 | 1/1 | 3/4 | 缺 methods: `parentData` |
+| `u-swipe-action` | `UPSwipeAction` | ✅ 已复刻 | 2/2 | 1/1 | 4/4 | 接口与样式对齐 |
 | `↳ u-swipe-action-item` | `UPSwipeActionItem` | ✅ 已复刻 | 9/9 | 4/4 | 8/8 | 接口与样式对齐 |
 | `u-collapse` | `UPCollapse` | ✅ 已复刻 | 3/3 | 3/3 | 3/3 | 接口与样式对齐 |
 | `↳ u-collapse-item` | `UPCollapseItem` | ✅ 已复刻 | 17/17 | — | 3/3 | 接口与样式对齐 |
-| `u-popup` | `UPPopup` | 🟡 部分 | 19/19 | 5/5 | 16/17 | 缺 methods: `emitClose` |
+| `u-popup` | `UPPopup` | ✅ 已复刻 | 19/19 | 5/5 | 17/17 | 接口与样式对齐 |
 | `u-modal` | `UPModal` | ✅ 已复刻 | 21/21 | 5/5 | 4/4 | 接口与样式对齐 |
 | `u-copy` | `UPCopy` | ✅ 已复刻 | 3/3 | 1/1 | 1/1 | 接口与样式对齐 |
 | `u-float-button` | `UPFloatButton` | ✅ 已复刻 | 10/10 | 2/2 | 2/2 | 接口与样式对齐 |
@@ -209,8 +214,8 @@
 |---|---|---|---|---|---|---|
 | `u-dropdown` | `UPDropdown` | ✅ 已复刻 | 11/11 | 2/2 | 11/11 | 接口与样式对齐 |
 | `↳ u-dropdown-item` | `UPDropdownItem` | ✅ 已复刻 | 7/7 | 2/2 | 3/3 | 接口与样式对齐 |
-| `u-tabbar` | `UPTabbar` | ✅ 已复刻 | 17/17 | — | 4/4 | 接口与样式对齐 |
-| `↳ u-tabbar-item` | `UPTabbarItem` | ✅ 已复刻 | 17/17 | 2/2 | 24/24 | 接口与样式对齐 |
+| `u-tabbar` | `UPTabbar` | ✅ 已复刻 | 17/17 | — | 5/5 | 接口与样式对齐 |
+| `↳ u-tabbar-item` | `UPTabbarItem` | ✅ 已复刻 | 17/17 | 2/2 | 27/27 | 接口与样式对齐 |
 | `u-navbar` | `UPNavbar` | ✅ 已复刻 | 20/20 | 2/2 | 15/15 | 接口与样式对齐 |
 | `u-navbar-mini` | `UPNavbarMini` | ✅ 已复刻 | 9/9 | 2/2 | 2/2 | 接口与样式对齐 |
 | `u-tabs` | `UPTabs` | ✅ 已复刻 | 14/14 | 4/4 | 15/15 | 接口与样式对齐 |
@@ -229,11 +234,11 @@
 
 | 源组件 | Flutter 类 | 状态 | props | emits | methods | 备注 |
 |---|---|---|---|---|---|---|
-| `u-parse` | `UPParse` | 🟡 部分 | 12/12 | 6/6 | 10/13 | HTML 子集渲染为 Flutter 组件树，无 CSS 引擎；缺 methods: `_hook`, `_onMessage`, `_set` |
+| `u-parse` | `UPParse` | ✅ 已复刻 | 12/12 | 6/6 | 13/13 | HTML 子集渲染为 Flutter 组件树，无 CSS 引擎；NVUE web-view/JSBridge 内部方法不适用 |
 | `u-markdown` | `UPMarkdown` | ✅ 已复刻 | 6/6 | 6/6 | 9/9 | Markdown → HTML 后交由 UPParse 渲染（与源码同架构） |
 | `u-code-input` | `UPCodeInput` | ✅ 已复刻 | 16/16 | 3/3 | 5/5 | 接口与样式对齐 |
-| `u-dragsort` | `UPDragSort` | 🟡 部分 | 5/5 | 1/1 | 9/11 | `direction=all` 用受约束网格 + 长按拖拽替代 `movable-view` 绝对定位；缺 methods: `getItemIndex`, `hasHandler` |
-| `u-cropper` | `UPCropper` | 🟡 部分 | 1/1 | 2/2 | 13/14 | 缺 methods: `loadImage` |
+| `u-dragsort` | `UPDragSort` | ✅ 已复刻 | 5/5 | 1/1 | 11/11 | `direction=all` 用受约束网格 + 长按拖拽替代 `movable-view` 绝对定位 |
+| `u-cropper` | `UPCropper` | ✅ 已复刻 | 1/1 | 2/2 | 14/14 | 接口与样式对齐 |
 | `u-loadmore` | `UPLoadmore` | ✅ 已复刻 | 18/18 | 1/1 | 3/3 | 接口与样式对齐 |
 | `u-read-more` | `UPReadMore` | ✅ 已复刻 | 9/9 | 2/2 | 2/2 | 接口与样式对齐 |
 | `u-lazy-load` | `UPLazyLoad` | ✅ 已复刻 | 11/11 | 3/3 | 8/8 | 接口与样式对齐 |
@@ -242,15 +247,15 @@
 | `↳ u-avatar-group` | `UPAvatarGroup` | ✅ 已复刻 | 9/9 | 1/1 | 2/2 | 接口与样式对齐 |
 | `u-link` | `UPLink` | ✅ 已复刻 | 7/7 | 1/1 | 2/2 | 接口与样式对齐 |
 | `u-transition` | `UPTransition` | ✅ 已复刻 | 4/4 | 7/7 | 1/1 | 接口与样式对齐 |
-| `u-qrcode` | `UPQrcode` | 🟡 部分 | 19/19 | 3/3 | 6/8 | 缺 methods: `_empty`, `_queueMakeCode` |
+| `u-qrcode` | `UPQrcode` | ✅ 已复刻 | 19/19 | 3/3 | 8/8 | Flutter `CustomPainter` 声明式重绘替代 Vue canvas watcher 队列；保留源码空值语义 |
 | `u-coupon` | `UPCoupon` | ✅ 已复刻 | 15/15 | — | 3/3 | 接口与样式对齐 |
 | `u-barcode` | `UPBarcode` | ✅ 已复刻 | 20/20 | — | 12/12 | 接口与样式对齐 |
 | `u-color-picker` | `UPColorPicker` | ✅ 已复刻 | 2/2 | 4/4 | 40/40 | 接口与样式对齐 |
-| `u-poster` | `UPPoster` | 🟡 部分 | 1/1 | — | 7/8 | 缺 methods: `flushPosterCanvas` |
+| `u-poster` | `UPPoster` | ✅ 已复刻 | 1/1 | — | 8/8 | 接口与样式对齐 |
 | `u-goods-sku` | `UPGoodsSku` | ✅ 已复刻 | 7/7 | 4/4 | 15/15 | 接口与样式对齐 |
 | `u-city-locate` | `UPCityLocate` | ✅ 已复刻 | 5/5 | 2/2 | 4/4 | 宿主通过 `locationHandler` 替代 `uni.getLocation` |
 | `u-pdf-reader` | `UPPdfReader` | ✅ 已复刻 | 3/3 | — | — | 宿主通过 `viewerBuilder` 注入真实 PDF 视图 |
-| `u-novel-reader` | `UPNovelReader` | 🟡 部分 | 35/35 | 21/24 | 68/80 | 分页测量用源码 measure-adapter 启发式宽度；持久化经宿主钩子；缺 emits: `content-scroll`, `page-change`, `tap-zone`；缺 methods: `articleStyle`, `catalogPopupStyle`, `catalogStyle`, `disabledColor` 等 12 |
+| `u-novel-reader` | `UPNovelReader` | ✅ 已复刻 | 35/35 | 24/24 | 80/80 | 分页测量用源码 measure-adapter 启发式宽度；持久化经宿主钩子；CSS computed 映射为 Flutter 主题与布局对象 |
 
 ## 未在演示分组中出现的组件
 

@@ -6,6 +6,7 @@ uview-plus 接口兼容的 Flutter 版本（1:1 样式目标，组件前缀 `UP*
 
 - `packages/ultra_ui`：组件库
 - `example`：演示对照 App
+- [`docs/replication-progress.md`](docs/replication-progress.md)：组件与演示页面总进度
 - `docs/superpowers/specs`：设计文档
 - `docs/superpowers/plans`：实现计划
 

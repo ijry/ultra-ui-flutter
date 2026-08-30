@@ -103,6 +103,23 @@ class UPDragSortState extends State<UPDragSort> {
   /// Source-compatible current list snapshot.
   List get value => List.from(list);
 
+  /// Returns the current position of an item by its source `id`.
+  ///
+  /// Scalar lists are also accepted by the Flutter port, so a scalar item is
+  /// matched directly when it has no map-shaped `id` field. Missing items use
+  /// the source's `-1` sentinel.
+  int getItemIndex(dynamic itemId) {
+    for (var index = 0; index < list.length; index++) {
+      final item = list[index];
+      final id = item is Map && item.containsKey('id') ? item['id'] : item;
+      if (id == itemId) return index;
+    }
+    return -1;
+  }
+
+  /// Whether a handler slot/builder was supplied.
+  bool get hasHandler => widget.handlerBuilder != null;
+
   /// Replace list contents.
   void setValue(List next, {bool emit = true}) {
     setState(() => list = List.from(next));

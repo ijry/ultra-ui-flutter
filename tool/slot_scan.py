@@ -45,6 +45,9 @@ ALIASES = {
     # because the parameter types already say which is which.
     "u-cate-tab:pageItem": "itemBuilder",
     "u-cate-tab:tabItem": "tabBuilder",
+    # u-tree's unnamed scoped slot is exposed as `nodeBuilder` in Dart because
+    # it is repeated for every node (and therefore is not a single `child`).
+    "u-tree:default": "nodeBuilder",
 }
 
 

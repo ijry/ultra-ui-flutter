@@ -94,6 +94,10 @@ class UPInput extends StatefulWidget {
     this.onUpdateValue,
     this.onUpdateModelValue,
     this.formatter,
+    this.prefixBuilder,
+    this.suffixBuilder,
+    this.prefixSlot,
+    this.suffixSlot,
   });
 
   final dynamic value;
@@ -157,6 +161,18 @@ class UPInput extends StatefulWidget {
 
   /// Source content formatter.
   final String Function(String)? formatter;
+
+  /// Source named slot `prefix`; replaces [prefixIcon] when provided.
+  final WidgetBuilder? prefixBuilder;
+
+  /// Source named slot `suffix`; replaces [suffixIcon] when provided.
+  final WidgetBuilder? suffixBuilder;
+
+  /// Source named slot `prefix` as a static widget.
+  final Widget? prefixSlot;
+
+  /// Source named slot `suffix` as a static widget.
+  final Widget? suffixSlot;
 
   dynamic get effectiveValue => modelValue ?? value;
 
@@ -509,14 +525,18 @@ class UPInputState extends State<UPInput> {
       ),
       child: Row(
         children: [
-          if (widget.prefixIcon.isNotEmpty) ...[
-            UPIcon(
-              name: widget.prefixIcon,
-              size: prefixIconStyle['fontSize'] ?? 18,
-              color: prefixIconStyle['color'] ?? tokens.tipsColor,
-              bold: _isUPInputIconBold(prefixIconStyle['fontWeight']),
-              top: prefixIconStyle['top'] ?? 0,
-            ),
+          if (widget.prefixBuilder != null ||
+              widget.prefixSlot != null ||
+              widget.prefixIcon.isNotEmpty) ...[
+            widget.prefixBuilder?.call(context) ??
+                widget.prefixSlot ??
+                UPIcon(
+                  name: widget.prefixIcon,
+                  size: prefixIconStyle['fontSize'] ?? 18,
+                  color: prefixIconStyle['color'] ?? tokens.tipsColor,
+                  bold: _isUPInputIconBold(prefixIconStyle['fontWeight']),
+                  top: prefixIconStyle['top'] ?? 0,
+                ),
             const SizedBox(width: 6),
           ],
           Expanded(
@@ -590,15 +610,19 @@ class UPInputState extends State<UPInput> {
               ),
             ),
           ],
-          if (widget.suffixIcon.isNotEmpty) ...[
+          if (widget.suffixBuilder != null ||
+              widget.suffixSlot != null ||
+              widget.suffixIcon.isNotEmpty) ...[
             const SizedBox(width: 6),
-            UPIcon(
-              name: widget.suffixIcon,
-              size: suffixIconStyle['fontSize'] ?? 18,
-              color: suffixIconStyle['color'] ?? tokens.tipsColor,
-              bold: _isUPInputIconBold(suffixIconStyle['fontWeight']),
-              top: suffixIconStyle['top'] ?? 0,
-            ),
+            widget.suffixBuilder?.call(context) ??
+                widget.suffixSlot ??
+                UPIcon(
+                  name: widget.suffixIcon,
+                  size: suffixIconStyle['fontSize'] ?? 18,
+                  color: suffixIconStyle['color'] ?? tokens.tipsColor,
+                  bold: _isUPInputIconBold(suffixIconStyle['fontWeight']),
+                  top: suffixIconStyle['top'] ?? 0,
+                ),
           ],
           if (widget.showWordLimit && widget.maxlength > 0) ...[
             const SizedBox(width: 6),

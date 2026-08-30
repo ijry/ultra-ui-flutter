@@ -106,15 +106,32 @@ EMULATION_NOTES = {
     "u-table2": "固定表头/左固定列用 Flutter 滚动裁剪覆盖层替代 CSS sticky",
     "u-guide": "`zIndex` 保留；真正全局固定层叠需状态保持 portal",
     "u-calendar-strip": "滑动手势用月份按钮模拟",
-    "u-parse": "HTML 子集渲染为 Flutter 组件树，无 CSS 引擎",
+    "u-parse": "HTML 子集渲染为 Flutter 组件树，无 CSS 引擎；NVUE web-view/JSBridge 内部方法不适用",
+    "u-qrcode": "Flutter `CustomPainter` 声明式重绘替代 Vue canvas watcher 队列；保留源码空值语义",
     "u-markdown": "Markdown → HTML 后交由 UPParse 渲染（与源码同架构）",
     "u-root-toast-host": "替代 `uni.$u.setRootToastRef`，注册全局 toast/notify 宿主",
-    "u-novel-reader": "分页测量用源码 measure-adapter 启发式宽度；持久化经宿主钩子",
+    "u-novel-reader": "分页测量用源码 measure-adapter 启发式宽度；持久化经宿主钩子；CSS computed 映射为 Flutter 主题与布局对象",
 }
 
 STATUS_DONE = "✅ 已复刻"
 STATUS_PARTIAL = "🟡 部分"
 STATUS_TODO = "⛔ 未复刻"
+
+
+def component_total(cov: dict) -> int:
+    """Return the number of real source components in a coverage report.
+
+    Older reports included a synthetic ``uview-plus`` aggregate entry, while
+    current ``coverage_scan.py`` emits only component directories.  Subtracting
+    one unconditionally therefore made the live total under-report by one.
+    Keep the compatibility subtraction conditional and ignore future metadata
+    keys (those conventionally start with an underscore).
+    """
+    return sum(
+        1
+        for name in cov
+        if name != "uview-plus" and not str(name).startswith("_")
+    )
 
 
 def load() -> tuple[dict, dict]:
@@ -254,7 +271,7 @@ def main() -> None:
         body.append(HEADER)
         body.extend(rows_for(leftovers, cov, seen))
 
-    total = len(cov) - 1  # exclude the uview-plus aggregate entry
+    total = component_total(cov)
     done = sum(
         1
         for n, e in cov.items()
@@ -303,6 +320,11 @@ def main() -> None:
 >
 > 该脚本只能证明 token 取值一致，不能证明组件读了正确的 token；后者由
 > `packages/ultra_ui/test/theme_parity_test.dart` 断言。
+>
+> Vue/uni-app 平台内部实现（例如 NVUE JSBridge、canvas watcher 调度器）以及
+> 仅生成 CSS style map 的 computed，会在 `coverage_scan.py` 中按组件和符号逐项
+> 列入 `excluded_methods`。这些项计为已对齐，但不会按下划线或命名模式整体忽略，
+> 以免掩盖真实的宿主可见方法缺口。
 >
 > **prop 默认值**由第三个脚本核对 —— 本表只看 prop 是否存在，存在但默认值写错
 > （尺寸、间距、时长差几个单位）是名称比对查不出的：

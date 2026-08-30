@@ -85,6 +85,9 @@ class UPUpload extends StatefulWidget {
     this.autoUploader,
     this.picker,
     this.trigger,
+    this.child,
+    this.playIconSlot,
+    this.successSlot,
     this.customStyle,
   });
 
@@ -143,6 +146,16 @@ class UPUpload extends StatefulWidget {
   /// Host-provided picker. Return one map / string or a list.
   final Future<dynamic> Function()? picker;
   final Widget? trigger;
+
+  /// Source default slot; replaces the built-in picker tile when no trigger is
+  /// supplied.
+  final Widget? child;
+
+  /// Source named slot `playIcon`; replaces the video preview play icon.
+  final Widget? playIconSlot;
+
+  /// Source named slot `success`; replaces the success badge.
+  final Widget? successSlot;
 
   final BoxDecoration? customStyle;
 
@@ -746,6 +759,20 @@ class UPUploadState extends State<UPUpload> {
                       ),
                     ),
                   ),
+                if (status == 'success' && _isVideo(item))
+                  Positioned.fill(
+                    child: GestureDetector(
+                      onTap: () => widget.onClickPreview?.call(item, i),
+                      child: Center(
+                        child: widget.playIconSlot ??
+                            const UPIcon(
+                              name: 'play-right',
+                              size: 22,
+                              color: Color(0xFFFFFFFF),
+                            ),
+                      ),
+                    ),
+                  ),
                 if (status != 'uploading' && deletableItem)
                   Positioned(
                     top: 0,
@@ -774,22 +801,23 @@ class UPUploadState extends State<UPUpload> {
                   Positioned(
                     bottom: 0,
                     right: 0,
-                    child: Container(
-                      width: 18,
-                      height: 14,
-                      alignment: Alignment.center,
-                      decoration: const BoxDecoration(
-                        color: Color(0xFF5AC725),
-                        borderRadius: BorderRadius.only(
-                          topLeft: Radius.circular(10),
+                    child: widget.successSlot ??
+                        Container(
+                          width: 18,
+                          height: 14,
+                          alignment: Alignment.center,
+                          decoration: const BoxDecoration(
+                            color: Color(0xFF5AC725),
+                            borderRadius: BorderRadius.only(
+                              topLeft: Radius.circular(10),
+                            ),
+                          ),
+                          child: const UPIcon(
+                            name: 'checkmark',
+                            size: 12,
+                            color: Color(0xFFFFFFFF),
+                          ),
                         ),
-                      ),
-                      child: const UPIcon(
-                        name: 'checkmark',
-                        size: 12,
-                        color: Color(0xFFFFFFFF),
-                      ),
-                    ),
                   ),
               ],
             ),
@@ -808,6 +836,13 @@ class UPUploadState extends State<UPUpload> {
                     chooseFile();
                   },
             child: widget.trigger,
+          ),
+        );
+      } else if (widget.child != null) {
+        children.add(
+          GestureDetector(
+            onTap: widget.disabled ? null : chooseFile,
+            child: widget.child,
           ),
         );
       } else {

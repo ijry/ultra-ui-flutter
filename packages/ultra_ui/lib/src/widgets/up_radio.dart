@@ -195,6 +195,7 @@ class UPRadio extends StatelessWidget {
     this.iconColor = '',
     this.customStyle,
     this.onChange,
+    this.iconSlot,
   });
 
   /// Source `formValidate` — requires [context] to reach parent form.
@@ -223,6 +224,9 @@ class UPRadio extends StatelessWidget {
   final dynamic iconColor;
   final BoxDecoration? customStyle;
   final ValueChanged<dynamic>? onChange;
+
+  /// Source named slot `icon`; replaces the built-in radio mark.
+  final Widget? iconSlot;
 
   bool get isDisabled {
     if (disabled is bool) return disabled as bool;
@@ -416,13 +420,14 @@ class UPRadio extends StatelessWidget {
           borderRadius: BorderRadius.circular(radius),
           border: Border.all(color: borderColor, width: 1),
         ),
-        child: isChecked
-            ? UPIcon(
-                name: 'checkbox-mark',
-                size: elIconSize,
-                color: markColor,
-              )
-            : null,
+        child: iconSlot ??
+            (isChecked
+                ? UPIcon(
+                    name: 'checkbox-mark',
+                    size: elIconSize,
+                    color: markColor,
+                  )
+                : null),
       ),
     );
 

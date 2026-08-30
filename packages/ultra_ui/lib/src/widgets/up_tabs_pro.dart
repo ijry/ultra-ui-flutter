@@ -48,6 +48,10 @@ class UPTabsPro extends StatefulWidget {
     this.bindIndexRef = '',
     this.left,
     this.right,
+    this.iconBuilder,
+    this.tabBuilder,
+    this.iconSlot,
+    this.tabSlot,
     this.contentBuilder,
     this.onClick,
     this.onLongPress,
@@ -87,6 +91,26 @@ class UPTabsPro extends StatefulWidget {
 
   /// Source `right` slot, forwarded to [UPTabs].
   final Widget? right;
+
+  /// Source `icon` slot, scoped to one tab item.
+  final Widget Function(
+    BuildContext context,
+    dynamic item,
+    String keyName,
+    int index,
+  )? iconBuilder;
+
+  /// Source `tab` slot, scoped to one tab item and used as its label.
+  final Widget Function(
+    BuildContext context,
+    dynamic item,
+    String keyName,
+    int index,
+  )? tabBuilder;
+
+  /// Static aliases for the named `icon` and `tab` slots.
+  final Widget? iconSlot;
+  final Widget? tabSlot;
 
   /// Source default slot, rendered in the content pane when [showContent].
   final Widget Function(UPTabsProContentScope scope)? contentBuilder;
@@ -249,6 +273,14 @@ class UPTabsProState extends State<UPTabsPro> {
       shapeMode: widget.shapeMode,
       left: widget.left,
       right: widget.right,
+      iconBuilder: widget.iconBuilder ??
+          (widget.iconSlot == null
+              ? null
+              : (context, item, keyName, index) => widget.iconSlot!),
+      contentBuilder: widget.tabBuilder ??
+          (widget.tabSlot == null
+              ? null
+              : (context, item, keyName, index) => widget.tabSlot!),
       onClick: (item, index) => clickHandler(item, index),
       onLongPress: (item, index) => longPressHandler(item, index),
       onUpdateCurrent: (index) => updateCurrent(index),

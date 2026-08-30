@@ -20,6 +20,79 @@ Widget _host(List<Widget> items, {String borderColor = ''}) => MaterialApp(
     );
 
 void main() {
+  group('source public API', () {
+    test('tabbar border offset follows the top-border flag', () {
+      expect(const UPTabbar(children: []).midButtonBorderTopOffset, 0.25);
+      expect(
+        const UPTabbar(children: [], border: false).midButtonBorderTopOffset,
+        0,
+      );
+    });
+
+    testWidgets('mid-button icon content carries its active animation classes',
+        (tester) async {
+      const item = UPTabbarItem(
+        name: 'post',
+        mode: 'midButton',
+        icon: 'plus',
+      );
+      await tester.pumpWidget(
+        MaterialApp(
+          home: Scaffold(
+            body: UPTabbar(
+              value: 'post',
+              animationType: 'swing',
+              children: const [item],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      expect(
+        item.iconContentClassNames,
+        'u-tabbar-item__icon-content--mid-button '
+        'u-tabbar-item__icon-content--anim-swing',
+      );
+    });
+
+    test('mid-button border style exposes the current clip height', () {
+      expect(
+        const UPTabbarItem(mode: 'midButton', text: '发布').midButtonBorderStyle,
+        {'height': '25.5px'},
+      );
+    });
+
+    testWidgets('mid-button measurement updates the clipped ring height',
+        (tester) async {
+      const item = UPTabbarItem(
+        name: 'post',
+        mode: 'midButton',
+        icon: 'plus',
+      );
+      await tester.pumpWidget(
+        const MaterialApp(
+          home: Scaffold(
+            body: UPTabbar(
+              value: 'post',
+              border: true,
+              children: [item],
+            ),
+          ),
+        ),
+      );
+      await tester.pump();
+
+      await item.scheduleMidButtonBorderMeasure(
+        const {'top': 100.0, 'height': 50.0},
+        const {'top': 84.0, 'height': 64.0},
+      );
+
+      expect(item.midButtonBorderClipHeight, '16.25px');
+      expect(item.midButtonBorderStyle, {'height': '16.25px'});
+    });
+  });
+
   group('mid-button geometry', () {
     test('offsetY falls back to the source default of -10', () {
       expect(

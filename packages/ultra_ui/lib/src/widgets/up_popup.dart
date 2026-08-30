@@ -30,11 +30,14 @@ class UPPopup extends StatefulWidget {
     this.touchable = false,
     this.minHeight = '200px',
     this.maxHeight = '600px',
+    this.emitCloseOnExternalShowChange = true,
     this.onClose,
     this.onClosed,
     this.onUpdateShow,
     this.onOpen,
     this.child,
+    this.triggerSlot,
+    this.bottomSlot,
     this.customStyle,
   });
 
@@ -57,6 +60,14 @@ class UPPopup extends StatefulWidget {
   final bool touchable;
   final dynamic minHeight;
   final dynamic maxHeight;
+
+  /// Whether a controlled `show: true -> false` change should emit `close`.
+  ///
+  /// Source wrappers such as picker and action-sheet already emit their own
+  /// close/cancel/confirm events before updating the nested popup visibility,
+  /// so they disable this watcher bridge to avoid reporting the same action
+  /// twice. A directly used popup keeps the source default of `true`.
+  final bool emitCloseOnExternalShowChange;
   final VoidCallback? onClose;
 
   /// Source emit `closed` — fires after the leave animation, when the popup has
@@ -67,6 +78,12 @@ class UPPopup extends StatefulWidget {
   final ValueChanged<bool>? onUpdateShow;
   final VoidCallback? onOpen;
   final Widget? child;
+
+  /// Source named slot `trigger`; tapping it opens the popup.
+  final Widget? triggerSlot;
+
+  /// Source named slot `bottom`; rendered immediately below the popup content.
+  final Widget? bottomSlot;
   final BoxDecoration? customStyle;
 
   /// Source computed: transitionStyle.
@@ -183,6 +200,14 @@ class UPPopupState extends State<UPPopup> {
   /// Pending `closed` emission, cancelled if the popup reopens first.
   Timer? _closedTimer;
 
+  // Source `closeEmitted`: an internal close action marks the next external
+  // show=false watcher update as already handled. Flutter parents apply the
+  // callback on the next frame, so the suppression lifetime spans one frame
+  // rather than only the callback's synchronous stack.
+  bool _closeEmitted = false;
+  bool _suppressNextExternalClose = false;
+  bool _externalCloseScheduled = false;
+
   bool get isShown => _localShow ?? widget.show;
 
   /// Source data.
@@ -221,17 +246,57 @@ class UPPopupState extends State<UPPopup> {
     if (isShown) return;
     setState(() => _localShow = true);
     if (emit) {
+      _closeEmitted = false;
+      _suppressNextExternalClose = false;
       widget.onOpen?.call();
       widget.onUpdateShow?.call(true);
     }
+  }
+
+  /// Emits the source `close` event once for the current dismissal cycle.
+  void emitClose([dynamic _]) {
+    _closeEmitted = true;
+    _suppressNextExternalClose = true;
+    widget.onClose?.call();
+
+    // `$nextTick` in the source clears the marker after the current update.
+    // Keep the separate watcher suppression until the next frame so a
+    // Flutter parent's `onUpdateShow(false)` rebuild cannot duplicate it.
+    scheduleMicrotask(() {
+      _closeEmitted = false;
+    });
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _suppressNextExternalClose = false;
+    });
+  }
+
+  void _scheduleExternalClose() {
+    if (_externalCloseScheduled) return;
+    _externalCloseScheduled = true;
+    // didUpdateWidget runs while the parent is rebuilding. Defer the callback
+    // until that build has completed; consumers such as UPPicker may update
+    // their own state from onClose, which must not recursively dirty the
+    // element currently being rebuilt.
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _externalCloseScheduled = false;
+      if (!mounted || isShown) return;
+      if (_suppressNextExternalClose || _closeEmitted) {
+        _suppressNextExternalClose = false;
+        _closeEmitted = false;
+      } else {
+        emitClose();
+      }
+    });
   }
 
   void close({bool emit = true}) {
     if (!isShown) return;
     setState(() => _localShow = false);
     if (emit) {
-      widget.onClose?.call();
+      // Match the source ordering: update the controlled value first, then
+      // emit close while the suppression marker is active.
       widget.onUpdateShow?.call(false);
+      emitClose();
     }
     // `closed` follows the leave animation regardless of how the popup was
     // dismissed, including a silent programmatic close.
@@ -403,9 +468,22 @@ class UPPopupState extends State<UPPopup> {
       if (widget.show) {
         // Reopened before the previous leave finished: cancel the pending emit.
         _closedTimer?.cancel();
+        _externalCloseScheduled = false;
+        _closeEmitted = false;
+        _suppressNextExternalClose = false;
       } else {
-        // Source watcher re-emits for an external show -> false, so `closed`
-        // is observable no matter how the popup was dismissed.
+        // Source watcher re-emits close for an external show -> false unless
+        // the component's own close action already emitted it.
+        if (!widget.emitCloseOnExternalShowChange) {
+          _externalCloseScheduled = false;
+          _suppressNextExternalClose = false;
+          _closeEmitted = false;
+        } else if (_suppressNextExternalClose || _closeEmitted) {
+          _suppressNextExternalClose = false;
+          _closeEmitted = false;
+        } else {
+          _scheduleExternalClose();
+        }
         _scheduleClosed();
       }
     }
@@ -581,12 +659,29 @@ class UPPopupState extends State<UPPopup> {
       );
     }
 
+    if (widget.bottomSlot != null) {
+      panel = Column(
+        mainAxisSize: MainAxisSize.min,
+        children: [panel, widget.bottomSlot!],
+      );
+    }
+
     if (widget.pageInline) {
-      return _UPPopupLifecycle(
-        show: isShown,
-        duration: ms,
-        onOpen: widget.onOpen,
-        child: isShown ? panel : const SizedBox.shrink(),
+      return Stack(
+        children: [
+          if (widget.triggerSlot != null)
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: open,
+              child: widget.triggerSlot!,
+            ),
+          _UPPopupLifecycle(
+            show: isShown,
+            duration: ms,
+            onOpen: widget.onOpen,
+            child: isShown ? panel : const SizedBox.shrink(),
+          ),
+        ],
       );
     }
 
@@ -596,6 +691,12 @@ class UPPopupState extends State<UPPopup> {
       onOpen: widget.onOpen,
       child: Stack(
         children: [
+          if (widget.triggerSlot != null)
+            GestureDetector(
+              behavior: HitTestBehavior.opaque,
+              onTap: open,
+              child: widget.triggerSlot!,
+            ),
           if (widget.overlay)
             Positioned.fill(
               child: UPOverlay(

@@ -60,6 +60,9 @@ class UPSwipeActionState extends State<UPSwipeAction> {
     widget.onOpendItemUpdate?.call(true);
   }
 
+  /// Parent values exposed to child swipe-action items by the source mixin.
+  List<dynamic> get parentData => <dynamic>[widget.autoClose];
+
   /// Source children count helper.
   int get itemCount => _items.length;
 
