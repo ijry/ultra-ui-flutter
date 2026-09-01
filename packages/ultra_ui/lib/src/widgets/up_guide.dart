@@ -77,6 +77,7 @@ class UPGuideState extends State<UPGuide> {
   int _current = 0;
   bool _innerShow = false;
   bool _closing = false;
+  late final OverlayPortalController _portalController;
   late final PageController _pageController;
 
   int get current => _current;
@@ -89,8 +90,12 @@ class UPGuideState extends State<UPGuide> {
   @override
   void initState() {
     super.initState();
+    _portalController = OverlayPortalController(debugLabel: 'UPGuide');
     _pageController = PageController();
     _innerShow = widget.show;
+    // The portal stays mounted for the widget's whole life; visibility is
+    // driven by the overlay child, so no controller call happens during build.
+    _portalController.show();
     _bootstrap();
   }
 
@@ -240,7 +245,7 @@ class UPGuideState extends State<UPGuide> {
   @override
   Widget build(BuildContext context) {
     final show = _innerShow && !_hiddenByOnce && widget.list.isNotEmpty;
-    if (!show) return const SizedBox.shrink();
+    if (!show) return _buildPortal(const SizedBox.shrink());
 
     final bg = UPUtils.parseColor(widget.bgColor) ?? const Color(0xFF111111);
     final screenWidth = MediaQuery.sizeOf(context).width;
@@ -478,6 +483,17 @@ class UPGuideState extends State<UPGuide> {
         ),
       ),
     );
-    return page;
+    return _buildPortal(page);
+  }
+
+  Widget _buildPortal(Widget page) {
+    // Routing to the root overlay keeps the guide clear of any local clipping
+    // while still inheriting this subtree's theme and media query.
+    return OverlayPortal(
+      controller: _portalController,
+      overlayLocation: OverlayChildLocation.rootOverlay,
+      overlayChildBuilder: (_) => page,
+      child: const SizedBox.shrink(),
+    );
   }
 }
