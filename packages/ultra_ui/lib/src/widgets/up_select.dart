@@ -10,8 +10,9 @@ class UPSelect extends StatefulWidget {
     super.key,
     this.maxHeight = '90vh',
     this.overlay = true,
-    this.overlayOpacity = 0.01,
+    this.overlayOpacity = 0.3,
     this.overlayStyle = const {},
+    this.closeOnClickOverlay = true,
     this.duration = 300,
     this.label = '选项',
     this.options = const [],
@@ -42,6 +43,9 @@ class UPSelect extends StatefulWidget {
   final bool overlay;
   final dynamic overlayOpacity;
   final Map overlayStyle;
+
+  /// Whether tapping the overlay closes the options panel.
+  final bool closeOnClickOverlay;
   final dynamic duration;
   final String label;
   final List options;
@@ -123,6 +127,16 @@ class UPSelectState extends State<UPSelect> {
     if (wasOpen) widget.onUpdateShow?.call(false);
   }
 
+  /// Source `labelClick`. The trigger sits above the overlay while open, so it
+  /// handles collapsing itself rather than relying on the barrier.
+  void labelClick() {
+    if (_open) {
+      closeSelect();
+      return;
+    }
+    openSelect();
+  }
+
   /// Source-compatible aliases.
   void open() => openSelect();
   void close() => closeSelect();
@@ -162,8 +176,10 @@ class UPSelectState extends State<UPSelect> {
   Map optionsStyle([dynamic _]) => optionsWrapStyle();
 
   /// Source `overlayClick`.
-  /// Source `overlayClick`.
-  void overlayClick() => closeSelect();
+  void overlayClick() {
+    if (!widget.closeOnClickOverlay) return;
+    closeSelect();
+  }
 
   /// Source `selectItem`.
   void selectItem(Map item) => _select(item);
@@ -200,10 +216,6 @@ class UPSelectState extends State<UPSelect> {
     } else {
       update();
     }
-  }
-
-  void _toggle() {
-    toggle();
   }
 
   void _select(Map item) {
@@ -317,22 +329,36 @@ class UPSelectState extends State<UPSelect> {
     );
   }
 
+  /// The source lifts the trigger above a now-visible overlay via z-index. Here
+  /// the barrier instead leaves a hole over the trigger, so the trigger keeps
+  /// its own colour and receives the tap that collapses the panel.
+  Widget _buildBarrier(double opacity) {
+    final Widget barrier = GestureDetector(
+      key: const ValueKey('up-select-overlay-barrier'),
+      behavior: HitTestBehavior.opaque,
+      onTap: overlayClick,
+      child: ColoredBox(color: Color.fromRGBO(0, 0, 0, opacity)),
+    );
+
+    final box = _triggerKey.currentContext?.findRenderObject() as RenderBox?;
+    if (box == null || !box.hasSize) {
+      return Positioned.fill(child: barrier);
+    }
+    final hole = box.localToGlobal(Offset.zero) & box.size;
+    return Positioned.fill(
+      child: ClipPath(
+        clipper: _TriggerHoleClipper(hole),
+        child: barrier,
+      ),
+    );
+  }
+
   Widget _buildOverlay(BuildContext context) {
     final opacity =
-        (double.tryParse('${widget.overlayOpacity}') ?? 0.01).clamp(0.0, 1.0);
+        (double.tryParse('${widget.overlayOpacity}') ?? 0.3).clamp(0.0, 1.0);
     return Stack(
       children: [
-        if (widget.overlay)
-          Positioned.fill(
-            child: GestureDetector(
-              key: const ValueKey('up-select-overlay-barrier'),
-              behavior: HitTestBehavior.opaque,
-              onTap: closeSelect,
-              child: ColoredBox(
-                color: Color.fromRGBO(0, 0, 0, opacity),
-              ),
-            ),
-          ),
+        if (widget.overlay) _buildBarrier(opacity),
         CompositedTransformFollower(
           link: _layerLink,
           showWhenUnlinked: false,
@@ -363,7 +389,7 @@ class UPSelectState extends State<UPSelect> {
       link: _layerLink,
       child: GestureDetector(
         key: _triggerKey,
-        onTap: _toggle,
+        onTap: labelClick,
         behavior: HitTestBehavior.opaque,
         child: Opacity(
           opacity: widget.disabled ? 0.5 : 1,
@@ -399,4 +425,20 @@ class UPSelectState extends State<UPSelect> {
 
     return body;
   }
+}
+
+class _TriggerHoleClipper extends CustomClipper<Path> {
+  const _TriggerHoleClipper(this.hole);
+
+  final Rect hole;
+
+  @override
+  Path getClip(Size size) => Path.combine(
+        PathOperation.difference,
+        Path()..addRect(Offset.zero & size),
+        Path()..addRect(hole),
+      );
+
+  @override
+  bool shouldReclip(_TriggerHoleClipper oldClipper) => oldClipper.hole != hole;
 }

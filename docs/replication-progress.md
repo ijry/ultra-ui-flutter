@@ -3,8 +3,8 @@
 本文件由 `tool/gen_replication_progress.py` 生成，汇总上游组件目录、`pages.json` 注册页、
 演示目录和 Flutter `exampleRoutes`。请勿手工修改表格；更新代码或上游后重新生成。
 
-- 生成日期：`2026-08-31`
-- 上游版本：`cf27e4ef6`
+- 生成日期：`2026-09-01`
+- 上游版本：`8a2c4cff8`
 - 上游目录：`uview-plus/src`
 - Flutter 目标：`packages/ultra_ui` 与 `example`
 
@@ -21,9 +21,9 @@
 | Flutter source manifest 路由 | 126 |
 | 源路由待实现 | 0 |
 | Flutter 扩展路由 | 2 |
-| props 接口覆盖 | 1581/1581 |
+| props 接口覆盖 | 1582/1582 |
 | emits 接口覆盖 | 332/332 |
-| methods + computed 覆盖 | 1345/1345 |
+| methods + computed 覆盖 | 1346/1346 |
 | slots 接口覆盖 | 198/198 |
 | 未注册上游源码文件 | 9 |
 
@@ -57,7 +57,7 @@
 | 表单组件 | `u-number-keyboard` | `src/uni_modules/uview-plus/components/u-number-keyboard` | `UPNumberKeyboard` | `packages/ultra_ui/lib/src/widgets/up_number_keyboard.dart` | ✅ 已复刻 | 完整 | 3/3 | 2/2 | 6/6 | — | `componentsB/keyboard/keyboard` | `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |
 | 表单组件 | `u-car-keyboard` | `src/uni_modules/uview-plus/components/u-car-keyboard` | `UPCarKeyboard` | `packages/ultra_ui/lib/src/widgets/up_car_keyboard.dart` | ✅ 已复刻 | 完整 | 2/2 | 2/2 | 6/6 | — | `componentsB/keyboard/keyboard` | `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |
 | 表单组件 | `u-picker` | `src/uni_modules/uview-plus/components/u-picker` | `UPPicker` | `packages/ultra_ui/lib/src/widgets/up_picker.dart` | ✅ 已复刻 | 完整 | 33/33 | 7/7 | 18/18 | 4/4 | `componentsC/picker/picker` | `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |
-| 表单组件 | `u-select` | `src/uni_modules/uview-plus/components/u-select` | `UPSelect` | `packages/ultra_ui/lib/src/widgets/up_select.dart` | ✅ 已复刻 | 完整 | 18/18 | 2/2 | 13/13 | 4/4 | `componentsD/select/select` | `packages/ultra_ui/test/widgets_test.dart` | 根 Overlay 锚定面板替代绝对定位 DOM 层叠 |
+| 表单组件 | `u-select` | `src/uni_modules/uview-plus/components/u-select` | `UPSelect` | `packages/ultra_ui/lib/src/widgets/up_select.dart` | ✅ 已复刻 | 完整 | 19/19 | 2/2 | 14/14 | 4/4 | `componentsD/select/select` | `packages/ultra_ui/test/select_overlay_test.dart`, `packages/ultra_ui/test/widgets_test.dart` | 根 Overlay 锚定面板替代绝对定位 DOM 层叠 |
 | 表单组件 | `u-cascader` | `src/uni_modules/uview-plus/components/u-cascader` | `UPCascader` | `packages/ultra_ui/lib/src/widgets/up_cascader.dart` | ✅ 已复刻 | 完整 | 12/12 | 5/5 | 15/15 | — | `componentsD/cascader/cascader` | `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |
 | 表单组件 | `u-choose` | `src/uni_modules/uview-plus/components/u-choose` | `UPChoose` | `packages/ultra_ui/lib/src/widgets/up_choose.dart` | ✅ 已复刻 | 完整 | 10/10 | 2/2 | 1/1 | 1/1 | `componentsD/choose/choose` | `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |
 | 表单组件 | `u-datetime-picker` | `src/uni_modules/uview-plus/components/u-datetime-picker` | `UPDatetimePicker` | `packages/ultra_ui/lib/src/widgets/up_datetime_picker.dart` | ✅ 已复刻 | 完整 | 37/37 | 6/6 | 23/23 | 3/3 | `componentsC/datetimePicker/datetimePicker` | `packages/ultra_ui/test/missing_public_methods_test.dart`, `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |
@@ -82,7 +82,7 @@
 | 数据组件 | `u-count-down` | `src/uni_modules/uview-plus/components/u-count-down` | `UPCountDown` | `packages/ultra_ui/lib/src/widgets/up_count_down.dart` | ✅ 已复刻 | 完整 | 4/4 | 2/2 | 9/9 | 1/1 | `componentsB/countDown/countDown` | `packages/ultra_ui/test/slot_builder_test.dart`, `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |
 | 数据组件 | `u-count-to` | `src/uni_modules/uview-plus/components/u-count-to` | `UPCountTo` | `packages/ultra_ui/lib/src/widgets/up_count_to.dart` | ✅ 已复刻 | 完整 | 11/11 | 1/1 | 13/13 | — | `componentsB/countTo/countTo` | `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |
 | 反馈组件 | `u-tooltip` | `src/uni_modules/uview-plus/components/u-tooltip` | `UPTooltip` | `packages/ultra_ui/lib/src/widgets/up_tooltip.dart` | ✅ 已复刻 | 完整 | 16/16 | 4/4 | 10/10 | 2/2 | `componentsC/tooltip/tooltip` | `packages/ultra_ui/test/slot_builder_test.dart`, `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |
-| 反馈组件 | `u-guide` | `src/uni_modules/uview-plus/components/u-guide` | `UPGuide` | `packages/ultra_ui/lib/src/widgets/up_guide.dart` | ✅ 已复刻 | 完整 | 11/11 | 5/5 | 12/12 | — | `componentsC/guide/guide` | `packages/ultra_ui/test/widgets_test.dart` | `zIndex` 保留；真正全局固定层叠需状态保持 portal |
+| 反馈组件 | `u-guide` | `src/uni_modules/uview-plus/components/u-guide` | `UPGuide` | `packages/ultra_ui/lib/src/widgets/up_guide.dart` | ✅ 已复刻 | 完整 | 11/11 | 5/5 | 12/12 | — | `componentsC/guide/guide` | `packages/ultra_ui/test/guide_root_overlay_test.dart`, `packages/ultra_ui/test/widgets_test.dart` | `zIndex` 保留；真正全局固定层叠需状态保持 portal |
 | 反馈组件 | `u-popover` | `src/uni_modules/uview-plus/components/u-popover` | `UPPopover` | `packages/ultra_ui/lib/src/widgets/up_popover.dart` | ✅ 已复刻 | 完整 | 10/10 | — | 5/5 | 2/2 | `componentsC/popover/popover` | `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |
 | 反馈组件 | `u-action-sheet` | `src/uni_modules/uview-plus/components/u-action-sheet` | `UPActionSheet` | `packages/ultra_ui/lib/src/widgets/up_action_sheet.dart` | ✅ 已复刻 | 完整 | 12/12 | 4/4 | 13/13 | 1/1 | `componentsB/actionSheet/actionSheet` | `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |
 | 反馈组件 | `u-alert` | `src/uni_modules/uview-plus/components/u-alert` | `UPAlert` | `packages/ultra_ui/lib/src/widgets/up_alert.dart` | ✅ 已复刻 | 完整 | 12/12 | 4/4 | 4/4 | 1/1 | `componentsB/alert/alert` | `packages/ultra_ui/test/slot_builder_test.dart`, `packages/ultra_ui/test/widgets_test.dart` | API 静态扫描全覆盖 |

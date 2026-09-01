@@ -57,9 +57,9 @@
 | ✅ 已复刻 | 141 |
 | 🟡 部分 | 0 |
 | ⛔ 未复刻 | 0 |
-| props 覆盖 | 1581/1581 |
+| props 覆盖 | 1582/1582 |
 | emits 覆盖 | 332/332 |
-| methods + computed 覆盖 | 1345/1345 |
+| methods + computed 覆盖 | 1346/1346 |
 
 ### 状态含义
 
@@ -117,7 +117,7 @@
 | `u-picker` | `UPPicker` | ✅ 已复刻 | 33/33 | 7/7 | 18/18 | 接口与样式对齐 |
 | `↳ u-picker-column` | `UPPickerColumn` | ✅ 已复刻 | — | — | — | 接口与样式对齐 |
 | `↳ u-picker-data` | `UPPickerData` | ✅ 已复刻 | 6/6 | 5/5 | 6/6 | 接口与样式对齐 |
-| `u-select` | `UPSelect` | ✅ 已复刻 | 18/18 | 2/2 | 13/13 | 根 Overlay 锚定面板替代绝对定位 DOM 层叠 |
+| `u-select` | `UPSelect` | ✅ 已复刻 | 19/19 | 2/2 | 14/14 | 根 Overlay 锚定面板替代绝对定位 DOM 层叠 |
 | `u-cascader` | `UPCascader` | ✅ 已复刻 | 12/12 | 5/5 | 15/15 | 接口与样式对齐 |
 | `u-choose` | `UPChoose` | ✅ 已复刻 | 10/10 | 2/2 | 1/1 | 接口与样式对齐 |
 | `u-datetime-picker` | `UPDatetimePicker` | ✅ 已复刻 | 37/37 | 6/6 | 23/23 | 接口与样式对齐 |

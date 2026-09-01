@@ -34,7 +34,7 @@ Prefix: `UP*`
 
 | `UPGoodsSku` | SKU matching supports nested `s/sku/specs` and flat source keys; confirm payload includes both Flutter and source keys (`sku/num/selectedText`) |
 | `UPCityLocate` | Host inject via `locationHandler` instead of `uni.getLocation`; autoLocate default true |
-| `UPGuide` | Source defaults and page visual scale are aligned; in-memory once cache plus optional `readPersisted/writePersisted/removePersisted` host hooks. The `zIndex` prop is retained, but true global fixed layering needs a state-preserving portal rather than the current simple root-overlay registry |
+| `UPGuide` | Source defaults and page visual scale are aligned; in-memory once cache plus optional `readPersisted/writePersisted/removePersisted` host hooks. Global fixed layering is real: the guide renders through a state-preserving `OverlayPortal` on the root overlay, so it escapes local clipping while keeping page state. The `zIndex` prop is retained for API compatibility, since overlay order is decided by the root overlay rather than a numeric index |
 | `UPCalendarStrip` | Horizontal month-day strip + expand embeds `UPCalendar` pageInline; swipe gestures emulated by month buttons |
 | `UPTree` | Source methods (get/set checked/expand) supported; recursive parent/child selection renders a Flutter tri-state checkbox for indeterminate parents |
 | `UPCascader` | Public open/close/reset/setValue; optionsCols=2 dual pane emulated |
@@ -1754,3 +1754,11 @@ Last update: 2026-08-31 (Batch LR qrcode gesture-event parity; flutter test 1041
 Last update: 2026-08-31 (Batch LS qrcode inactive-show parity; flutter test 1042 green)
 
 | render parity | UPQrcode now leaves the source-declared but source-unconsumed `show` prop inert. Passing `show: false` no longer collapses the Flutter widget to zero size; the QR content retains its configured dimensions exactly as the upstream template does. The prop remains accepted for source API compatibility, while value encoding, gestures, colors, quiet zone, and icon rendering remain independent. |
+
+Last update: 2026-09-01 (Batch LT guide root-overlay layering; flutter test 1044 green)
+
+| render parity | UPGuide now renders through a state-preserving `OverlayPortal` routed to the root overlay, so the guide escapes any local clipping or sizing of its host subtree and covers the full screen like the source `position: fixed` layer, while still inheriting the theme and media query of where it is declared. The portal stays mounted for the widget's lifetime and visibility is derived from build state, which keeps controlled `show` toggles to a single frame and avoids calling the portal controller during build. Page state survives showing and hiding. |
+
+Last update: 2026-09-01 (Batch LU select visible-overlay and close switch parity, syncing upstream 9250af9b4; flutter test 1050 green)
+
+| behavior parity | UPSelect syncs the upstream visible-overlay change. `overlayOpacity` now defaults to the source `0.3` instead of the effectively invisible `0.01` and accepts a string as well as a number. The new `closeOnClickOverlay` prop (default true) makes overlay-tap dismissal switchable rather than hardcoded, so a host can require an explicit option choice; the barrier tap now routes through `overlayClick` so the prop is actually honoured. The new public `labelClick` handles collapsing from the trigger itself, matching the source. Where the source lifts the trigger with `z-index`, Flutter's barrier lives in the root overlay, so it instead clips a hole over the measured trigger rect — the trigger keeps its own colour and still receives the tap that closes the panel. |
