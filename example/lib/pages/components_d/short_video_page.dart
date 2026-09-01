@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ultra_ui/ultra_ui.dart';
+import 'package:ultra_ui_media/ultra_ui_media.dart';
 
 import '../shared/example_page_scaffold.dart';
 
@@ -117,6 +118,13 @@ class _ShortVideoPageState extends State<ShortVideoPage> {
                 videoList: _videoList,
                 currentTab: _currentTab,
                 currentVideo: _currentVideo,
+                videoBuilder: (item, index, playing) {
+                  final map = item is Map ? item : const <String, Object>{};
+                  return UPVideoView(
+                    src: '${map['videoUrl'] ?? ''}',
+                    playing: playing,
+                  );
+                },
                 onTabChange: (index) => setState(() => _currentTab = index),
                 onVideoChange: (index) => setState(() => _currentVideo = index),
                 onLike: (item, index) => _toggleLike(index),

@@ -1,0 +1,26 @@
+name: ultra_ui_media
+description: Real PDF and video backends for ultra_ui's UPPdfReader and UPShortVideo.
+version: 0.1.0
+publish_to: none
+
+environment:
+  sdk: ">=3.3.0 <4.0.0"
+  flutter: ">=3.19.0"
+
+dependencies:
+  flutter:
+    sdk: flutter
+  ultra_ui:
+    path: ../ultra_ui
+  pdfrx: 2.4.7
+  video_player: 2.11.1
+
+dev_dependencies:
+  flutter_test:
+    sdk: flutter
+  flutter_lints: ^5.0.0
+  # Tests swap in a fake platform implementation instead of decoding real media.
+  video_player_platform_interface: 6.9.0
+
+flutter:
+  uses-material-design: true

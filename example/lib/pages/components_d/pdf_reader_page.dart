@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:ultra_ui/ultra_ui.dart';
+import 'package:ultra_ui_media/ultra_ui_media.dart';
 
 import '../shared/example_demo_block.dart';
 import '../shared/example_page_scaffold.dart';
@@ -42,12 +43,15 @@ class _PdfReaderPageState extends State<PdfReaderPage> {
                       show: _show,
                       onUpdateShow: (value) => setState(() => _show = value),
                       onClose: () => setState(() => _show = false),
-                      child: const SizedBox(
+                      child: SizedBox(
                         height: 480,
                         child: UPPdfReader(
-                          key: ValueKey('pdf-reader-page-viewer'),
+                          key: const ValueKey('pdf-reader-page-viewer'),
                           src: _pdfFileUrl,
                           baseUrl: '',
+                          viewerBuilder: (viewerUrl) => UPPdfView(
+                            target: resolvePdfTarget(viewerUrl),
+                          ),
                         ),
                       ),
                     ),

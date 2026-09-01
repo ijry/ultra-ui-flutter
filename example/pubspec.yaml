@@ -12,6 +12,8 @@ dependencies:
     sdk: flutter
   ultra_ui:
     path: ../packages/ultra_ui
+  ultra_ui_media:
+    path: ../packages/ultra_ui_media
 
 dev_dependencies:
   flutter_test:

@@ -30,7 +30,7 @@ Prefix: `UP*`
 |---|---|
 | `UPDragSort` | Vertical/horizontal modes use Flutter `ReorderableListView`; `direction=all` uses a wrapped grid with long-press drag targets rather than uni `movable-view` absolute positioning |
 | `UPSelect` | Anchored Flutter root-overlay panel and dismiss barrier replace uni `u-overlay`/absolute-position DOM layering |
-| `UPPdfReader` | Host injects real viewer via `viewerBuilder` |
+| `UPPdfReader` | Real viewer available: `UPPdfView` from `ultra_ui_media` (pdfrx/PDFium), passed via `viewerBuilder`. Core stays dependency-free and falls back to a placeholder when no viewer is supplied |
 
 | `UPGoodsSku` | SKU matching supports nested `s/sku/specs` and flat source keys; confirm payload includes both Flutter and source keys (`sku/num/selectedText`) |
 | `UPCityLocate` | Host inject via `locationHandler` instead of `uni.getLocation`; autoLocate default true |
@@ -40,7 +40,7 @@ Prefix: `UP*`
 | `UPCascader` | Public open/close/reset/setValue; optionsCols=2 dual pane emulated |
 | `UPTable2` | Tree expand/selection cascade and public selection/sort/expand APIs; fixed header and fixed-left use Flutter scroll/clip overlays rather than uni `scroll-view` DOM/CSS sticky behavior |
 | `UPCoupon` | Slot builders (`unit/amount/title/action/...`) map source named slots |
-| `UPShortVideo` | Host inject player via `videoBuilder`; public `playVideo/pauseCurrentVideo` |
+| `UPShortVideo` | Real player available: `UPVideoView` from `ultra_ui_media` (video_player), passed via `videoBuilder`; public `playVideo/pauseCurrentVideo` still drive it |
 | `UPCateTab` | follow mode uses Flutter scroll-position section tracking rather than uni intersection observers; source scroll snapshots and public `switchMenu` are synchronized |
 | `UPPopover` | Built on UPTooltip; public open/close/toggle + onUpdateShow. Click/long-press triggers use source one-way open behavior, and `show` is controlled only when `triggerMode=manual` |
 | `UPDatetimePicker` | Public setValue/open/close; modes mapped through UPPicker columns |
@@ -1762,3 +1762,7 @@ Last update: 2026-09-01 (Batch LT guide root-overlay layering; flutter test 1044
 Last update: 2026-09-01 (Batch LU select visible-overlay and close switch parity, syncing upstream 9250af9b4; flutter test 1050 green)
 
 | behavior parity | UPSelect syncs the upstream visible-overlay change. `overlayOpacity` now defaults to the source `0.3` instead of the effectively invisible `0.01` and accepts a string as well as a number. The new `closeOnClickOverlay` prop (default true) makes overlay-tap dismissal switchable rather than hardcoded, so a host can require an explicit option choice; the barrier tap now routes through `overlayClick` so the prop is actually honoured. The new public `labelClick` handles collapsing from the trigger itself, matching the source. Where the source lifts the trigger with `z-index`, Flutter's barrier lives in the root overlay, so it instead clips a hole over the measured trigger rect — the trigger keeps its own colour and still receives the tap that closes the panel. |
+
+Last update: 2026-09-01 (Batch LV real PDF and video backends via ultra_ui_media; ultra_ui 1050 + media 14 + example 502 green)
+
+| platform capability | UPPdfReader and UPShortVideo now have real engines instead of placeholder-only rendering. A new sibling package `ultra_ui_media` supplies `UPPdfView` (pdfrx / PDFium) and `UPVideoView` (video_player), wired through the existing `viewerBuilder` and `videoBuilder` hooks. `ultra_ui` itself keeps zero native dependencies, so hosts that do not need PDF or video pay nothing and still get the placeholder fallback; the example app depends on the media package and both demo pages render real content. `resolvePdfTarget` unwraps the pdf.js `?file=` viewer URL the reader produces so a native renderer receives the underlying document. `UPVideoView` derives playback from the source's active-item `playing` state, so `playVideo` / `pauseCurrentVideo` keep working unchanged. Note pdfrx downloads a PDFium binary from GitHub at first build. |
