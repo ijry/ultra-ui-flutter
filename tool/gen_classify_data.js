@@ -10,9 +10,9 @@ const fs = require('fs');
 const path = require('path');
 
 const SRC =
-  'D:/Repos/xyito/open/uview-plus/src/pages/template/common/classify.data.js';
+  'D:/Repos/xyito/ultra-ui/uview-plus/src/pages/template/common/classify.data.js';
 const OUT =
-  'D:/Repos/xyito/open/ultra-ui-flutter/example/lib/pages/template/classify_data.dart';
+  'D:/Repos/xyito/ultra-ui/ultra-ui-flutter/example/lib/pages/template/classify_data.dart';
 
 // The source is an ES module; rewrite the single export so require() can load it.
 const tmp = path.join(require('os').tmpdir(), 'up_classify_data.js');

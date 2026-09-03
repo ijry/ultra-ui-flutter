@@ -2,7 +2,7 @@
 // markdown swap can be checked against the real upstream parser.
 //
 //   node tool/markdown_reference.mjs
-import { marked } from 'file:///D:/Repos/xyito/open/uview-plus/src/uni_modules/uview-plus/components/u-markdown/marked.esm.mjs'
+import { marked } from 'file:///D:/Repos/xyito/ultra-ui/uview-plus/src/uni_modules/uview-plus/components/u-markdown/marked.esm.mjs'
 
 const cases = {
   heading: '# H1\n## H2\n### H3',

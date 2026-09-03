@@ -6,18 +6,18 @@ import {
   wrapText,
   paginateParagraphs,
   resolveAnchor,
-} from 'file:///D:/Repos/xyito/open/uview-plus/src/uni_modules/uview-plus/components/u-novel-reader/layout-engine.js'
-import { measureTextWidth } from 'file:///D:/Repos/xyito/open/uview-plus/src/uni_modules/uview-plus/components/u-novel-reader/measure-adapter.js'
+} from 'file:///D:/Repos/xyito/ultra-ui/uview-plus/src/uni_modules/uview-plus/components/u-novel-reader/layout-engine.js'
+import { measureTextWidth } from 'file:///D:/Repos/xyito/ultra-ui/uview-plus/src/uni_modules/uview-plus/components/u-novel-reader/measure-adapter.js'
 import {
   normalizeContent,
   normalizeProgress,
-} from 'file:///D:/Repos/xyito/open/uview-plus/src/uni_modules/uview-plus/components/u-novel-reader/content-normalizer.js'
+} from 'file:///D:/Repos/xyito/ultra-ui/uview-plus/src/uni_modules/uview-plus/components/u-novel-reader/content-normalizer.js'
 import {
   mergeReaderSettings,
   createBookmark,
   toggleBookmark,
   normalizeMode,
-} from 'file:///D:/Repos/xyito/open/uview-plus/src/uni_modules/uview-plus/components/u-novel-reader/reader-core.js'
+} from 'file:///D:/Repos/xyito/ultra-ui/uview-plus/src/uni_modules/uview-plus/components/u-novel-reader/reader-core.js'
 
 const out = {}
 

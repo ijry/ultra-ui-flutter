@@ -10,9 +10,9 @@ const fs = require('fs');
 const os = require('os');
 const path = require('path');
 
-const SRC = 'D:/Repos/xyito/open/uview-plus/src/pages/template/common';
+const SRC = 'D:/Repos/xyito/ultra-ui/uview-plus/src/pages/template/common';
 const OUT =
-  'D:/Repos/xyito/open/ultra-ui-flutter/example/lib/pages/template/region_data.dart';
+  'D:/Repos/xyito/ultra-ui/ultra-ui-flutter/example/lib/pages/template/region_data.dart';
 
 function load(name) {
   const tmp = path.join(os.tmpdir(), `up_region_${name}.js`);
