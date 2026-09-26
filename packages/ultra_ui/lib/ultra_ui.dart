@@ -141,6 +141,7 @@ export 'src/widgets/up_icon.dart';
 export 'src/widgets/up_image.dart';
 export 'src/widgets/up_input.dart';
 export 'src/widgets/up_layout.dart';
+export 'src/widgets/up_flex.dart';
 export 'src/widgets/up_line_progress.dart';
 export 'src/widgets/up_link.dart';
 export 'src/widgets/up_list.dart';
