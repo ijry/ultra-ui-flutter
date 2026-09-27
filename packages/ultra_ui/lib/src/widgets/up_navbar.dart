@@ -257,6 +257,7 @@ class UPNavbar extends StatelessWidget implements PreferredSizeWidget {
 
     final bar = SizedBox(
       height: h,
+      width: double.infinity,
       child: Stack(
         alignment: Alignment.center,
         children: [
