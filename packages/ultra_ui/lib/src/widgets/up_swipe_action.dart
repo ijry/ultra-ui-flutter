@@ -106,6 +106,7 @@ class UPSwipeActionItem extends StatefulWidget {
     this.button,
     required this.child,
     this.customStyle,
+    this.margin,
   });
 
   final bool show;
@@ -135,6 +136,10 @@ class UPSwipeActionItem extends StatefulWidget {
   final Widget? button;
   final Widget child;
   final BoxDecoration? customStyle;
+
+  /// 外部间距。作用在整条 item 的外层，因此滑动按钮不会延伸到间距区
+  /// （若把 margin 加在 child 上，未滑动时按钮会在间隙里露出来）。
+  final EdgeInsetsGeometry? margin;
 
   @override
   State<UPSwipeActionItem> createState() => UPSwipeActionItemState();
@@ -479,13 +484,20 @@ class UPSwipeActionItemState extends State<UPSwipeActionItem> {
             },
             child: Container(
               width: double.infinity,
-              color: tokens.cardBgColor,
+              // `customStyle` lets a card that paints its own surface (glass,
+              // gradient) control the base behind it — colour *and* radius,
+              // so the base lines up with the card's rounded corners.
+              decoration: widget.customStyle ??
+                  BoxDecoration(color: tokens.cardBgColor),
               child: widget.child,
             ),
           ),
         ),
       ],
     );
+    if (widget.margin != null) {
+      root = Padding(padding: widget.margin!, child: root);
+    }
     return root;
   }
 

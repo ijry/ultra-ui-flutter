@@ -53,6 +53,10 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
     required this.switchLoadingInactiveColor,
     required this.tagCloseBgColor,
     required this.noticeBarBgColor,
+    required this.glassBgColor,
+    required this.glassBorderColor,
+    required this.glassHighlightColor,
+    required this.glassShadowColor,
   });
 
   final Color mainColor;
@@ -114,6 +118,14 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
   final Color tagCloseBgColor;
   final Color noticeBarBgColor;
 
+  /// Glassmorphism tokens: the frosted surface itself, its hairline stroke,
+  /// the inner top highlight and the ambient drop shadow. All four are
+  /// semi-transparent so the backdrop stays visible through the surface.
+  final Color glassBgColor;
+  final Color glassBorderColor;
+  final Color glassHighlightColor;
+  final Color glassShadowColor;
+
   factory UPThemeTokens.light() {
     return const UPThemeTokens(
       mainColor: Color(0xFF303133),
@@ -166,6 +178,11 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
       switchLoadingInactiveColor: Color(0xFFAAABAD),
       tagCloseBgColor: Color(0xFFC8C9CC),
       noticeBarBgColor: Color(0xFFFDF6EC),
+      // rgba(255,255,255,0.62) / 0.9 / 0.85 / rgba(31,45,71,0.12)
+      glassBgColor: Color(0x9EFFFFFF),
+      glassBorderColor: Color(0xE6FFFFFF),
+      glassHighlightColor: Color(0xD9FFFFFF),
+      glassShadowColor: Color(0x1F1F2D47),
     );
   }
 
@@ -222,6 +239,12 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
       switchLoadingInactiveColor: Color(0xFF9CA3AF),
       tagCloseBgColor: Color(0xFF4B5563),
       noticeBarBgColor: Color(0xFF3D2F1B),
+      // Darker, lower-alpha surface; the stroke/highlight carry the glass cue
+      // because a dark backdrop cannot be lit by a white fill.
+      glassBgColor: Color(0x731C1C1E),
+      glassBorderColor: Color(0x24FFFFFF),
+      glassHighlightColor: Color(0x1AFFFFFF),
+      glassShadowColor: Color(0x73000000),
     );
   }
 
@@ -354,6 +377,10 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
           switchLoadingInactiveColor ?? this.switchLoadingInactiveColor,
       tagCloseBgColor: tagCloseBgColor ?? this.tagCloseBgColor,
       noticeBarBgColor: noticeBarBgColor ?? this.noticeBarBgColor,
+      glassBgColor: glassBgColor ?? this.glassBgColor,
+      glassBorderColor: glassBorderColor ?? this.glassBorderColor,
+      glassHighlightColor: glassHighlightColor ?? this.glassHighlightColor,
+      glassShadowColor: glassShadowColor ?? this.glassShadowColor,
     );
   }
 
@@ -421,6 +448,10 @@ class UPThemeTokens extends ThemeExtension<UPThemeTokens> {
           l(switchLoadingInactiveColor, other.switchLoadingInactiveColor),
       tagCloseBgColor: l(tagCloseBgColor, other.tagCloseBgColor),
       noticeBarBgColor: l(noticeBarBgColor, other.noticeBarBgColor),
+      glassBgColor: l(glassBgColor, other.glassBgColor),
+      glassBorderColor: l(glassBorderColor, other.glassBorderColor),
+      glassHighlightColor: l(glassHighlightColor, other.glassHighlightColor),
+      glassShadowColor: l(glassShadowColor, other.glassShadowColor),
     );
   }
 

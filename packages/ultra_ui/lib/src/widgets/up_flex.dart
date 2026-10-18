@@ -1,9 +1,12 @@
 import 'package:flutter/material.dart';
 
 import '../utils/up_utils.dart';
+import 'up_liquid_glass.dart';
 
-/// Cross-platform glass options. Accepted for API parity; NOT rendered on
-/// Flutter yet (glass is iOS/Android-first per the shared contract).
+/// Cross-platform glass options, now rendered on Flutter via [UPLiquidGlass].
+///
+/// Kept field-for-field with `contracts/up-flex.contract.json` so a node can
+/// declare glass once and look the same on iOS and Flutter.
 class UPFlexGlass {
   const UPFlexGlass({
     this.enabled = false,
@@ -152,6 +155,19 @@ class UPFlex extends StatelessWidget {
     Widget root = layout;
     if (customStyle != null) {
       root = DecoratedBox(decoration: customStyle!, child: root);
+    }
+    // Glass wraps last so the material sits under the gesture, exactly like
+    // the iOS/Android renderers do.
+    final UPFlexGlass? glassOpts = glass;
+    if (glassOpts != null && glassOpts.enabled) {
+      return UPLiquidGlass(
+        variant: glassOpts.variant,
+        tint: UPUtils.parseColor(glassOpts.tint),
+        interactive: glassOpts.interactive,
+        cornerRadius: glassOpts.cornerRadius,
+        onTap: onClick,
+        child: root,
+      );
     }
     if (onClick != null) {
       root = GestureDetector(
