@@ -37,22 +37,29 @@ import '../utils/up_utils.dart';
 /// Backdrop blur costs a per-frame GPU pass: leave [refraction] off and keep
 /// blurred surfaces out of long scrolling lists.
 class UPLiquidGlass extends StatelessWidget {
+  /// Global material switch. When `false`, every [UPLiquidGlass] degrades to a
+  /// plain opaque rounded surface — same radius and colours, but no backdrop
+  /// blur, specular rim, sheen, inner shade or drop shadow. Escape hatch for
+  /// backends that cannot render the material (e.g. Skia) or for products that
+  /// want the layout without the glass look.
+  static bool enabled = true;
+
   const UPLiquidGlass({
-    super.key,
-    required this.child,
-    this.variant = 'regular',
-    this.tint,
-    this.interactive = false,
-    this.cornerRadius,
-    this.blur,
-    this.gradient,
-    this.refraction = 0,
-    this.padding = const EdgeInsets.all(16),
-    this.margin,
-    this.width,
-    this.height,
-    this.shadow = true,
-    this.onTap,
+  super.key,
+  required this.child,
+  this.variant = 'regular',
+  this.tint,
+  this.interactive = false,
+  this.cornerRadius,
+  this.blur,
+  this.gradient,
+  this.refraction = 0,
+  this.padding = const EdgeInsets.all(16),
+  this.margin,
+  this.width,
+  this.height,
+  this.shadow = true,
+  this.onTap,
   });
 
   final Widget child;
@@ -101,6 +108,32 @@ class UPLiquidGlass extends StatelessWidget {
     final brightness = Theme.of(context).brightness;
     final isDark = brightness == Brightness.dark;
     final radius = _radius;
+
+    // 玻璃关闭：同一圆角、同一配色，但去掉模糊 / 描边 / 高光 / 内阴影 /
+    // 投影，退化成一张不透明圆角卡片（tint 强制为不透明）。
+    if (!enabled) {
+      final Color solid = (tint ?? tokens.glassBgColor).withValues(alpha: 1);
+      Widget plain = Container(
+        width: width,
+        height: height,
+        decoration: BoxDecoration(
+          // 先铺不透明底色，再叠渐变（与玻璃态的 fill+gradient 层次一致），
+          // 否则半透明渐变直接铺在背景上会让整张卡几乎看不见。
+          color: solid,
+          gradient: gradient,
+          borderRadius: BorderRadius.circular(radius),
+        ),
+        child: Padding(padding: padding, child: child),
+      );
+      if (onTap != null || interactive) {
+        plain = _GlassPressable(
+          interactive: interactive && onTap != null,
+          onTap: onTap,
+          child: plain,
+        );
+      }
+      return Container(margin: margin, child: plain);
+    }
 
     final baseTint = tint ?? tokens.glassBgColor;
     // In the `regular` variant, cap the fill alpha so the blurred backdrop
