@@ -19,14 +19,20 @@ import '../utils/up_utils.dart';
 ///     render (this app pins Skia for the H.264 SurfaceTexture preview, so a
 ///     superellipse would come out blank). We instead build the same shape with
 ///     a `Path` of cubic béziers, which Skia draws fine.
-///   * the fill **and** the 1px specular rim are painted with a `CustomPainter`
+///   * the fill **and** the specular rim are painted with a `CustomPainter`
 ///     via `Canvas.drawPath`. This deliberately avoids `ShapeDecoration(shape:
 ///     <custom border>) + gradient`: on the Skia backend that combination
 ///     paints as a solid red rectangle. Hand-rolling the paint avoids it.
+///   * the **specular rim is its own layer drawn *on top* of the blurred body**
+///     (not beneath it) so the backdrop filter does not smear the bright edge
+///     into a washed-out band — that was the earlier "looks like a soft box,
+///     not glass" failure.
+///   * **light vs dark edges differ on purpose**: a white edge is invisible
+///     against the near-white light backdrop, so light mode uses a subtle dark
+///     hairline to define the shape (the way iOS light glass is outlined), while
+///     dark mode uses a bright edge. Both get a top sheen + bottom inner shade.
 ///   * the backdrop is blurred, and [refraction] very slightly magnifies it
-///     to mimic light bending through the material's edge;
-///   * a specular rim (bright top, dim bottom) plus an inner bottom shade
-///     fake the thickness that makes the material read as glass.
+///     to mimic light bending through the material's edge.
 ///
 /// Backdrop blur costs a per-frame GPU pass: leave [refraction] off and keep
 /// blurred surfaces out of long scrolling lists.
@@ -97,28 +103,92 @@ class UPLiquidGlass extends StatelessWidget {
     final radius = _radius;
 
     final baseTint = tint ?? tokens.glassBgColor;
-    final fill = _isClear
-        ? baseTint.withValues(alpha: baseTint.a * 0.4)
-        : baseTint;
+    // In the `regular` variant, cap the fill alpha so the blurred backdrop
+    // stays visible through the glass — otherwise it reads as a flat box.
+    final double baseA = baseTint.a / 255.0;
+    final double fillA =
+        _isClear ? baseA * 0.4 : (baseA > 0.72 ? 0.72 : baseA);
+    final Color fill = baseTint.withValues(alpha: fillA);
+    // Dark inner edge at the bottom, faking the glass thickness.
+    final Color rimShadow = isDark
+        ? Colors.black.withValues(alpha: 0.35)
+        : const Color(0x33000000);
 
     // iOS lights the top edge and lets the bottom fall into shade; in dark
     // mode the "light" is a faint sheen rather than white.
     final rimTop = isDark
-        ? Colors.white.withValues(alpha: 0.32)
+        ? Colors.white.withValues(alpha: 0.55)
         : tokens.glassBorderColor;
     final rimBottom = isDark
-        ? Colors.white.withValues(alpha: 0.05)
+        ? Colors.white.withValues(alpha: 0.06)
         : Colors.white.withValues(alpha: 0.16);
     final innerShade = isDark
         ? Colors.black.withValues(alpha: 0.3)
         : const Color(0x1A0F1B2E);
+    // Outline colour: a bright edge on dark, a subtle-but-present dark hairline
+    // on light (a white edge is invisible against the near-white light
+    // backdrop — iOS light glass is outlined this way). Strong enough to read
+    // as a crisp edge so the panel does not dissolve into a soft blob.
+    final Color edgeColor = isDark
+        ? Colors.white.withValues(alpha: 0.55)
+        : const Color(0x4D000000);
 
     // The squircle fill + (optional) drop shadow are painted with a
-    // CustomPainter using `Canvas.drawPath`. This deliberately avoids
-    // `ShapeDecoration` together with a `gradient`: on the Skia backend (this
-    // app pins Skia for the H.264 SurfaceTexture preview) that combination
-    // renders as a solid red rectangle instead of the glass surface.
-    const double kRimInset = 1;
+    // `CustomPainter` using `Canvas.drawPath`. The blurred body + content is the
+    // `child`, clipped to the squircle. The specular rim is painted with a
+    // **foreground** painter — i.e. *on top of* the child — so the backdrop
+    // filter never smears the bright edge into a washed-out band (that was the
+    // earlier "no glass, just a soft box" miss). This also avoids a second
+    // `Positioned.fill` layer, which the Skia backend here drops entirely.
+    // iOS vs light edges differ on purpose: a white edge is invisible against
+    // the near-white light backdrop, so light mode uses a subtle dark hairline
+    // (the way iOS light glass is outlined) while dark mode uses a bright edge.
+    final Widget body = ClipPath(
+      clipper: _SuperellipseClipper(radius),
+      child: _maybeBlur(
+        Stack(
+          fit: StackFit.passthrough,
+          children: <Widget>[
+            // Specular sheen across the top — brightest at the very edge.
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: Alignment.topCenter,
+                      end: const Alignment(0, 0.55),
+                      colors: <Color>[
+                        rimTop,
+                        rimTop.withValues(alpha: 0),
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            // Inner bottom shade: the material's far edge.
+            Positioned.fill(
+              child: IgnorePointer(
+                child: DecoratedBox(
+                  decoration: BoxDecoration(
+                    gradient: LinearGradient(
+                      begin: const Alignment(0, 0.5),
+                      end: Alignment.bottomCenter,
+                      colors: <Color>[
+                        innerShade.withValues(alpha: 0),
+                        innerShade,
+                      ],
+                    ),
+                  ),
+                ),
+              ),
+            ),
+            Padding(padding: padding, child: child),
+          ],
+        ),
+      ),
+    );
+
     Widget surface = SizedBox(
       width: width,
       height: height,
@@ -130,61 +200,15 @@ class UPLiquidGlass extends StatelessWidget {
           shadow: shadow,
           shadowColor: tokens.glassShadowColor,
         ),
-        child: ClipPath(
-          clipper: _SuperellipseClipper(radius),
-          child: _maybeBlur(
-            Stack(
-              fit: StackFit.passthrough,
-              children: <Widget>[
-                // Specular sheen across the top half — brighter at the very edge.
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: Alignment.topCenter,
-                          end: const Alignment(0, 0.62),
-                          colors: <Color>[
-                            tokens.glassHighlightColor,
-                            tokens.glassHighlightColor.withValues(alpha: 0),
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                // Inner bottom shade: the material's far edge.
-                Positioned.fill(
-                  child: IgnorePointer(
-                    child: DecoratedBox(
-                      decoration: BoxDecoration(
-                        gradient: LinearGradient(
-                          begin: const Alignment(0, 0.55),
-                          end: Alignment.bottomCenter,
-                          colors: <Color>[
-                            innerShade.withValues(alpha: 0),
-                            innerShade,
-                          ],
-                        ),
-                      ),
-                    ),
-                  ),
-                ),
-                Padding(padding: padding, child: child),
-              ],
-            ),
-          ),
+        foregroundPainter: _GlassRimPainter(
+          radius: radius,
+          edge: edgeColor,
+          top: rimTop,
+          bottom: rimBottom,
+          shadow: rimShadow,
         ),
+        child: body,
       ),
-    );
-
-    // Specular rim: a 1px gradient stroke. Painted as a slightly larger
-    // squircle underneath, with the surface sitting 1px inside it.
-    surface = _GlassRim(
-      radius: radius + kRimInset,
-      top: rimTop,
-      bottom: rimBottom,
-      child: surface,
     );
 
     if (onTap != null || interactive) {
@@ -282,11 +306,16 @@ class _GlassSurfacePainter extends CustomPainter {
     final Path path = _superellipsePath(rect, radius);
 
     if (shadow) {
+      // A soft, lifted shadow so the glass separates from the backdrop even
+      // when the fill is near-white (light mode). The theme token is faint, so
+      // we deepen it locally to keep the panel from dissolving into the
+      // near-white backdrop.
+      final double sa = (shadowColor.a / 255.0 * 1.7).clamp(0.0, 1.0);
       final Paint shadowPaint = Paint()
-        ..color = shadowColor
-        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
+        ..color = shadowColor.withValues(alpha: sa)
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 18);
       canvas.save();
-      canvas.translate(0, 6);
+      canvas.translate(0, 9);
       canvas.drawPath(path, shadowPaint);
       canvas.restore();
     }
@@ -309,53 +338,68 @@ class _GlassSurfacePainter extends CustomPainter {
       old.shadowColor != shadowColor;
 }
 
-/// 1px specular stroke: a slightly larger squircle filled with a vertical
-/// gradient, with the surface sitting 1px inside it so only the rim shows.
-class _GlassRim extends StatelessWidget {
-  const _GlassRim({
+/// Crisp specular rim painted as strokes along the superellipse edge, drawn on
+/// top of the blurred body so the backdrop filter does not smear it:
+///   1. a 1px hairline outline — bright on dark, subtle dark on light;
+///   2. a bright top sheen (strongest at the very top edge);
+///   3. a dark bottom inner edge, faking the glass thickness.
+class _GlassRimPainter extends CustomPainter {
+  const _GlassRimPainter({
     required this.radius,
+    required this.edge,
     required this.top,
     required this.bottom,
-    required this.child,
+    required this.shadow,
   });
 
   final double radius;
+  final Color edge;
   final Color top;
   final Color bottom;
-  final Widget child;
-
-  @override
-  Widget build(BuildContext context) {
-    return CustomPaint(
-      painter: _RimPainter(radius, top, bottom),
-      child: Padding(padding: const EdgeInsets.all(1), child: child),
-    );
-  }
-}
-
-class _RimPainter extends CustomPainter {
-  const _RimPainter(this.radius, this.top, this.bottom);
-
-  final double radius;
-  final Color top;
-  final Color bottom;
+  final Color shadow;
 
   @override
   void paint(Canvas canvas, Size size) {
     final Path path = _superellipsePath(Offset.zero & size, radius);
-    final Paint paint = Paint()
-      ..style = PaintingStyle.fill
+    final Rect rect = Offset.zero & size;
+
+    // 1) Hairline outline defining the shape.
+    final Paint outline = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 1.5
+      ..color = edge;
+    canvas.drawPath(path, outline);
+
+    // 2) Bright specular sheen at the top edge, gone by 40% down.
+    final Paint sheen = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2.5
       ..shader = LinearGradient(
         begin: Alignment.topCenter,
+        end: const Alignment(0, 0.4),
+        colors: <Color>[top, top.withValues(alpha: 0)],
+      ).createShader(rect);
+    canvas.drawPath(path, sheen);
+
+    // 3) Dark inner edge at the bottom, suggesting thickness.
+    final Paint dark = Paint()
+      ..style = PaintingStyle.stroke
+      ..strokeWidth = 2
+      ..shader = LinearGradient(
+        begin: const Alignment(0, 0.6),
         end: Alignment.bottomCenter,
-        colors: <Color>[top, bottom],
-      ).createShader(Offset.zero & size);
-    canvas.drawPath(path, paint);
+        colors: <Color>[shadow.withValues(alpha: 0), shadow],
+      ).createShader(rect);
+    canvas.drawPath(path, dark);
   }
 
   @override
-  bool shouldRepaint(covariant _RimPainter old) =>
-      old.radius != radius || old.top != top || old.bottom != bottom;
+  bool shouldRepaint(covariant _GlassRimPainter old) =>
+      old.radius != radius ||
+      old.edge != edge ||
+      old.top != top ||
+      old.bottom != bottom ||
+      old.shadow != shadow;
 }
 
 /// iOS controls on glass dip slightly and brighten when pressed.
