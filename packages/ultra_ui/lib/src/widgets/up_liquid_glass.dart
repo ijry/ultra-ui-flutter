@@ -13,8 +13,16 @@ import '../utils/up_utils.dart';
 /// response iOS gives to controls that sit on glass.
 ///
 /// Rendering is deliberately an *approximation* of UIKit/SwiftUI:
-///   * shape uses [RoundedSuperellipseBorder] — the continuous-corner
-///     "squircle" that iOS actually draws, not a circular-arc corner;
+///   * shape uses a **continuous-curvature squircle** — the signature iOS
+///     "superellipse" corner. Flutter's `RoundedSuperellipseBorder` fills
+///     through `Canvas.drawRSuperellipse`, which the Skia backend does not
+///     render (this app pins Skia for the H.264 SurfaceTexture preview, so a
+///     superellipse would come out blank). We instead build the same shape with
+///     a `Path` of cubic béziers, which Skia draws fine.
+///   * the fill **and** the 1px specular rim are painted with a `CustomPainter`
+///     via `Canvas.drawPath`. This deliberately avoids `ShapeDecoration(shape:
+///     <custom border>) + gradient`: on the Skia backend that combination
+///     paints as a solid red rectangle. Hand-rolling the paint avoids it.
 ///   * the backdrop is blurred, and [refraction] very slightly magnifies it
 ///     to mimic light bending through the material's edge;
 ///   * a specular rim (bright top, dim bottom) plus an inner bottom shade
@@ -79,7 +87,7 @@ class UPLiquidGlass extends StatelessWidget {
       ? 22
       : UPUtils.getPx(cornerRadius).clamp(0, 1000).toDouble();
 
-  double get _blur => blur ?? (_isClear ? 26 : 18);
+  double get _blur => blur ?? (_isClear ? 26 : 20);
 
   @override
   Widget build(BuildContext context) {
@@ -90,102 +98,90 @@ class UPLiquidGlass extends StatelessWidget {
 
     final baseTint = tint ?? tokens.glassBgColor;
     final fill = _isClear
-        ? baseTint.withValues(alpha: baseTint.a * 0.45)
+        ? baseTint.withValues(alpha: baseTint.a * 0.4)
         : baseTint;
 
     // iOS lights the top edge and lets the bottom fall into shade; in dark
     // mode the "light" is a faint sheen rather than white.
     final rimTop = isDark
-        ? tokens.glassHighlightColor.withValues(alpha: 0.55)
-        : tokens.glassHighlightColor;
+        ? Colors.white.withValues(alpha: 0.32)
+        : tokens.glassBorderColor;
     final rimBottom = isDark
         ? Colors.white.withValues(alpha: 0.05)
-        : Colors.white.withValues(alpha: 0.25);
+        : Colors.white.withValues(alpha: 0.16);
     final innerShade = isDark
-        ? Colors.black.withValues(alpha: 0.28)
+        ? Colors.black.withValues(alpha: 0.3)
         : const Color(0x1A0F1B2E);
 
-    // NOTE: iOS draws a "squircle" (RoundedSuperellipseBorder). Flutter's
-    // implementation fills through `Canvas.drawRSuperellipse`, which the Skia
-    // backend does not render — this app pins Skia on purpose (the H.264
-    // preview needs SurfaceTexture), so a superellipse surface comes out
-    // blank. Rounded-rect path is visually close and renders everywhere.
-    final borderRadius = BorderRadius.circular(radius);
-
-    Widget surface = Container(
+    // The squircle fill + (optional) drop shadow are painted with a
+    // CustomPainter using `Canvas.drawPath`. This deliberately avoids
+    // `ShapeDecoration` together with a `gradient`: on the Skia backend (this
+    // app pins Skia for the H.264 SurfaceTexture preview) that combination
+    // renders as a solid red rectangle instead of the glass surface.
+    const double kRimInset = 1;
+    Widget surface = SizedBox(
       width: width,
       height: height,
-      decoration: BoxDecoration(
-        borderRadius: borderRadius,
-        color: fill,
-        gradient: gradient,
-        boxShadow: shadow
-            ? <BoxShadow>[
-                BoxShadow(
-                  color: tokens.glassShadowColor,
-                  blurRadius: 26,
-                  offset: const Offset(0, 10),
-                ),
-              ]
-            : null,
-      ),
-      child: ClipRRect(
-        borderRadius: borderRadius,
-        // `blur: 0` must NOT install a BackdropFilter: a sigma-0 blur still
-        // promotes the subtree to its own composited layer, which both costs
-        // a per-frame pass and breaks stacking against sliding siblings
-        // (e.g. swipe-action buttons showing through the card).
-        child: _maybeBlur(
-          Stack(
-            fit: StackFit.passthrough,
-            children: <Widget>[
-              // Specular sheen across the top half.
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: borderRadius,
-                      gradient: LinearGradient(
-                        begin: Alignment.topCenter,
-                        end: const Alignment(0, 0.75),
-                        colors: <Color>[
-                          tokens.glassHighlightColor,
-                          tokens.glassHighlightColor.withValues(alpha: 0),
-                        ],
+      child: CustomPaint(
+        painter: _GlassSurfacePainter(
+          radius: radius,
+          fill: fill,
+          gradient: gradient,
+          shadow: shadow,
+          shadowColor: tokens.glassShadowColor,
+        ),
+        child: ClipPath(
+          clipper: _SuperellipseClipper(radius),
+          child: _maybeBlur(
+            Stack(
+              fit: StackFit.passthrough,
+              children: <Widget>[
+                // Specular sheen across the top half — brighter at the very edge.
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: Alignment.topCenter,
+                          end: const Alignment(0, 0.62),
+                          colors: <Color>[
+                            tokens.glassHighlightColor,
+                            tokens.glassHighlightColor.withValues(alpha: 0),
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              // Inner bottom shade: the material's far edge.
-              Positioned.fill(
-                child: IgnorePointer(
-                  child: DecoratedBox(
-                    decoration: BoxDecoration(
-                      borderRadius: borderRadius,
-                      gradient: LinearGradient(
-                        begin: const Alignment(0, 0.55),
-                        end: Alignment.bottomCenter,
-                        colors: <Color>[
-                          innerShade.withValues(alpha: 0),
-                          innerShade,
-                        ],
+                // Inner bottom shade: the material's far edge.
+                Positioned.fill(
+                  child: IgnorePointer(
+                    child: DecoratedBox(
+                      decoration: BoxDecoration(
+                        gradient: LinearGradient(
+                          begin: const Alignment(0, 0.55),
+                          end: Alignment.bottomCenter,
+                          colors: <Color>[
+                            innerShade.withValues(alpha: 0),
+                            innerShade,
+                          ],
+                        ),
                       ),
                     ),
                   ),
                 ),
-              ),
-              Padding(padding: padding, child: child),
-            ],
+                Padding(padding: padding, child: child),
+              ],
+            ),
           ),
         ),
       ),
     );
 
-    // Specular rim: a 1px gradient stroke. `BoxDecoration.border` cannot hold
-    // a gradient, so it is painted as a slightly larger shape underneath.
+    // Specular rim: a 1px gradient stroke. Painted as a slightly larger
+    // squircle underneath, with the surface sitting 1px inside it.
     surface = _GlassRim(
-      radius: radius + 1,
+      radius: radius + kRimInset,
       top: rimTop,
       bottom: rimBottom,
       child: surface,
@@ -221,7 +217,100 @@ class UPLiquidGlass extends StatelessWidget {
   }
 }
 
-/// Paints the 1px specular stroke by sitting just outside the surface.
+/// Continuous-curvature squircle outline, drawn with cubic béziers so it
+/// renders on the Skia backend (unlike `RoundedSuperellipseBorder`).
+Path _superellipsePath(Rect rect, double radius) {
+  final double r = radius.clamp(0.0, rect.shortestSide / 2);
+  if (r <= 0) return Path()..addRect(rect);
+  // Control-point offset along each tangent. 0.5523·r ≈ circular corner;
+  // smaller → tighter, more "squircle" continuous curvature (iOS-like).
+  final double a = r * 0.45;
+  final double l = rect.left;
+  final double t = rect.top;
+  final double rr = rect.right;
+  final double b = rect.bottom;
+  return Path()
+    ..moveTo(l + r, t)
+    ..lineTo(rr - r, t)
+    ..cubicTo(rr - r + a, t, rr, t + r - a, rr, t + r)
+    ..lineTo(rr, b - r)
+    ..cubicTo(rr, b - r + a, rr - r + a, b, rr - r, b)
+    ..lineTo(l + r, b)
+    ..cubicTo(l + r - a, b, l, b - r + a, l, b - r)
+    ..lineTo(l, t + r)
+    ..cubicTo(l, t + r - a, l + r - a, t, l + r, t)
+    ..close();
+}
+
+/// Clips children to the squircle outline.
+class _SuperellipseClipper extends CustomClipper<Path> {
+  const _SuperellipseClipper(this.radius);
+
+  final double radius;
+
+  @override
+  Path getClip(Size size) => _superellipsePath(Offset.zero & size, radius);
+
+  @override
+  bool shouldReclip(covariant _SuperellipseClipper old) =>
+      old.radius != radius;
+}
+
+/// Paints the squircle fill (and optional gradient / drop shadow) with
+/// `Canvas.drawPath`. Using `CustomPainter` instead of `ShapeDecoration` keeps
+/// a `gradient` fill working on the Skia backend, which otherwise paints the
+/// `ShapeDecoration(shape: <custom border>) + gradient` combo as a solid red
+/// rectangle.
+class _GlassSurfacePainter extends CustomPainter {
+  const _GlassSurfacePainter({
+    required this.radius,
+    required this.fill,
+    required this.gradient,
+    required this.shadow,
+    required this.shadowColor,
+  });
+
+  final double radius;
+  final Color fill;
+  final Gradient? gradient;
+  final bool shadow;
+  final Color shadowColor;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Rect rect = Offset.zero & size;
+    final Path path = _superellipsePath(rect, radius);
+
+    if (shadow) {
+      final Paint shadowPaint = Paint()
+        ..color = shadowColor
+        ..maskFilter = const MaskFilter.blur(BlurStyle.normal, 12);
+      canvas.save();
+      canvas.translate(0, 6);
+      canvas.drawPath(path, shadowPaint);
+      canvas.restore();
+    }
+
+    final Paint fillPaint = Paint()..style = PaintingStyle.fill;
+    if (gradient != null) {
+      fillPaint.shader = gradient!.createShader(rect);
+    } else {
+      fillPaint.color = fill;
+    }
+    canvas.drawPath(path, fillPaint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _GlassSurfacePainter old) =>
+      old.radius != radius ||
+      old.fill != fill ||
+      old.gradient != gradient ||
+      old.shadow != shadow ||
+      old.shadowColor != shadowColor;
+}
+
+/// 1px specular stroke: a slightly larger squircle filled with a vertical
+/// gradient, with the surface sitting 1px inside it so only the rim shows.
 class _GlassRim extends StatelessWidget {
   const _GlassRim({
     required this.radius,
@@ -237,18 +326,36 @@ class _GlassRim extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return DecoratedBox(
-      decoration: BoxDecoration(
-        borderRadius: BorderRadius.circular(radius),
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: <Color>[top, bottom],
-        ),
-      ),
+    return CustomPaint(
+      painter: _RimPainter(radius, top, bottom),
       child: Padding(padding: const EdgeInsets.all(1), child: child),
     );
   }
+}
+
+class _RimPainter extends CustomPainter {
+  const _RimPainter(this.radius, this.top, this.bottom);
+
+  final double radius;
+  final Color top;
+  final Color bottom;
+
+  @override
+  void paint(Canvas canvas, Size size) {
+    final Path path = _superellipsePath(Offset.zero & size, radius);
+    final Paint paint = Paint()
+      ..style = PaintingStyle.fill
+      ..shader = LinearGradient(
+        begin: Alignment.topCenter,
+        end: Alignment.bottomCenter,
+        colors: <Color>[top, bottom],
+      ).createShader(Offset.zero & size);
+    canvas.drawPath(path, paint);
+  }
+
+  @override
+  bool shouldRepaint(covariant _RimPainter old) =>
+      old.radius != radius || old.top != top || old.bottom != bottom;
 }
 
 /// iOS controls on glass dip slightly and brighten when pressed.
