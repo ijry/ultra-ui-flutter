@@ -454,21 +454,31 @@ class UPSwipeActionItemState extends State<UPSwipeActionItem> {
           ],
         );
 
+    // customStyle 的圆角底座在四个角会留出缺口，缺口里露出背后的滑动
+    // 按钮（玻璃卡半透明时红/蓝按钮从右上角缺口钻出来，像补丁）。把按钮层
+    // 裁成与底座一致的圆角，缺口处回落到底色，与 iOS 的滑动操作一致。
+    final BorderRadius clipRadius =
+        widget.customStyle?.borderRadius?.resolve(TextDirection.ltr) ??
+            BorderRadius.zero;
+
     Widget root = Stack(
       children: [
         Positioned.fill(
-          child: Align(
-            alignment: Alignment.centerRight,
-            child: _MeasureWidth(
-              onChange: (w) {
-                if ((w - _actionsWidth).abs() > 0.5) {
-                  setState(() {
-                    _actionsWidth = w;
-                    if (_open) _offset = -w;
-                  });
-                }
-              },
-              child: actions,
+          child: ClipRRect(
+            borderRadius: clipRadius,
+            child: Align(
+              alignment: Alignment.centerRight,
+              child: _MeasureWidth(
+                onChange: (w) {
+                  if ((w - _actionsWidth).abs() > 0.5) {
+                    setState(() {
+                      _actionsWidth = w;
+                      if (_open) _offset = -w;
+                    });
+                  }
+                },
+                child: actions,
+              ),
             ),
           ),
         ),
